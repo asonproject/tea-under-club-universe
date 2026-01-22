@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>てぃあんだぁクラブ universe</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogInRlYS11bmRlciB1bml2ZXJzZSIsCiAgInNob3J0X25hbWUiOiAidW5pdmVyc2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTEyNiIsCiAgInRoZW1lX2NvbG9yIjogIzBmMTEyNiIKfQ==">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-main: #e5e7eb;
+            --text-muted: #94a3b8;
+            --accent-color: #a5b4fc;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --radius: 18px;
+            --nav-bg: rgba(15, 23, 42, 0.9);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(to bottom, #0b1026 0%, #1a2b5c 35%, #234f7a 55%, #f28c6a 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* --- PWA Layout --- */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* コンテンツエリア（スクロール可能） */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px; /* ナビの高さ分 */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 下部固定ナビゲーション */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(165, 180, 252, 0.2);
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            flex: 1;
+            transition: color 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        /* セクション表示切り替え */
+        .content-section {
+            display: none;
+            padding: 1.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 既存のデザイン調整 --- */
+        .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .stars span { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
+
+        header { text-align: center; padding: 2rem 0; }
+        h1 { font-size: 1.4rem; letter-spacing: 0.1em; }
+        
+        .shelf-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+        .shelf-card h2 { color: #3730a3; border-bottom: 2px solid #e1e8ef; font-size: 1.1rem; }
+        .shelf-list { list-style: none; padding: 0.8rem; background: #f0f4f8; border-radius: 8px; }
+        .shelf-list li { margin-bottom: 0.6rem; font-size: 0.9rem; }
+        
+        /* 月と水平線（Footer）をTimeタブやHomeに配置 */
+        .horizon-area {
+            position: relative;
+            background: linear-gradient(to top, #0b3c5d, #0e7490, #f59e7d);
+            padding: 4rem 1rem;
+            border-radius: var(--radius);
+            margin-top: 2rem;
+            overflow: hidden;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <div class="app-container">
+        <main id="main-content">
+            <section id="home" class="content-section active">
+                <header>
+                    <h1>てぃあんだぁクラブ universe</h1>
+                    <p style="font-size:0.8rem; opacity:0.8;">学び・実践・創作の記録を、必要な人へ届ける場所。</p>
+                </header>
+                
+                <div class="shelf-card">
+                    <p style="margin:0;">このアプリは、園内ガイドのように直感的に資料を探せるデジタルアーカイブです。下のタブから「棚」を選んで探索してください。</p>
+                </div>
+
+                <div class="horizon-area">
+                    <div class="moon" id="moon"></div>
+                    <p style="color:#fde68a; position:relative; z-index:10;">見上げれば、いつでも繋がっている。</p>
+                </div>
+            </section>
+
+            <section id="shelves" class="content-section">
+                <h2 style="text-align:center;">📚 本棚を巡る</h2>
+                
+                <article class="shelf-card">
+                    <h2>📚 教材の棚</h2>
+                    <ul class="shelf-list">
+                        <li><a href="#">英語トレーニング</a></li>
+                        <li><a href="#">タイピング練習</a></li>
+                        <li><a href="#">漢字テスト</a></li>
+                    </ul>
+                </article>
+
+                <article class="shelf-card">
+                    <h2>🌱 実践の棚</h2>
+                    <ul class="shelf-list">
+                        <li>声かけ・関わり方のメモ</li>
+                        <li>研究会まとめZINE</li>
+                    </ul>
+                </article>
+
+                <article class="shelf-card">
+                    <h2>🎨 創作の棚</h2>
+                    <ul class="shelf-list">
+                        <li>詩・エッセイ</li>
+                        <li>親子合作の作品</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section id="time" class="content-section">
+                <h2 style="text-align:center;">📅 時間の棚</h2>
+                <div class="shelf-card">
+                    <ul class="shelf-list" style="background:none;">
+                        <li><strong>2013</strong>｜活動開始</li>
+                        <li><strong>2019</strong>｜アルパカすく〜る 開始</li>
+                        <li><strong>2025</strong>｜沖縄文芸フリマ出展</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="links" class="content-section">
+                <h2 style="text-align:center;">🤝 ご縁とリンク</h2>
+                <div class="shelf-card">
+                    <div class="shelf-list">
+                        <a href="https://tea-under.club" style="display:block; margin-bottom:10px;">・てぃあんだぁクラブ</a>
+                        <a href="https://alpaca-school.okinawa" style="display:block; margin-bottom:10px;">・アルパカすく〜る</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="showSection('home', this)">
+                <span class="nav-icon">✨</span>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('shelves', this)">
+                <span class="nav-icon">📚</span>
+                <span>Shelves</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('time', this)">
+                <span class="nav-icon">⏳</span>
+                <span>Time</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('links', this)">
+                <span class="nav-icon">🔗</span>
+                <span>Links</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // セクション切り替え機能
+        function showSection(sectionId, element) {
+            // 全セクションを非表示
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            // 対象セクションを表示
+            document.getElementById(sectionId).classList.add('active');
+            
+            // ナビボタンのスタイル変更
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            element.classList.add('active');
+
+            // スクロール位置をトップに戻す
+            document.getElementById('main-content').scrollTop = 0;
+        }
+
+        // 星空の生成（簡易版）
+        function initStars() {
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 80; i++) {
+                const s = document.createElement('span');
+                const size = Math.random() * 2;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.left = Math.random() * 100 + '%';
+                stars.appendChild(s);
+            }
+        }
+        initStars();
+    </script>
+</body>
+</html>
