@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>てぃあんだぁクラブ universe</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogInRlYS11bmRlciB1bml2ZXJzZSIsCiAgInNob3J0X25hbWUiOiAidW5pdmVyc2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTEyNiIsCiAgInRoZW1lX2NvbG9yIjogIzBmMTEyNiIKfQ==">
-    
+    <link rel="manifest"
+        href="data:application/json;base64,ewogICJuYW1lIjogInRlYS11bmRlciB1bml2ZXJzZSIsCiAgInNob3J0X25hbWUiOiAidW5pdmVyc2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTEyNiIsCiAgInRoZW1lX2NvbG9yIjogIzBmMTEyNiIKfQ==">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -27,7 +30,8 @@
             font-family: 'Zen Maru Gothic', sans-serif;
             background: linear-gradient(to bottom, #0b1026 0%, #1a2b5c 35%, #234f7a 55%, #f28c6a 100%);
             color: var(--text-main);
-            margin: 0; padding: 0;
+            margin: 0;
+            padding: 0;
             height: 100vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
@@ -54,16 +58,36 @@
             animation: fadeIn 0.5s ease-out forwards;
         }
 
-        .content-section.active { display: block; }
+        .content-section.active {
+            display: block;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* --- 共通コンポーネント --- */
-        .stars { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-        .stars span { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
+        .stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .stars span {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
 
         .shelf-card {
             background: var(--card-bg);
@@ -71,19 +95,54 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             color: #1f2937;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
-        .shelf-card h2 { color: #3730a3; border-bottom: 2px solid #e1e8ef; margin-top: 0; font-size: 1.1rem; }
-        .shelf-list { list-style: none; padding: 0.8rem; background: #f0f4f8; border-radius: 8px; margin: 0; }
-        .shelf-list li { margin-bottom: 0.6rem; font-size: 0.9rem; border-bottom: 1px solid #e1e8ef; padding-bottom: 4px; }
-        .shelf-list li:last-child { border: none; }
-        a { color: #4f46e5; text-decoration: none; font-weight: bold; }
+
+        .shelf-card h2 {
+            color: #3730a3;
+            border-bottom: 2px solid #e1e8ef;
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .shelf-list {
+            list-style: none;
+            padding: 0.8rem;
+            background: #f0f4f8;
+            border-radius: 8px;
+            margin: 0;
+        }
+
+        .shelf-list li {
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #e1e8ef;
+            padding-bottom: 4px;
+        }
+
+        .shelf-list li:last-child {
+            border: none;
+        }
+
+        a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
         /* --- 星座ウィジェットの配置用 --- */
-        header { position: relative; padding: 3rem 0 1rem; text-align: center; }
+        header {
+            position: relative;
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
         .constellation-widget {
-            width: 120px; height: 120px; margin: 0 auto 10px;
-            position: relative; cursor: pointer;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 10px;
+            position: relative;
+            cursor: pointer;
         }
 
         /* --- 月と水平線の演出（Footerをセクション化） --- */
@@ -97,47 +156,91 @@
         }
 
         .moon {
-            position: absolute; top: 10%; right: 15%;
-            width: 60px; height: 60px; border-radius: 50%;
+            position: absolute;
+            top: 10%;
+            right: 15%;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #fffbe6, #fde68a 60%, #eec758 100%);
-            cursor: pointer; z-index: 20;
+            cursor: pointer;
+            z-index: 20;
             box-shadow: 0 0 30px rgba(253, 230, 138, 0.4);
             animation: moon-rise 10s ease-out forwards;
         }
 
         .moon-reflection {
-            position: absolute; top: 45%; right: 15%;
-            width: 60px; height: 100px;
-            background: linear-gradient(to bottom, rgba(253,230,138,0.4), transparent);
+            position: absolute;
+            top: 45%;
+            right: 15%;
+            width: 60px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(253, 230, 138, 0.4), transparent);
             filter: blur(8px);
         }
 
         /* --- 下部ナビ --- */
         .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 75px;
-            background: var(--nav-bg); backdrop-filter: blur(15px);
-            display: flex; justify-content: space-around; align-items: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 75px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
             border-top: 1px solid rgba(165, 180, 252, 0.2);
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 1000;
         }
+
         .nav-item {
-            flex: 1; text-align: center; color: var(--text-muted);
-            text-decoration: none; font-size: 0.7rem;
+            flex: 1;
+            text-align: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
         }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 2px;
+        }
 
         @keyframes moon-rise {
-            from { transform: translateY(50px) scale(0.5); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+            from {
+                transform: translateY(50px) scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
-        
+
         /* 星座ライン描画用 */
-        .constellation-lines { position: absolute; inset: 0; pointer-events: none; opacity: 0.5; }
-        .constellation-lines path { stroke: #a5b4fc; stroke-width: 1; fill: none; }
+        .constellation-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .constellation-lines path {
+            stroke: #a5b4fc;
+            stroke-width: 1;
+            fill: none;
+        }
     </style>
 </head>
+
 <body>
     <div class="stars"></div>
 
@@ -156,7 +259,7 @@
 
             <section id="shelves" class="content-section">
                 <h2 style="text-align:center; font-size:1.2rem;">📚 本棚を巡る</h2>
-                
+
                 <article class="shelf-card">
                     <h2>📚 教材の棚</h2>
                     <ul class="shelf-list">
@@ -192,7 +295,7 @@
                         <li><strong>2025</strong>｜沖縄文芸フリマ出展</li>
                     </ul>
                 </div>
-                
+
                 <div class="horizon-view">
                     <div class="moon" id="moon-obj"></div>
                     <div class="moon-reflection"></div>
@@ -250,7 +353,7 @@
                 s.style.height = size + 'px';
                 s.style.top = Math.random() * 100 + 'vh';
                 s.style.left = Math.random() * 100 + 'vw';
-                s.style.animation = `twinkle ${Math.random()*5 + 3}s infinite`;
+                s.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
                 container.appendChild(s);
             }
         }
@@ -265,7 +368,7 @@
             const age = (diff / 86400000) % synodic;
             const phase = age / synodic;
 
-            let shadowOffset = phase <= 0.5 ? (1 - (phase/0.5)) * 60 : -((phase-0.5)/0.5) * 60;
+            let shadowOffset = phase <= 0.5 ? (1 - (phase / 0.5)) * 60 : -((phase - 0.5) / 0.5) * 60;
             moon.style.boxShadow = `inset ${shadowOffset}px 0 12px rgba(11,16,38,0.9), 0 0 20px rgba(255,241,160,0.3)`;
 
             moon.onclick = () => alert(`現在の月齢: ${age.toFixed(1)}`);
@@ -281,4 +384,5 @@
         };
     </script>
 </body>
+
 </html>
