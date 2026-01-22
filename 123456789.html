@@ -74,7 +74,7 @@
             }
         }
 
-        /* --- 星空 --- */
+        /* --- 星空とカード --- */
         .stars {
             position: fixed;
             inset: 0;
@@ -101,7 +101,44 @@
             }
         }
 
-        /* --- 星座ウィジェット --- */
+        .shelf-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .shelf-card h2 {
+            color: #3730a3;
+            border-bottom: 2px solid #e1e8ef;
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .shelf-list {
+            list-style: none;
+            padding: 0.8rem;
+            background: #f0f4f8;
+            border-radius: 8px;
+            margin: 0;
+        }
+
+        .shelf-list li {
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #e1e8ef;
+            padding-bottom: 4px;
+        }
+
+        a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* --- 星座ウィジェット (SVG) --- */
         header {
             position: relative;
             padding: 2rem 0 1rem;
@@ -122,7 +159,6 @@
             border-radius: 50%;
             box-shadow: 0 0 4px #fff;
             transform: translate(-50%, -50%);
-            z-index: 5;
         }
 
         .constellation-lines {
@@ -132,123 +168,89 @@
         }
 
         .constellation-lines path {
-            stroke: rgba(165, 180, 252, 0.4);
+            stroke: rgba(165, 180, 252, 0.5);
             stroke-width: 1.5;
             fill: none;
             stroke-dasharray: 200;
             stroke-dashoffset: 200;
-            transition: stroke-dashoffset 2s;
+            animation: drawLine 3s ease-out forwards;
         }
 
-        .constellation-widget.active .constellation-lines path {
-            stroke-dashoffset: 0;
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
         }
 
-        .const-label {
-            background: rgba(15, 23, 42, 0.85);
+        .const-name {
+            font-size: 0.7rem;
             color: var(--accent-color);
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            margin-top: 8px;
-            display: inline-block;
-            opacity: 0;
-            transition: 0.4s;
-            border: 1px solid rgba(165, 180, 252, 0.3);
+            margin-top: 5px;
+            display: block;
         }
 
-        .const-label.visible {
-            opacity: 1;
-        }
-
-        /* --- 月と水平線の反射 --- */
+        /* --- 月と水平線 --- */
         .horizon-view {
             position: relative;
-            min-height: 380px;
+            min-height: 320px;
             background: linear-gradient(to top, #0b3c5d 5%, #0e7490 40%, #f59e7d 45%, #1a2b5c 80%, #0f172a 100%);
             margin: 2rem -1.5rem -1.5rem;
-            padding: 2rem 1.5rem;
+            padding: 4rem 1.5rem;
             overflow: hidden;
+            border-radius: 0 0 var(--radius) var(--radius);
         }
 
         .moon {
             position: absolute;
             top: 15%;
             right: 15%;
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #fffbe6, #fde68a 60%, #eec758 100%);
             cursor: pointer;
-            z-index: 50;
+            z-index: 20;
+            animation: moonRise 2s ease-out;
+        }
+
+        .moon-label {
+            position: absolute;
+            top: 75px;
+            right: 10%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            color: #fff;
+            pointer-events: none;
+            opacity: 0;
             transition: 0.3s;
         }
 
-        /* 反射効果 */
-        .moon-reflection {
-            position: absolute;
-            top: 45%;
-            right: 15%;
-            width: 65px;
-            height: 150px;
-            background: linear-gradient(to bottom, rgba(253, 230, 138, 0.5) 0%, rgba(253, 230, 138, 0.1) 60%, transparent 100%);
-            filter: blur(10px);
-            pointer-events: none;
-            z-index: 20;
-            transform-origin: top;
-            animation: shimmer 4s infinite ease-in-out;
-        }
-
-        @keyframes shimmer {
-
-            0%,
-            100% {
-                transform: scaleX(1);
-                opacity: 0.5;
-            }
-
-            50% {
-                transform: scaleX(1.3);
-                opacity: 0.7;
-            }
-        }
-
-        .popup-label {
-            position: absolute;
-            background: rgba(15, 23, 42, 0.95);
-            color: #fde68a;
-            padding: 8px 15px;
-            border-radius: 10px;
-            border: 1px solid #fde68a;
-            font-size: 0.8rem;
-            text-align: center;
-            z-index: 100;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: 0.4s;
-            pointer-events: none;
-        }
-
-        .popup-label.visible {
+        .moon:hover+.moon-label {
             opacity: 1;
-            transform: translateY(0);
         }
 
-        /* --- その他UI --- */
-        .shelf-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #1f2937;
+        @keyframes moonRise {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
+        /* --- 下部ナビ --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
             height: 75px;
             background: var(--nav-bg);
+            backdrop-filter: blur(15px);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -272,6 +274,7 @@
         .nav-icon {
             font-size: 1.5rem;
             display: block;
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -282,35 +285,76 @@
         <main id="scroll-container">
             <section id="home" class="content-section active">
                 <header>
-                    <div id="const-widget" class="constellation-widget" onclick="toggleConst()"></div>
-                    <div id="const-label" class="const-label"></div>
+                    <div id="const-widget" class="constellation-widget"></div>
+                    <span id="const-name-label" class="const-name"></span>
                     <h1>てぃあんだぁクラブ universe</h1>
+                    <p style="font-size:0.8rem; opacity:0.8;">学び・実践・創作のアーカイブ</p>
                 </header>
                 <div class="shelf-card">
-                    <p>星座をタップすると、今月の空が見えます。</p>
+                    <p>宇宙を旅するように、アーカイブを探索してください。下のタブから各棚へアクセスできます。</p>
                 </div>
+            </section>
+
+            <section id="shelves" class="content-section">
+                <h2 style="text-align:center; font-size:1.2rem;">📚 本棚を巡る</h2>
+                <article class="shelf-card">
+                    <h2>📚 教材の棚</h2>
+                    <ul class="shelf-list">
+                        <li><a href="#">英語トレーニング</a></li>
+                        <li><a href="#">タイピング練習（2年生）</a></li>
+                        <li><a href="#">漢字テスト</a></li>
+                    </ul>
+                </article>
+                <article class="shelf-card">
+                    <h2>🌱 実践の棚</h2>
+                    <ul class="shelf-list">
+                        <li>声かけ・関わり方のメモ</li>
+                        <li>研究会まとめZINE</li>
+                    </ul>
+                </article>
             </section>
 
             <section id="time" class="content-section">
                 <h2 style="text-align:center; font-size:1.2rem;">📅 時間の棚</h2>
+                <div class="shelf-card">
+                    <ul class="shelf-list" style="background:none;">
+                        <li><strong>2013</strong>｜活動開始</li>
+                        <li><strong>2019</strong>｜アルパカすく〜る 開始</li>
+                        <li><strong>2025</strong>｜沖縄文芸フリマ出展</li>
+                    </ul>
+                </div>
                 <div class="horizon-view">
-                    <div class="moon" id="moon-obj" onclick="toggleMoon()"></div>
-                    <div class="moon-reflection"></div>
-                    <div id="moon-popup" class="popup-label" style="top: 10%; right: 35%;"></div>
-                    <div style="position:relative; z-index:30; margin-top:200px; text-align:center; color:#fff;">
-                        <p style="font-size:0.8rem; opacity:0.7;">月をタップして月齢を確認</p>
+                    <div class="moon" id="moon-obj"></div>
+                    <div id="moon-info" class="moon-label"></div>
+                    <div style="position:relative; z-index:30; margin-top:80px; text-align:center;">
+                        <p style="color:#fde68a; font-size:0.8rem;">今夜の沖縄の月</p>
                     </div>
                 </div>
             </section>
 
+            <section id="links" class="content-section">
+                <h2 style="text-align:center; font-size:1.2rem;">🤝 ご縁とリンク</h2>
+                <div class="shelf-card">
+                    <ul class="shelf-list">
+                        <li><a href="https://tea-under.club">てぃあんだぁクラブ</a></li>
+                        <li><a href="https://alpaca-school.okinawa">アルパカすく〜る</a></li>
+                    </ul>
+                </div>
+            </section>
         </main>
 
         <nav class="bottom-nav">
             <a href="javascript:void(0)" class="nav-item active" onclick="showTab('home', this)">
                 <span class="nav-icon">✨</span>Home
             </a>
+            <a href="javascript:void(0)" class="nav-item" onclick="showTab('shelves', this)">
+                <span class="nav-icon">📚</span>Shelves
+            </a>
             <a href="javascript:void(0)" class="nav-item" onclick="showTab('time', this)">
                 <span class="nav-icon">⏳</span>Time
+            </a>
+            <a href="javascript:void(0)" class="nav-item" onclick="showTab('links', this)">
+                <span class="nav-icon">🔗</span>Links
             </a>
         </nav>
     </div>
@@ -322,61 +366,64 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
+            document.getElementById('scroll-container').scrollTop = 0;
+            if (id === 'home') initConstellation();
         }
 
-        // 星座の表示/非表示
-        function toggleConst() {
+        // 星空生成
+        function initStars() {
+            const container = document.querySelector('.stars');
+            for (let i = 0; i < 80; i++) {
+                const s = document.createElement('span');
+                const size = Math.random() * 2 + 0.5;
+                s.style.width = size + 'px'; s.style.height = size + 'px';
+                s.style.top = Math.random() * 100 + 'vh'; s.style.left = Math.random() * 100 + 'vw';
+                s.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
+                container.appendChild(s);
+            }
+        }
+
+        // 月齢計算
+        function initMoon() {
+            const moon = document.getElementById('moon-obj');
+            const synodic = 29.53058867;
+            const baseDate = new Date('2000-01-06T18:14:00Z');
+            const age = ((new Date().getTime() - baseDate.getTime()) / 86400000) % synodic;
+            const phase = age / synodic;
+            let offset = phase <= 0.5 ? (1 - (phase / 0.5)) * 60 : -((phase - 0.5) / 0.5) * 60;
+            moon.style.boxShadow = `inset ${offset}px 0 12px rgba(11,16,38,0.9), 0 0 20px rgba(255,241,160,0.3)`;
+            document.getElementById('moon-info').innerText = `月齢: ${age.toFixed(1)}`;
+        }
+
+        // 星座描画 (元のSVGパスロジック)
+        function initConstellation() {
             const widget = document.getElementById('const-widget');
-            const label = document.getElementById('const-label');
-            widget.classList.toggle('active');
-            label.classList.toggle('visible');
-        }
+            widget.innerHTML = '';
+            const data = [
+                { name: 'みずがめ座', stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60]], lines: [[0, 1], [1, 2], [2, 3], [1, 4]] },
+                { name: 'うお座', stars: [[20, 30], [30, 50], [40, 70], [60, 80], [80, 60]], lines: [[0, 1], [1, 2], [2, 3], [3, 4]] },
+                { name: 'おひつじ座', stars: [[20, 60], [50, 50], [70, 40], [80, 55]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'おうし座', stars: [[20, 50], [40, 50], [50, 70], [50, 30], [80, 50]], lines: [[0, 1], [1, 2], [1, 3], [3, 4]] },
+                { name: 'ふたご座', stars: [[30, 20], [30, 80], [60, 80], [60, 20]], lines: [[0, 1], [2, 3], [0, 3]] },
+                { name: 'かに座', stars: [[50, 50], [30, 30], [30, 70], [70, 30]], lines: [[0, 1], [0, 2], [0, 3]] },
+                { name: 'しし座', stars: [[50, 30], [70, 20], [80, 40], [70, 60]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'おとめ座', stars: [[30, 30], [50, 50], [50, 80], [70, 50]], lines: [[0, 1], [1, 2], [1, 3]] },
+                { name: 'てんびん座', stars: [[50, 20], [30, 60], [70, 60], [50, 80]], lines: [[0, 1], [1, 3], [3, 2]] },
+                { name: 'さそり座', stars: [[80, 20], [70, 30], [60, 40], [50, 50]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'いて座', stars: [[30, 60], [50, 60], [50, 40], [70, 40]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'やぎ座', stars: [[20, 30], [50, 50], [80, 30], [50, 80]], lines: [[0, 1], [1, 2], [2, 3]] }
+            ];
+            const target = data[new Date().getMonth()];
+            document.getElementById('const-name-label').innerText = target.name;
 
-        // 月の情報の表示
-        function toggleMoon() {
-            const popup = document.getElementById('moon-popup');
-            popup.classList.toggle('visible');
-        }
-
-        // 星座データ
-        const constData = [
-            { name: 'みずがめ座', en: 'Aquarius', stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60]], lines: [[0, 1], [1, 2], [2, 3], [1, 4]] },
-            { name: 'うお座', en: 'Pisces', stars: [[20, 30], [30, 50], [40, 70], [60, 80], [80, 60]], lines: [[0, 1], [1, 2], [2, 3], [3, 4]] },
-            { name: 'おひつじ座', en: 'Aries', stars: [[20, 60], [50, 50], [70, 40], [80, 55]], lines: [[0, 1], [1, 2], [2, 3]] },
-            { name: 'おうし座', en: 'Taurus', stars: [[20, 50], [40, 50], [50, 70], [50, 30], [80, 50]], lines: [[0, 1], [1, 2], [1, 3], [3, 4]] },
-            { name: 'ふたご座', en: 'Gemini', stars: [[30, 20], [30, 80], [60, 80], [60, 20]], lines: [[0, 1], [2, 3], [0, 3]] },
-            { name: 'かに座', en: 'Cancer', stars: [[50, 50], [30, 30], [30, 70], [70, 30]], lines: [[0, 1], [0, 2], [0, 3]] },
-            { name: 'しし座', en: 'Leo', stars: [[50, 30], [70, 20], [80, 40], [70, 60]], lines: [[0, 1], [1, 2], [2, 3]] },
-            { name: 'おとめ座', en: 'Virgo', stars: [[30, 30], [50, 50], [50, 80], [70, 50]], lines: [[0, 1], [1, 2], [1, 3]] },
-            { name: 'てんびん座', en: 'Libra', stars: [[50, 20], [30, 60], [70, 60], [50, 80]], lines: [[0, 1], [1, 3], [3, 2]] },
-            { name: 'さそり座', en: 'Scorpius', stars: [[80, 20], [70, 30], [60, 40], [50, 50]], lines: [[0, 1], [1, 2], [2, 3]] },
-            { name: 'いて座', en: 'Sagittarius', stars: [[30, 60], [50, 60], [50, 40], [70, 40]], lines: [[0, 1], [1, 2], [2, 3]] },
-            { name: 'やぎ座', en: 'Capricornus', stars: [[20, 30], [50, 50], [80, 30], [50, 80]], lines: [[0, 1], [1, 2], [2, 3]] }
-        ];
-
-        function getMoonName(age) {
-            if (age < 1) return '新月 (New Moon)';
-            if (age < 7) return '三日月 (Crescent Moon)';
-            if (age < 9) return '上弦の月 (First Quarter)';
-            if (age < 14) return '十日夜 (Waxing Gibbous)';
-            if (age < 16) return '満月 (Full Moon)';
-            if (age < 22) return '十六夜・寝待月 (Waning Gibbous)';
-            if (age < 24) return '下弦の月 (Last Quarter)';
-            return '有明の月 (Waning Crescent)';
-        }
-
-        window.onload = () => {
-            // 星座初期化
-            const target = constData[new Date().getMonth()];
-            document.getElementById('const-label').innerText = `${target.name} : ${target.en}`;
-            const widget = document.getElementById('const-widget');
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute("viewBox", "0 0 100 100");
             svg.classList.add("constellation-lines");
+
             target.stars.forEach(p => {
                 const s = document.createElement('div');
                 s.className = 'star-point'; s.style.left = p[0] + '%'; s.style.top = p[1] + '%';
-                widget.appendChild(s);
+                s.style.width = '4px'; s.style.height = '4px'; widget.appendChild(s);
             });
             target.lines.forEach(l => {
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -384,26 +431,9 @@
                 svg.appendChild(path);
             });
             widget.appendChild(svg);
+        }
 
-            // 月の初期化
-            const synodic = 29.53058867;
-            const baseDate = new Date('2000-01-06T18:14:00Z');
-            const age = ((new Date().getTime() - baseDate.getTime()) / 86400000) % synodic;
-            const phase = age / synodic;
-            let offset = phase <= 0.5 ? (1 - (phase / 0.5)) * 65 : -((phase - 0.5) / 0.5) * 65;
-            document.getElementById('moon-obj').style.boxShadow = `inset ${offset}px 0 12px rgba(11,16,38,0.9), 0 0 20px rgba(255,241,160,0.3)`;
-            document.getElementById('moon-popup').innerHTML = `<strong>${getMoonName(age)}</strong><br>月齢: ${age.toFixed(1)}`;
-
-            // 背景の星
-            const container = document.querySelector('.stars');
-            for (let i = 0; i < 80; i++) {
-                const s = document.createElement('span');
-                s.style.width = s.style.height = (Math.random() * 2 + 1) + 'px';
-                s.style.top = Math.random() * 100 + 'vh'; s.style.left = Math.random() * 100 + 'vw';
-                s.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
-                container.appendChild(s);
-            }
-        };
+        window.onload = () => { initStars(); initMoon(); initConstellation(); };
     </script>
 </body>
 
