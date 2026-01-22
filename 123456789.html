@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>てぃあんだぁクラブ universe</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest"
-        href="data:application/json;base64,ewogICJuYW1lIjogInRlYS11bmRlciB1bml2ZXJzZSIsCiAgInNob3J0X25hbWUiOiAidW5pdmVyc2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTEyNiIsCiAgInRoZW1lX2NvbG9yIjogIzBmMTEyNiIKfQ==">
-
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogInRlYS11bmRlciB1bml2ZXJzZSIsCiAgInNob3J0X25hbWUiOiAidW5pdmVyc2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTEyNiIsCiAgInRoZW1lX2NvbG9yIjogIzBmMTEyNiIKfQ==">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -30,225 +27,60 @@
             font-family: 'Zen Maru Gothic', sans-serif;
             background: linear-gradient(to bottom, #0b1026 0%, #1a2b5c 35%, #234f7a 55%, #f28c6a 100%);
             color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; padding: 0;
+            height: 100vh; overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
         /* --- PWA Layout --- */
-        .app-shell {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+        main { flex: 1; overflow-y: auto; padding-bottom: 90px; z-index: 10; -webkit-overflow-scrolling: touch; }
+        .content-section { display: none; padding: 1.5rem; animation: fadeIn 0.5s ease-out forwards; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        main {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 90px;
-            z-index: 10;
-            -webkit-overflow-scrolling: touch;
-        }
+        /* --- 星空とカード --- */
+        .stars { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+        .stars span { position: absolute; background: white; border-radius: 50%; opacity: 0.3; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
 
-        .content-section {
-            display: none;
-            padding: 1.5rem;
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+        .shelf-card { background: var(--card-bg); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; color: #1f2937; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .shelf-card h2 { color: #3730a3; border-bottom: 2px solid #e1e8ef; margin-top: 0; font-size: 1.1rem; }
+        .shelf-list { list-style: none; padding: 0.8rem; background: #f0f4f8; border-radius: 8px; margin: 0; }
+        .shelf-list li { margin-bottom: 0.6rem; font-size: 0.9rem; border-bottom: 1px solid #e1e8ef; padding-bottom: 4px; }
+        a { color: #4f46e5; text-decoration: none; font-weight: bold; }
 
-        .content-section.active {
-            display: block;
-        }
+        /* --- 星座ウィジェット (SVG) --- */
+        header { position: relative; padding: 2rem 0 1rem; text-align: center; }
+        .constellation-widget { width: 140px; height: 140px; margin: 0 auto; position: relative; cursor: pointer; }
+        .star-point { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 4px #fff; transform: translate(-50%, -50%); }
+        .constellation-lines { position: absolute; inset: 0; pointer-events: none; }
+        .constellation-lines path { stroke: rgba(165, 180, 252, 0.5); stroke-width: 1.5; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawLine 3s ease-out forwards; }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        .const-name { font-size: 0.7rem; color: var(--accent-color); margin-top: 5px; display: block; }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- 共通コンポーネント --- */
-        .stars {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .stars span {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-        .shelf-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #1f2937;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .shelf-card h2 {
-            color: #3730a3;
-            border-bottom: 2px solid #e1e8ef;
-            margin-top: 0;
-            font-size: 1.1rem;
-        }
-
-        .shelf-list {
-            list-style: none;
-            padding: 0.8rem;
-            background: #f0f4f8;
-            border-radius: 8px;
-            margin: 0;
-        }
-
-        .shelf-list li {
-            margin-bottom: 0.6rem;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #e1e8ef;
-            padding-bottom: 4px;
-        }
-
-        .shelf-list li:last-child {
-            border: none;
-        }
-
-        a {
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* --- 星座ウィジェットの配置用 --- */
-        header {
-            position: relative;
-            padding: 3rem 0 1rem;
-            text-align: center;
-        }
-
-        .constellation-widget {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 10px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        /* --- 月と水平線の演出（Footerをセクション化） --- */
-        .horizon-view {
-            position: relative;
-            min-height: 300px;
-            background: linear-gradient(to top, #0b3c5d 5%, #0e7490 40%, #f59e7d 45%, #1a2b5c 80%, #0f172a 100%);
-            margin: 2rem -1.5rem -1.5rem;
-            padding: 4rem 1.5rem;
-            overflow: hidden;
-        }
-
-        .moon {
-            position: absolute;
-            top: 10%;
-            right: 15%;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fffbe6, #fde68a 60%, #eec758 100%);
-            cursor: pointer;
-            z-index: 20;
-            box-shadow: 0 0 30px rgba(253, 230, 138, 0.4);
-            animation: moon-rise 10s ease-out forwards;
-        }
-
-        .moon-reflection {
-            position: absolute;
-            top: 45%;
-            right: 15%;
-            width: 60px;
-            height: 100px;
-            background: linear-gradient(to bottom, rgba(253, 230, 138, 0.4), transparent);
-            filter: blur(8px);
-        }
+        /* --- 月と水平線 --- */
+        .horizon-view { position: relative; min-height: 320px; background: linear-gradient(to top, #0b3c5d 5%, #0e7490 40%, #f59e7d 45%, #1a2b5c 80%, #0f172a 100%); margin: 2rem -1.5rem -1.5rem; padding: 4rem 1.5rem; overflow: hidden; border-radius: 0 0 var(--radius) var(--radius); }
+        .moon { position: absolute; top: 15%; right: 15%; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbe6, #fde68a 60%, #eec758 100%); cursor: pointer; z-index: 20; animation: moonRise 2s ease-out; }
+        .moon-label { position: absolute; top: 75px; right: 10%; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; font-size: 0.7rem; color: #fff; pointer-events: none; opacity: 0; transition: 0.3s; }
+        .moon:hover + .moon-label { opacity: 1; }
+        @keyframes moonRise { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* --- 下部ナビ --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 75px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid rgba(165, 180, 252, 0.2);
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1000;
-        }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.7rem;
-        }
-
-        .nav-item.active {
-            color: var(--accent-color);
-        }
-
-        .nav-icon {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        @keyframes moon-rise {
-            from {
-                transform: translateY(50px) scale(0.5);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* 星座ライン描画用 */
-        .constellation-lines {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        .constellation-lines path {
-            stroke: #a5b4fc;
-            stroke-width: 1;
-            fill: none;
-        }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--nav-bg); backdrop-filter: blur(15px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(165, 180, 252, 0.2); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: var(--text-muted); text-decoration: none; font-size: 0.7rem; }
+        .nav-item.active { color: var(--accent-color); }
+        .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 2px; }
     </style>
 </head>
-
 <body>
     <div class="stars"></div>
-
     <div class="app-shell">
         <main id="scroll-container">
             <section id="home" class="content-section active">
                 <header>
                     <div id="const-widget" class="constellation-widget"></div>
+                    <span id="const-name-label" class="const-name"></span>
                     <h1>てぃあんだぁクラブ universe</h1>
                     <p style="font-size:0.8rem; opacity:0.8;">学び・実践・創作のアーカイブ</p>
                 </header>
@@ -259,7 +91,6 @@
 
             <section id="shelves" class="content-section">
                 <h2 style="text-align:center; font-size:1.2rem;">📚 本棚を巡る</h2>
-
                 <article class="shelf-card">
                     <h2>📚 教材の棚</h2>
                     <ul class="shelf-list">
@@ -268,20 +99,11 @@
                         <li><a href="#">漢字テスト</a></li>
                     </ul>
                 </article>
-
                 <article class="shelf-card">
                     <h2>🌱 実践の棚</h2>
                     <ul class="shelf-list">
                         <li>声かけ・関わり方のメモ</li>
                         <li>研究会まとめZINE</li>
-                    </ul>
-                </article>
-
-                <article class="shelf-card">
-                    <h2>🎨 創作の棚</h2>
-                    <ul class="shelf-list">
-                        <li>詩・エッセイ・ポエム</li>
-                        <li>親子合作の作品</li>
                     </ul>
                 </article>
             </section>
@@ -295,12 +117,11 @@
                         <li><strong>2025</strong>｜沖縄文芸フリマ出展</li>
                     </ul>
                 </div>
-
                 <div class="horizon-view">
                     <div class="moon" id="moon-obj"></div>
-                    <div class="moon-reflection"></div>
-                    <div style="position:relative; z-index:30; margin-top:80px;">
-                        <p style="color:#fde68a;">月をタップすると月齢が表示されます</p>
+                    <div id="moon-info" class="moon-label"></div>
+                    <div style="position:relative; z-index:30; margin-top:80px; text-align:center;">
+                        <p style="color:#fde68a; font-size:0.8rem;">今夜の沖縄の月</p>
                     </div>
                 </div>
             </section>
@@ -311,7 +132,6 @@
                     <ul class="shelf-list">
                         <li><a href="https://tea-under.club">てぃあんだぁクラブ</a></li>
                         <li><a href="https://alpaca-school.okinawa">アルパカすく〜る</a></li>
-                        <li><a href="https://furima.ryukyu-tane.com">沖縄文芸フリマ</a></li>
                     </ul>
                 </div>
             </section>
@@ -334,55 +154,80 @@
     </div>
 
     <script>
-        // --- タブ切り替え ---
+        // タブ切り替え
         function showTab(id, el) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('scroll-container').scrollTop = 0;
+            if(id === 'home') initConstellation();
         }
 
-        // --- 星の生成（元のロジック） ---
+        // 星空生成
         function initStars() {
             const container = document.querySelector('.stars');
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 80; i++) {
                 const s = document.createElement('span');
                 const size = Math.random() * 2 + 0.5;
-                s.style.width = size + 'px';
-                s.style.height = size + 'px';
-                s.style.top = Math.random() * 100 + 'vh';
-                s.style.left = Math.random() * 100 + 'vw';
-                s.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite`;
+                s.style.width = size + 'px'; s.style.height = size + 'px';
+                s.style.top = Math.random() * 100 + 'vh'; s.style.left = Math.random() * 100 + 'vw';
+                s.style.animation = `twinkle ${Math.random()*5+3}s infinite`;
                 container.appendChild(s);
             }
         }
 
-        // --- 月齢計算と影の設定（元のロジック） ---
+        // 月齢計算
         function initMoon() {
             const moon = document.getElementById('moon-obj');
-            const date = new Date();
             const synodic = 29.53058867;
             const baseDate = new Date('2000-01-06T18:14:00Z');
-            const diff = date.getTime() - baseDate.getTime();
-            const age = (diff / 86400000) % synodic;
+            const age = ((new Date().getTime() - baseDate.getTime()) / 86400000) % synodic;
             const phase = age / synodic;
-
-            let shadowOffset = phase <= 0.5 ? (1 - (phase / 0.5)) * 60 : -((phase - 0.5) / 0.5) * 60;
-            moon.style.boxShadow = `inset ${shadowOffset}px 0 12px rgba(11,16,38,0.9), 0 0 20px rgba(255,241,160,0.3)`;
-
-            moon.onclick = () => alert(`現在の月齢: ${age.toFixed(1)}`);
+            let offset = phase <= 0.5 ? (1 - (phase/0.5)) * 60 : -((phase-0.5)/0.5) * 60;
+            moon.style.boxShadow = `inset ${offset}px 0 12px rgba(11,16,38,0.9), 0 0 20px rgba(255,241,160,0.3)`;
+            document.getElementById('moon-info').innerText = `月齢: ${age.toFixed(1)}`;
         }
 
-        // 起動時実行
-        window.onload = () => {
-            initStars();
-            initMoon();
-            // 星座（簡易版）
-            document.getElementById('const-widget').innerHTML = '✨';
-            document.getElementById('const-widget').style.fontSize = '3rem';
-        };
+        // 星座描画 (元のSVGパスロジック)
+        function initConstellation() {
+            const widget = document.getElementById('const-widget');
+            widget.innerHTML = '';
+            const data = [
+                { name: 'みずがめ座', stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60]], lines: [[0, 1], [1, 2], [2, 3], [1, 4]] },
+                { name: 'うお座', stars: [[20, 30], [30, 50], [40, 70], [60, 80], [80, 60]], lines: [[0, 1], [1, 2], [2, 3], [3, 4]] },
+                { name: 'おひつじ座', stars: [[20, 60], [50, 50], [70, 40], [80, 55]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'おうし座', stars: [[20, 50], [40, 50], [50, 70], [50, 30], [80, 50]], lines: [[0, 1], [1, 2], [1, 3], [3, 4]] },
+                { name: 'ふたご座', stars: [[30, 20], [30, 80], [60, 80], [60, 20]], lines: [[0, 1], [2, 3], [0, 3]] },
+                { name: 'かに座', stars: [[50, 50], [30, 30], [30, 70], [70, 30]], lines: [[0, 1], [0, 2], [0, 3]] },
+                { name: 'しし座', stars: [[50, 30], [70, 20], [80, 40], [70, 60]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'おとめ座', stars: [[30, 30], [50, 50], [50, 80], [70, 50]], lines: [[0, 1], [1, 2], [1, 3]] },
+                { name: 'てんびん座', stars: [[50, 20], [30, 60], [70, 60], [50, 80]], lines: [[0, 1], [1, 3], [3, 2]] },
+                { name: 'さそり座', stars: [[80, 20], [70, 30], [60, 40], [50, 50]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'いて座', stars: [[30, 60], [50, 60], [50, 40], [70, 40]], lines: [[0, 1], [1, 2], [2, 3]] },
+                { name: 'やぎ座', stars: [[20, 30], [50, 50], [80, 30], [50, 80]], lines: [[0, 1], [1, 2], [2, 3]] }
+            ];
+            const target = data[new Date().getMonth()];
+            document.getElementById('const-name-label').innerText = target.name;
+
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.classList.add("constellation-lines");
+
+            target.stars.forEach(p => {
+                const s = document.createElement('div');
+                s.className = 'star-point'; s.style.left = p[0]+'%'; s.style.top = p[1]+'%';
+                s.style.width = '4px'; s.style.height = '4px'; widget.appendChild(s);
+            });
+            target.lines.forEach(l => {
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", `M ${target.stars[l[0]][0]} ${target.stars[l[0]][1]} L ${target.stars[l[1]][0]} ${target.stars[l[1]][1]}`);
+                svg.appendChild(path);
+            });
+            widget.appendChild(svg);
+        }
+
+        window.onload = () => { initStars(); initMoon(); initConstellation(); };
     </script>
 </body>
-
 </html>
