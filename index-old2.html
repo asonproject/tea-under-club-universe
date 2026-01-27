@@ -783,182 +783,13 @@
             stroke-width: 2;
             fill: none;
         }
-
-        /* Events Container */
-        .events-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .loading-text {
-            color: var(--text-muted);
-            font-style: italic;
-            text-align: center;
-        }
-
-        .event-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(165, 180, 252, 0.2);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            border-color: rgba(165, 180, 252, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .event-date {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .event-date::before {
-            content: "📅";
-        }
-
-        .event-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-            line-height: 1.5;
-        }
-
-        .event-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .event-location::before {
-            content: "📍";
-        }
-
-        .no-events {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 1rem;
-        }
-
-        @media (max-width: 480px) {
-            .event-card {
-                padding: 1rem;
-            }
-
-            .event-title {
-                font-size: 1rem;
-            }
-        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initStars();
             initMoon();
             initConstellation();
-            loadEventsFromSheet();
         });
-
-        // --- Googleスプレッドシートからイベント情報を取得 ---
-        async function loadEventsFromSheet() {
-            const container = document.getElementById('events-container');
-            if (!container) return;
-
-            const SHEET_ID = '1z_NGWc9_tapcu7mC44K6AMp4DZKpMKaFecSUk2xtHWs';
-            const GID = '200700104';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Failed to fetch');
-
-                const csvText = await response.text();
-                const events = parseCSV(csvText);
-
-                if (events.length === 0) {
-                    container.innerHTML = '<p class="no-events">現在予定されているイベントはありません</p>';
-                    return;
-                }
-
-                container.innerHTML = events.map(event => `
-                    <div class="event-card">
-                        <div class="event-date">${escapeHtml(event.dateTime)}</div>
-                        <div class="event-title">${escapeHtml(event.title)}</div>
-                        <div class="event-location">${escapeHtml(event.location)}</div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error loading events:', error);
-                container.innerHTML = '<p class="no-events">イベント情報の読み込みに失敗しました</p>';
-            }
-        }
-
-        // CSV解析（シンプルなパーサー）
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            if (lines.length <= 1) return [];
-
-            const events = [];
-            // ヘッダー行をスキップして2行目から処理
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
-                if (values.length >= 3) {
-                    events.push({
-                        dateTime: values[0],
-                        location: values[1],
-                        title: values[2]
-                    });
-                }
-            }
-            return events;
-        }
-
-        // CSV行パーサー（ダブルクォート対応）
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                const nextChar = line[i + 1];
-
-                if (char === '"') {
-                    if (inQuotes && nextChar === '"') {
-                        current += '"';
-                        i++; // エスケープされた引用符をスキップ
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current.trim());
-            return result;
-        }
-
-        // HTMLエスケープ
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
 
         // --- 星の生成 ---
         function initStars() {
@@ -1322,12 +1153,7 @@
                 記録の背景にある、現在進行形の取り組みです。
             </p>
 
-            <!-- イベント一覧（スプレッドシートから動的取得） -->
-            <div id="events-container" class="events-container">
-                <p class="loading-text">イベント情報を読み込んでいます...</p>
-            </div>
-
-            <ul class="shelf-list" style="margin-top: 1.5rem;">
+            <ul class="shelf-list">
                 <li>
                     <a href="/kosodate-study/index.html">
                         子育て勉強会（開催案内）

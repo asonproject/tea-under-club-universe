@@ -783,376 +783,13 @@
             stroke-width: 2;
             fill: none;
         }
-
-        /* Events Container */
-        .events-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .loading-text {
-            color: var(--text-muted);
-            font-style: italic;
-            text-align: center;
-        }
-
-        .event-card {
-            background: rgba(15, 23, 42, 0.1);
-            backdrop-filter: blur(1px);
-            border: 1px solid rgba(165, 180, 252, 0.3);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            border-color: rgba(165, 180, 252, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .event-header {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .event-date {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-        }
-
-        .event-date::before {
-            content: "📅";
-        }
-
-        .event-category {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .category-kosodate {
-            background: rgba(52, 211, 153, 0.2);
-            color: #34d399;
-            border: 1px solid rgba(52, 211, 153, 0.3);
-        }
-
-        .category-mikata {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
-        .category-chiiki {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .event-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.75rem;
-            line-height: 1.5;
-        }
-
-        .event-location {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-        }
-
-        .event-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .event-detail {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            background: rgba(100, 116, 139, 0.2);
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .map-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 8px;
-            color: #a5b4fc;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .map-button:hover {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.3));
-            border-color: rgba(165, 180, 252, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .event-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .apply-button {
-            display: inline-flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(16, 185, 129, 0.15));
-            border: 1px solid rgba(52, 211, 153, 0.3);
-            border-radius: 8px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .apply-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            background: rgba(52, 211, 153, 0.2);
-            border-radius: 6px;
-            color: #34d399;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .apply-link:hover {
-            background: rgba(52, 211, 153, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .no-events {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 1rem;
-        }
-
-        @media (max-width: 480px) {
-            .event-card {
-                padding: 1rem;
-            }
-
-            .event-title {
-                font-size: 1rem;
-            }
-        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initStars();
             initMoon();
             initConstellation();
-            loadEventsFromSheet();
         });
-
-        // --- Googleスプレッドシートからイベント情報を取得 ---
-        async function loadEventsFromSheet() {
-            const container = document.getElementById('events-container');
-            if (!container) return;
-
-            const SHEET_ID = '1z_NGWc9_tapcu7mC44K6AMp4DZKpMKaFecSUk2xtHWs';
-            const GID = '200700104';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Failed to fetch');
-
-                const csvText = await response.text();
-                const events = parseCSV(csvText);
-
-                if (events.length === 0) {
-                    container.innerHTML = '<p class="no-events">現在予定されているイベントはありません</p>';
-                    return;
-                }
-
-                container.innerHTML = events.map(event => {
-                    const mapQuery = encodeURIComponent(event.location || event.address);
-                    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-                    const locationText = event.address
-                        ? `${event.location}（${event.address}）`
-                        : event.location;
-
-                    // カテゴリに応じたクラス
-                    let categoryClass = 'category-kosodate';
-                    if (event.category.includes('MIKATA')) categoryClass = 'category-mikata';
-                    else if (event.category.includes('地域')) categoryClass = 'category-chiiki';
-
-                    // 詳細情報の構築（申込以外）
-                    const details = [];
-                    if (event.fee) details.push(`💰 ${event.fee}`);
-                    if (event.target) details.push(`👥 ${event.target}`);
-                    if (event.organizer) details.push(`🏛️ 主催: ${event.organizer}`);
-                    if (event.coOrganizer) details.push(`🤝 共催: ${event.coOrganizer}`);
-                    if (event.note) details.push(`📝 ${event.note}`);
-
-                    // 申込方法のリンク化
-                    const applicationHtml = event.application ? linkify(event.application) : '';
-
-                    return `
-                    <div class="event-card">
-                        <div class="event-header">
-                            <div class="event-date">${escapeHtml(event.dateTime)}</div>
-                            ${event.category ? `<span class="event-category ${categoryClass}">${escapeHtml(event.category)}</span>` : ''}
-                        </div>
-                        <div class="event-title">${escapeHtml(event.title)}</div>
-                        <div class="event-location">📍 ${escapeHtml(locationText)}</div>
-                        ${details.length > 0 ? `
-                        <div class="event-details">
-                            ${details.map(d => `<span class="event-detail">${escapeHtml(d)}</span>`).join('')}
-                        </div>
-                        ` : ''}
-                        <div class="event-buttons">
-                            <a href="${mapUrl}" target="_blank" class="map-button">
-                                🗺️ 地図を開く
-                            </a>
-                            ${applicationHtml ? `<div class="apply-button">✉️ 申込: ${applicationHtml}</div>` : ''}
-                        </div>
-                    </div>
-                `}).join('');
-
-            } catch (error) {
-                console.error('Error loading events:', error);
-                container.innerHTML = '<p class="no-events">イベント情報の読み込みに失敗しました</p>';
-            }
-        }
-
-        // CSV解析（シンプルなパーサー）
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            if (lines.length <= 1) return [];
-
-            const events = [];
-            // ヘッダー行をスキップして2行目から処理
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
-                if (values.length >= 5) {
-                    events.push({
-                        dateTime: values[0],
-                        location: values[1],
-                        address: values[2],
-                        title: values[3],
-                        category: values[4] || '',
-                        fee: values[5] || '',
-                        application: values[6] || '',
-                        organizer: values[7] || '',
-                        coOrganizer: values[8] || '',
-                        note: values[9] || '',
-                        target: values[10] || ''
-                    });
-                } else if (values.length >= 4) {
-                    events.push({
-                        dateTime: values[0],
-                        location: values[1],
-                        address: values[2],
-                        title: values[3],
-                        category: '',
-                        fee: '',
-                        application: '',
-                        organizer: '',
-                        coOrganizer: '',
-                        note: '',
-                        target: ''
-                    });
-                }
-            }
-            return events;
-        }
-
-        // CSV行パーサー（ダブルクォート対応）
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                const nextChar = line[i + 1];
-
-                if (char === '"') {
-                    if (inQuotes && nextChar === '"') {
-                        current += '"';
-                        i++; // エスケープされた引用符をスキップ
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current.trim());
-            return result;
-        }
-
-        // HTMLエスケープ
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // URL/メール/電話番号をリンク化
-        function linkify(text) {
-            // まずHTMLエスケープ
-            let result = escapeHtml(text);
-
-            // URLをリンク化
-            result = result.replace(
-                /(https?:\/\/[^\s<]+)/g,
-                '<a href="$1" target="_blank" class="apply-link">🔗 フォームを開く</a>'
-            );
-
-            // メールアドレスをリンク化
-            result = result.replace(
-                /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
-                '<a href="mailto:$1" class="apply-link">📧 $1</a>'
-            );
-
-            // 電話番号をリンク化 (098-XXX-XXXX 形式)
-            result = result.replace(
-                /(0\d{1,4}[-\s]?\d{1,4}[-\s]?\d{3,4})/g,
-                '<a href="tel:$1" class="apply-link">📞 $1</a>'
-            );
-
-            // 「フォーム」というテキストがあれば特別表示（リンクがない場合）
-            if (text === 'フォーム' && !text.includes('http')) {
-                result = '📝 フォーム';
-            }
-
-            return result;
-        }
-
 
         // --- 星の生成 ---
         function initStars() {
@@ -1398,18 +1035,6 @@
             <p class="subtitle">学び・実践・創作の記録を、必要な人へ届ける場所。</p>
         </header>
 
-        <section class="now-moving">
-            <h2>🕊 今、動いている場</h2>
-
-            <!-- イベント一覧（スプレッドシートから動的取得） -->
-            <div id="events-container" class="events-container">
-                <p class="loading-text">イベント情報を読み込んでいます...</p>
-            </div>
-
-
-        </section>
-
-
         <section class="shelves-grid">
             <!-- 教材の棚 -->
             <article class="shelf-card">
@@ -1506,7 +1131,7 @@
             <h2 class="section-title">📅 時間の棚</h2>
 
             <p class="section-desc">
-                これまでの取り組みの記録です。
+                これまでの取り組みを、成果ではなく「積み重なり」として残しています。
             </p>
 
             <ul class="shelf-list">
@@ -1522,6 +1147,25 @@
             </ul>
         </section>
 
+        <section class="now-moving">
+            <h2>🕊 今、動いている場</h2>
+            <p class="section-desc">
+                記録の背景にある、現在進行形の取り組みです。
+            </p>
+
+            <ul class="shelf-list">
+                <li>
+                    <a href="/kosodate-study/index.html">
+                        子育て勉強会（開催案内）
+                    </a>
+                </li>
+                <li>
+                    <a href="/mikata/index.html">
+                        子どものMIKATA研究会（開催案内）
+                    </a>
+                </li>
+            </ul>
+        </section>
 
     </div>
 
