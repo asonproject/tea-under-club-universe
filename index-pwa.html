@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>てぃあんだぁクラブ universe</title>
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+
+            --bg-color: #0f172a;
+            /* 夜の宇宙（ほぼ黒） */
+            --text-main: #e5e7eb;
+            /* 月明かり */
+            --text-muted: #94a3b8;
+            /* 遠くの星 */
+            --accent-color: #a5b4fc;
+            /* 星雲っぽい青紫 */
+            --card-bg: rgba(255, 255, 255, 0.92);
+            /* 宇宙に浮かぶ紙 */
+            --card-shadow:
+                0 20px 40px rgba(15, 23, 42, 0.6);
+            --radius: 18px;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            background: linear-gradient(to bottom,
+                    #0b1026 0%,
+                    /* 夜空（濃紺） */
+                    #1a2b5c 35%,
+                    /* 深い青 */
+                    #234f7a 55%,
+                    /* 海の青 */
+                    #f28c6a 100%,
+                    /* 夕焼けオレンジ */
+                );
+
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+            background-size: 160px 160px;
+            /* 星を減らす */
+            opacity: 0.35;
+            /* 存在感を上げる */
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        section {
+            margin-bottom: 4rem;
+        }
+
+
+
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+            /* カードなどを月より手前に表示 */
+        }
+
+        /* Header */
+        header {
+            padding: 4rem 0 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            letter-spacing: 0.12em;
+            text-shadow: 0 0 12px rgba(165, 180, 252, 0.15);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Grid Layout for Shelves */
+        .shelves-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .shelves-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Shelf Card */
+        .shelf-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            color: #1f2937;
+        }
+
+        .shelf-card h2 {
+            color: #3730a3
+        }
+
+
+        .shelf-card:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                0 30px 60px rgba(15, 23, 42, 0.8);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #e1e8ef;
+            padding-bottom: 0.5rem;
+        }
+
+        /* footer直前のsectionの余白（月を見せるためにスマホでは余白確保） */
+        section:last-of-type {
+            margin-bottom: 6rem;
+        }
+
+        @media (min-width: 900px) {
+            section:last-of-type {
+                margin-bottom: 0;
+            }
+        }
+
+        /* スマホでの月の見え方調整 */
+        @media (max-width: 900px) {
+            .moon {
+                top: -70px;
+                right: 1.5rem;
+                width: 50px;
+                height: 50px;
+            }
+
+            .moon-reflection {
+                right: 1.5rem;
+                width: 50px;
+            }
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            color: #374151;
+        }
+
+        .shelf-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+            background: #f0f4f8;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .shelf-list li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+            color: #1f2937;
+        }
+
+        .shelf-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        .shelf-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Media Section in Card */
+        .media-box {
+            margin-top: 1rem;
+            border-top: 1px dashed #e1e8ef;
+            padding-top: 0.75rem;
+        }
+
+        .media-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .media-item {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .media-item:hover {
+            text-decoration: underline;
+            color: var(--text-main);
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin: 0;
+            margin-top: auto;
+
+        }
+
+        /* Page Sections */
+        .section-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+        }
+
+        .section-title {
+            margin-bottom: 1rem;
+        }
+
+
+
+
+
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            /* overflow: hidden; Removed to allow horizon float to be visible */
+
+            background: linear-gradient(to top,
+                    #0b3c5d 5%,
+                    #0e7490 40%,
+                    #f59e7d 45%,
+                    #1a2b5c 80%,
+                    #0f172a 100%);
+
+            color: #fde68a;
+            padding: 4rem 1.5rem 3rem;
+
+            /* ✅ これが“動かない水平線” */
+            /* border-top: 1px solid rgba(255, 235, 205, 0.35); */
+        }
+
+        footer .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 波っぽい薄い筋（背景用） */
+        footer::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+
+
+            /* 🌊 波の揺らぎ */
+            background:
+                linear-gradient(to top,
+                    rgba(255, 255, 255, 0.03) 0%,
+                    rgba(255, 255, 255, 0.015) 20%,
+                    transparent 55%);
+
+            background-size: 200% 100%;
+            animation: wave-drift 18s ease-in-out infinite;
+
+
+
+            opacity: 0.55;
+            background: repeating-linear-gradient(to top,
+                    rgba(255, 255, 255, 0.01),
+                    rgba(255, 255, 255, 0.01) 1px,
+                    transparent 8px,
+                    transparent 16px);
+        }
+
+        footer::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            width: 160px;
+            top: 10%;
+            transform: translateX(-50%);
+            /* ← border-top と完全一致 */
+            height: 65%;
+            pointer-events: none;
+
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.12),
+                    rgba(255, 255, 255, 0.04),
+                    transparent);
+
+            filter: blur(6px);
+            opacity: 0.35;
+            pointer-events: none;
+
+            /* にじみは上方向だけ */
+            box-shadow:
+                0 -6px 18px rgba(245, 158, 125, 0.28),
+                0 -2px 10px rgba(255, 200, 150, 0.25);
+
+            /* 水平線をゆらめかせる */
+            animation: horizonFloat 6s ease-in-out infinite;
+
+
+        }
+
+
+        footer a {
+            color: #fde68a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #fff7ed;
+            text-decoration: underline;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+
+
+        .copyright {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            color: #fed7aa;
+        }
+
+        .mini-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mini-tag {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 999px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            text-decoration: none;
+            border: 1px solid #e1e8ef;
+        }
+
+        .mini-tag:hover {
+            background: #e9eff5;
+            color: var(--text-main);
+        }
+
+        .timeline-link {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .timeline-link::before {
+            content: "→";
+            margin-right: 0.2rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes horizonFloat {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-6px);
+            }
+        }
+
+        @keyframes wave-drift {
+            0% {
+                background-position: 0% 0%;
+                opacity: 0.12;
+            }
+
+            50% {
+                background-position: 50% 0%;
+                opacity: 0.18;
+            }
+
+            100% {
+                background-position: 100% 0%;
+                opacity: 0.12;
+            }
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 0.25;
+            }
+        }
+
+
+
+        .stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stars span {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        /* 星座ウィジェット */
+        .constellation-widget {
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 140px;
+            height: 140px;
+            overflow: visible;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .constellation-widget:hover {
+            opacity: 1;
+        }
+
+        /* スマホ向け調整 */
+        @media (max-width: 900px) {
+            .constellation-widget {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                margin: 0 auto 1rem;
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        .star-point {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 4px #fff;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .star-point.main {
+            width: 4px;
+            height: 4px;
+            box-shadow: 0 0 8px #a5b4fc;
+        }
+
+        .star-point.sub {
+            width: 2px;
+            height: 2px;
+            opacity: 0.7;
+        }
+
+        .constellation-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .constellation-lines path {
+            stroke: rgba(165, 180, 252, 0.5);
+            stroke-width: 1;
+            fill: none;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            transition: stroke-dashoffset 2s ease;
+        }
+
+        .constellation-widget.active .constellation-lines {
+            opacity: 1;
+        }
+
+        .constellation-widget.active .constellation-lines path {
+            stroke-dashoffset: 0;
+        }
+
+        .constellation-obj-name {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            border: 1px solid rgba(165, 180, 252, 0.3);
+        }
+
+        .constellation-widget.active .constellation-obj-name {
+            opacity: 1;
+        }
+
+        .moon {
+            position: absolute;
+            /* Footer内を基準に配置 */
+            top: -90px;
+            /* 水平線（Footer上辺）の少し上 */
+            right: 8%;
+            /* 右側に寄せる */
+            width: 60px;
+            /* 月の直径変数 */
+            height: 60px;
+            border-radius: 50%;
+            background: #fde68a;
+            background: radial-gradient(circle at 35% 35%,
+                    #fffbe6,
+                    #fde68a 60%,
+                    #eec758 100%);
+
+            transform: scale(0.2);
+            opacity: 0;
+            pointer-events: auto;
+            /* クリック可能に */
+            cursor: pointer;
+            z-index: 20;
+            /* コンテンツより前に */
+            transition: filter 0.3s;
+
+            /* アニメーション適用 */
+            animation: moon-rise 18s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        .moon:hover {
+            filter: drop-shadow(0 0 15px rgba(253, 230, 138, 0.9));
+        }
+
+        /* 月の名前ラベル */
+        .moon-label {
+            position: absolute;
+            top: 120%;
+            /* スマホで見やすいように下に表示 */
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(15, 23, 42, 0.95);
+            color: #fde68a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            border: 1px solid rgba(253, 230, 138, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .moon-label.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .moon-name {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+            color: #fff;
+        }
+
+        .moon-age {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            font-family: monospace;
+        }
+
+        /* 海面に映る月明かり */
+        .moon-reflection {
+            position: absolute;
+            top: auto;
+            bottom: 0;
+            /* #0e7490 40% の位置から下に配置 */
+            right: 8%;
+            /* 月と同じ位置 */
+            width: 60px;
+            height: 40%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            /* 月が出るまで見えない */
+
+            background: linear-gradient(to bottom,
+                    rgba(253, 230, 138, 0.6) 0%,
+                    rgba(253, 230, 138, 0.3) 40%,
+                    rgba(253, 230, 138, 0.1) 80%,
+                    transparent 100%);
+
+            filter: blur(8px);
+            transform-origin: top;
+            animation: reflection-shimmer 18s ease-out forwards;
+            animation-delay: 1.5s;
+            /* 月より少し遅れて出る */
+        }
+
+        @keyframes moon-rise {
+            0% {
+                transform: translateY(20px) scale(0.2);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes reflection-shimmer {
+            0% {
+                opacity: 0;
+                transform: scaleY(0.5) scaleX(0.8);
+            }
+
+            100% {
+                opacity: 0.6;
+                transform: scaleY(1) scaleX(1.2);
+                /* 横に揺らめく感じは別途filterなどで代用 */
+            }
+        }
+
+        /* iPhone 12 / Mobile Optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            header {
+                padding: 2.5rem 0 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .shelf-card {
+                padding: 1.5rem;
+            }
+
+            /* スマホで星座ウィジェットを少し小さく */
+            .constellation-widget {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 0.5rem;
+            }
+
+            /* カード内のリスト間隔を少し詰める */
+            .shelf-list li {
+                margin-bottom: 0.4rem;
+                padding-left: 1rem;
+            }
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(165, 180, 252, 0.15);
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @media (max-width: 900px) {
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            body {
+                padding-bottom: 80px;
+            }
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            width: 100%;
+            height: 100%;
+            transition: color 0.2s;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            color: var(--accent-color);
+        }
+
+        .nav-btn svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Events Container */
+        .events-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .loading-text {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(165, 180, 252, 0.2);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            border-color: rgba(165, 180, 252, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-date::before {
+            content: "📅";
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .event-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .event-location::before {
+            content: "📍";
+        }
+
+        .no-events {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .event-card {
+                padding: 1rem;
+            }
+
+            .event-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initStars();
+            initMoon();
+            initConstellation();
+            loadEventsFromSheet();
+        });
+
+        // --- Googleスプレッドシートからイベント情報を取得 ---
+        async function loadEventsFromSheet() {
+            const container = document.getElementById('events-container');
+            if (!container) return;
+
+            const SHEET_ID = '1z_NGWc9_tapcu7mC44K6AMp4DZKpMKaFecSUk2xtHWs';
+            const GID = '200700104';
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch');
+
+                const csvText = await response.text();
+                const events = parseCSV(csvText);
+
+                if (events.length === 0) {
+                    container.innerHTML = '<p class="no-events">現在予定されているイベントはありません</p>';
+                    return;
+                }
+
+                container.innerHTML = events.map(event => `
+                    <div class="event-card">
+                        <div class="event-date">${escapeHtml(event.dateTime)}</div>
+                        <div class="event-title">${escapeHtml(event.title)}</div>
+                        <div class="event-location">${escapeHtml(event.location)}</div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading events:', error);
+                container.innerHTML = '<p class="no-events">イベント情報の読み込みに失敗しました</p>';
+            }
+        }
+
+        // CSV解析（シンプルなパーサー）
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            if (lines.length <= 1) return [];
+
+            const events = [];
+            // ヘッダー行をスキップして2行目から処理
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= 3) {
+                    events.push({
+                        dateTime: values[0],
+                        location: values[1],
+                        title: values[2]
+                    });
+                }
+            }
+            return events;
+        }
+
+        // CSV行パーサー（ダブルクォート対応）
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
+
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        current += '"';
+                        i++; // エスケープされた引用符をスキップ
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // HTMLエスケープ
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+
+        // --- 星の生成 ---
+        function initStars() {
+            const starCount = 120;
+            const stars = document.querySelector('.stars');
+            if (!stars) return;
+
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('span');
+                const size = Math.random() * 1.5 + 0.5;
+                const duration = Math.random() * 6 + 4; // 4〜10秒
+
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.opacity = Math.random() * 0.4 + 0.2;
+
+                star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
+                star.style.animationDelay = `${Math.random() * duration}s`;
+
+                fragment.appendChild(star);
+            }
+            stars.appendChild(fragment);
+        }
+
+        // --- 今日の月の形（沖縄の現在の月）を計算 ---
+        function initMoon() {
+            const moon = document.querySelector('.moon');
+            if (!moon) return;
+
+            const getMoonPhase = () => {
+                const date = new Date();
+                // 基準：2000年1月6日 18:14 UTC (新月)
+                const synodic = 29.53058867;
+                const baseDate = new Date('2000-01-06T18:14:00Z');
+                const diff = date.getTime() - baseDate.getTime();
+                const age = (diff / 86400000) % synodic;
+                let phase = age / synodic; // 0.0 (新月) 〜 0.5 (満月) 〜 1.0 (新月)
+                return phase;
+            };
+
+            const phase = getMoonPhase();
+            const diameter = 60; // CSSに合わせて変更
+            let shadowOffset = 0;
+            const shadowColor = 'rgba(11, 16, 38, 0.9)';
+
+            // 影の計算
+            if (phase <= 0.5) {
+                // Waxing (新月 -> 満月)
+                shadowOffset = (1 - (phase / 0.5)) * diameter;
+            } else {
+                // Waning (満月 -> 新月)
+                shadowOffset = -((phase - 0.5) / 0.5) * diameter;
+            }
+
+            // 影と光彩を適用
+            moon.style.boxShadow = `inset ${shadowOffset.toFixed(1)}px 0 12px ${shadowColor}, 0 0 50px rgba(255, 241, 160, 0.5)`;
+
+            // クリック機能
+            moon.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                // 既存ラベル削除
+                const old = moon.querySelector('.moon-label');
+                if (old) old.remove();
+
+                const moonAge = phase * 29.53;
+                const ageInt = Math.round(moonAge);
+                const name = getMoonName(ageInt);
+
+                const label = document.createElement('div');
+                label.className = 'moon-label';
+                label.innerHTML = `<span class="moon-name">${name}</span><span class="moon-age">月齢 ${moonAge.toFixed(1)}</span>`;
+
+                moon.appendChild(label);
+
+                // 表示アニメーション
+                requestAnimationFrame(() => label.classList.add('visible'));
+
+                // 自動消去
+                setTimeout(() => {
+                    if (label.parentNode) {
+                        label.classList.remove('visible');
+                        setTimeout(() => label.remove(), 500);
+                    }
+                }, 4000);
+            });
+        }
+
+        // 月の名前を取得するヘルパー
+        function getMoonName(ageInt) {
+            if (ageInt === 0) return '新月';
+            if (ageInt === 1) return '二日月';
+            if (ageInt === 2) return '二日月・三日月';
+            if (ageInt === 3) return '三日月';
+            if (ageInt >= 4 && ageInt <= 6) return '夕月';
+            if (ageInt >= 7 && ageInt <= 8) return '上弦の月';
+            if (ageInt >= 9 && ageInt <= 12) return '十日夜';
+            if (ageInt === 13) return '十三夜';
+            if (ageInt === 14) return '小望月';
+            if (ageInt === 15) return '満月';
+            if (ageInt === 16) return '十六夜';
+            if (ageInt === 17) return '立待月';
+            if (ageInt === 18) return '居待月';
+            if (ageInt === 19) return '寝待月';
+            if (ageInt === 20) return '更待月';
+            if (ageInt >= 21 && ageInt <= 22) return '下弦の月';
+            if (ageInt >= 23 && ageInt <= 28) return '有明の月';
+            return '晦日（つごもり）';
+        }
+
+        // --- 星座ウィジェット ---
+        function initConstellation() {
+            const header = document.querySelector('header');
+            if (!header) return;
+
+            const widget = document.createElement('div');
+            widget.className = 'constellation-widget';
+            header.insertBefore(widget, header.firstChild);
+
+            // 簡易星座データ
+            const constellations = getConstellationData();
+
+            // 今の月 (0-11)
+            const month = new Date().getMonth();
+            const targetConstellation = constellations[month];
+
+            // 星を描画
+            targetConstellation.stars.forEach((pos, index) => {
+                const star = document.createElement('div');
+                star.className = 'star-point ' + (index < 4 ? 'main' : 'sub');
+                star.style.left = pos[0] + '%';
+                star.style.top = pos[1] + '%';
+                star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ${Math.random()}s`;
+                widget.appendChild(star);
+            });
+
+            // 線を描画 (SVG)
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.classList.add('constellation-lines');
+            svg.setAttribute('viewBox', '0 0 100 100');
+
+            targetConstellation.lines.forEach(lineIdx => {
+                const p1 = targetConstellation.stars[lineIdx[0]];
+                const p2 = targetConstellation.stars[lineIdx[1]];
+                const path = document.createElementNS(svgNS, "path");
+                path.setAttribute('d', `M ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]}`);
+                svg.appendChild(path);
+            });
+            widget.appendChild(svg);
+
+            // 名前ラベル
+            const nameLabel = document.createElement('div');
+            nameLabel.className = 'constellation-obj-name';
+            nameLabel.textContent = targetConstellation.name;
+            widget.appendChild(nameLabel);
+
+            // クリックイベント
+            widget.addEventListener('click', (e) => {
+                e.stopPropagation();
+                widget.classList.toggle('active');
+            });
+        }
+
+        // 星座データを返すヘルパー
+        function getConstellationData() {
+            return [
+                {
+                    name: 'みずがめ座 Aquqrius',
+                    stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60], [40, 70], [70, 50], [80, 60], [75, 80]],
+                    lines: [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [3, 6], [6, 7], [7, 8]]
+                },
+                {
+                    name: 'うお座 Pisces',
+                    stars: [[20, 30], [30, 50], [40, 70], [60, 80], [80, 60], [85, 40], [70, 30]],
+                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
+                },
+                {
+                    name: 'おひつじ座 Aries',
+                    stars: [[20, 60], [50, 50], [70, 40], [80, 55]],
+                    lines: [[0, 1], [1, 2], [2, 3]]
+                },
+                {
+                    name: 'おうし座 Taurus',
+                    stars: [[20, 50], [40, 50], [50, 70], [50, 30], [70, 40], [80, 50]],
+                    lines: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5]]
+                },
+                {
+                    name: 'ふたご座 Gemini',
+                    stars: [[30, 20], [30, 80], [60, 80], [60, 20]],
+                    lines: [[0, 1], [2, 3], [0, 3], [1, 2]]
+                },
+                {
+                    name: 'かに座 Cancer',
+                    stars: [[50, 50], [30, 30], [30, 70], [70, 30], [70, 70]],
+                    lines: [[0, 1], [0, 2], [0, 3], [0, 4]]
+                },
+                {
+                    name: 'しし座 Leo',
+                    stars: [[50, 30], [70, 20], [80, 40], [70, 60], [50, 50], [30, 70]],
+                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [4, 5]]
+                },
+                {
+                    name: 'おとめ座 Virgo',
+                    stars: [[30, 30], [50, 50], [50, 80], [70, 50], [90, 30]],
+                    lines: [[0, 1], [1, 2], [1, 3], [3, 4]]
+                },
+                {
+                    name: 'てんびん座 Libra',
+                    stars: [[50, 20], [30, 60], [70, 60], [50, 80]],
+                    lines: [[0, 1], [1, 3], [3, 2], [2, 0]]
+                },
+                {
+                    name: 'さそり座 Scorpius',
+                    stars: [[80, 20], [70, 30], [60, 40], [50, 50], [50, 70], [60, 80], [80, 70]],
+                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
+                },
+                {
+                    name: 'いて座 Sagittarius',
+                    stars: [[30, 60], [50, 60], [50, 40], [70, 40], [70, 80], [40, 30]],
+                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [1, 4], [2, 5]]
+                },
+                {
+                    name: 'やぎ座 Capricornus',
+                    stars: [[20, 30], [50, 50], [80, 30], [50, 80]],
+                    lines: [[0, 1], [1, 2], [2, 3], [3, 0]]
+                }
+            ];
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="stars"></div>
+
+    <div class="container">
+        <header>
+            <h1>てぃあんだぁクラブ universe</h1>
+            <p class="subtitle">学び・実践・創作の記録を、必要な人へ届ける場所。</p>
+        </header>
+
+        <section class="shelves-grid">
+            <!-- 教材の棚 -->
+            <article class="shelf-card">
+                <h2>📚 教材の棚</h2>
+                <div class="card-description">
+                    家庭での学びを、あとから振り返りたいときに。学びの途中で残ったもの。<br>
+                </div>
+                <ul class="shelf-list">
+
+                    <li><a href="/training/english-training.html" target="_blank">英語トレーニング</a></li>
+                    <li><a href="/training/grade2-typing.html" target="_blank">タイピング練習（2年生）</a></li>
+                    <li><a href="/training/kanji_test.html" target="_blank">漢字テスト</a></li>
+                    <!--                    <li><a href="/rekishi/sweet_potato_history.html" target="_blank">歴史：サツマイモの歴史</a></li>
+                    <li><a href="/Research/ayurveda-dosha-quiz.html" target="_blank">アーユルヴェーダ・ドーシャ診断</a></li> -->
+                    <li>HTML教材（家庭学習・社会学習）</li>
+                    <li>note教材・連載</li>
+                    <li>ツアー事前／事後テキスト</li>
+                </ul>
+                <p class="note">※ 一人で読み返せる形のものを中心に置いています</p>
+            </article>
+
+            <!-- 実践の棚 -->
+            <article class="shelf-card">
+                <h2>🌱 実践の棚</h2>
+                <div class="card-description">
+                    子どもを支える中で、立ち止まった人たちの記録。<br>
+                </div>
+                <ul class="shelf-list">
+                    <!-- <li><a href="/heiwa/ansin_sinrai.html" target="_blank">安心と信頼</a></li>
+                    <li><a href="/heiwa/yaruki.html" target="_blank">やる気について</a></li>
+                    <li><a href="/Research/yomitanpersonalizedguide.html" target="_blank">読谷村パーソナライズガイド</a></li>
+                    <li><a href="/training/okinawa_bungeifurima_meeting_1weekago.html" target="_blank">沖縄文芸フリマ
+                            1週間前ミーティング</a></li> -->
+                    <li>声かけ・関わり方のメモ</li>
+                    <li>うまくいかなかった事例</li>
+                    <li>研究会まとめZINE</li>
+                </ul>
+                <p class="note">※ 正解探しではなく、考える材料として。</p>
+            </article>
+
+            <!-- 創作の棚 -->
+            <article class="shelf-card">
+                <h2>🎨 創作の棚</h2>
+                <div class="card-description">
+                    気持ちや経験を、言葉や形にして外に出した表現の跡。<br>
+                </div>
+                <ul class="shelf-list">
+                    <!--
+                    <li><a href="/Research/plastic_infographic.html" target="_blank">プラスチック・インフォグラフィック</a></li>
+                    <li><a href="/training/LLM.html" target="_blank">LLM（大規模言語モデル）の実験</a></li>
+                    <li><a href="/training/moritown-251129.html" target="_blank">モリタウン 251129</a></li> -->
+                    <li>詩・エッセイ・ポエム</li>
+                    <li>ZINE・冊子</li>
+                    <li>親子合作の作品</li>
+                </ul>
+                <p class="note">※ 上手さより、出てきた言葉や形を残しています。</p>
+            </article>
+
+            <!-- ご縁の棚 -->
+            <article class="shelf-card">
+                <h2>🤝 ご縁の棚</h2>
+                <div class="card-description">
+                    人や社会とつながった、その記録。<br>
+                </div>
+                <ul class="shelf-list">
+                    <!-- <li><a href="/kuraku-teikan.html" target="_blank">てぃあんだぁクラブ定款</a></li> -->
+                    <li>文芸フリマ出展の記録</li>
+                    <li>参加者の声</li>
+                    <li>つながった人・場</li>
+                </ul>
+                <div class="media-box">
+                    <p class="media-label">
+                        メディア掲載・インタビュー
+                    </p>
+
+                    <a href="https://drive.google.com/file/d/0BxHVWALbJxS0eTlzcjZwQ0w3Wms/view?usp=sharing&resourcekey=0-81PZ6esNEMQTRik0J6xv-A"
+                        target="_blank" class="media-item">
+                        📰 日経新聞「ワンコインの居場所 心育む」（2014年4月13日）
+                    </a>
+
+                    <a href="https://www.okinawatimes.co.jp/articles/-/17792" target="_blank" class="media-item">
+                        📰 沖縄タイムス「ワンコインで自習室」（2015年8月18日）
+                    </a>
+
+                    <a href="https://www.tsuushinsei-navi.com/real/expert/354/" target="_blank" class="media-item">
+                        🎤 通信制高校ナビ インタビュー（2016年9月19日）
+                    </a>
+                </div>
+
+            </article>
+        </section>
+
+        <section>
+            <h2 class="section-title">📅 時間の棚</h2>
+
+            <p class="section-desc">
+                これまでの取り組みを、成果ではなく「積み重なり」として残しています。
+            </p>
+
+            <ul class="shelf-list">
+                <li><strong>2013</strong>｜てぃあんだぁクラブ・ワンコイン勉強会・子育て勉強会 開始</li>
+                <li><strong>2014</strong>｜日経新聞 掲載</li>
+                <li><strong>2015</strong>｜沖縄タイムス 掲載</li>
+                <li><strong>2019</strong>｜アルパカすく〜る 開始</li>
+                <li><strong>2024</strong>｜子どものMIKATA研究会 発足</li>
+                <li><strong>2025</strong>｜親子の創作活動が文芸フリマへ
+                    <a href="https://furima.ryukyu-tane.com" class="timeline-link">沖縄文芸フリマ</a>
+                </li>
+
+            </ul>
+        </section>
+
+        <section class="now-moving">
+            <h2>🕊 今、動いている場</h2>
+            <p class="section-desc">
+                記録の背景にある、現在進行形の取り組みです。
+            </p>
+
+            <!-- イベント一覧（スプレッドシートから動的取得） -->
+            <div id="events-container" class="events-container">
+                <p class="loading-text">イベント情報を読み込んでいます...</p>
+            </div>
+
+            <ul class="shelf-list" style="margin-top: 1.5rem;">
+                <li>
+                    <a href="/kosodate-study/index.html">
+                        子育て勉強会（開催案内）
+                    </a>
+                </li>
+                <li>
+                    <a href="/mikata/index.html">
+                        子どものMIKATA研究会（開催案内）
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+    </div>
+
+
+    <footer>
+        <div class="moon"></div>
+        <div class="moon-reflection"></div>
+        <div class="container">
+            <p>
+                てぃあんだぁクラブ universe には、<br>
+                現在は無料で読める記録・資料が中心です。
+            </p>
+
+            <div class="mini-tags">
+                <a href="https://tea-under.club" class="mini-tag">お母さんの安心づくり：てぃあんだぁクラブ</a>
+                <a href="https://alpaca-school.okinawa" target="_blank" class="mini-tag">社会を学ぶ：アルパカすく〜る</a>
+                <a href="https://furima.ryukyu-tane.com" target="_blank" class="mini-tag">社会への橋：沖縄文芸フリマ</a>
+                <a href="https://yumetsumugi.ainoie1962.com/" target="_blank" class="mini-tag">自分を整える：わたしの夢つむぎ</a>
+            </div>
+
+            <p class="copyright">
+                © てぃあんだぁクラブ
+            </p>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="#shelf-1" class="nav-btn" onclick="scrollToShelf(event, '教材')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>教材</span>
+        </a>
+        <a href="#shelf-2" class="nav-btn" onclick="scrollToShelf(event, '実践')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>実践</span>
+        </a>
+        <a href="#shelf-3" class="nav-btn" onclick="scrollToShelf(event, '創作')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+            <span>創作</span>
+        </a>
+        <a href="#shelf-4" class="nav-btn" onclick="scrollToShelf(event, 'ご縁')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            <span>ご縁</span>
+        </a>
+    </nav>
+
+    <script>
+        // Smooth scroll for bottom nav
+        function scrollToShelf(e, keyword) {
+            e.preventDefault();
+            const headings = document.querySelectorAll('.shelf-card h2');
+            for (let h of headings) {
+                if (h.textContent.includes(keyword)) {
+                    h.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
