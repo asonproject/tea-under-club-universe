@@ -922,6 +922,18 @@
             border-color: rgba(203, 213, 225, 0.5);
         }
 
+        .calendar-button {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+            border-color: rgba(251, 191, 36, 0.3);
+            color: #fcd34d;
+        }
+
+        .calendar-button:hover {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(245, 158, 11, 0.25));
+            border-color: rgba(251, 191, 36, 0.5);
+            transform: translateY(-1px);
+        }
+
         .event-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -1042,15 +1054,20 @@
                         </div>
                         ` : ''}
                         <div class="event-buttons">
-                            <div class="map-buttons-container" style="display:flex; gap:0.5rem;">
+                            ${applicationHtml ? `<div class="apply-button">✉️ 申込: ${applicationHtml}</div>` : ''}
+                            <div class="map-buttons-container" style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                                 <a href="${mapUrl}" target="_blank" class="map-button">
-                                    🗺️ Google
+                                    🗺️ Googleマップ
                                 </a>
                                 <a href="http://maps.apple.com/?q=${mapQuery}" target="_blank" class="map-button apple-map-button">
-                                    🍎 Apple
+                                    🍎 Appleマップ
                                 </a>
+                                ${(() => {
+                            const calUrl = generateCalendarUrl(event);
+                            return calUrl ? `<a href="${calUrl}" target="_blank" class="map-button calendar-button">📅 カレンダー</a>` : '';
+                        })()}
                             </div>
-                            ${applicationHtml ? `<div class="apply-button">✉️ 申込: ${applicationHtml}</div>` : ''}
+                            
                         </div>
                     </div>
                 `}).join('');
@@ -1167,6 +1184,90 @@
             }
 
             return result;
+        }
+
+        // GoogleカレンダーURL生成
+        function generateCalendarUrl(event) {
+            try {
+                const dateInfo = parseEventDateString(event.dateTime);
+                if (!dateInfo) return null;
+
+                const startStr = dateInfo.start.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                const endStr = dateInfo.end.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+                const details = `
+場所: ${event.location}
+住所: ${event.address}
+申込: ${event.application}
+参加費: ${event.fee}
+詳細: ${event.note}
+                `.trim();
+
+                const url = new URL('https://www.google.com/calendar/render');
+                url.searchParams.set('action', 'TEMPLATE');
+                url.searchParams.set('text', event.title);
+                url.searchParams.set('dates', `${startStr}/${endStr}`);
+                url.searchParams.set('details', details);
+                url.searchParams.set('location', `${event.location} ${event.address}`);
+
+                return url.toString();
+            } catch (e) {
+                console.warn('Date parse error:', e);
+                return null;
+            }
+        }
+
+        // 日時文字列解析: "2026/1/30（金） 11時〜12時" -> {start: Date, end: Date}
+        function parseEventDateString(dateStr) {
+            // 正規表現で日付と時刻を抽出
+            // 例: 2026/1/30（金） 11時〜12時 -> 2026, 1, 30, 11, 00, 12, 00
+            // 例: 2026/2/5(木) 10:00〜11:30
+
+            // 年月日抽出
+            const dateMatch = dateStr.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+            if (!dateMatch) return null;
+
+            const year = parseInt(dateMatch[1]);
+            const month = parseInt(dateMatch[2]) - 1; // 0-indexed
+            const day = parseInt(dateMatch[3]);
+
+            // 時刻部分抽出（"〜"や"-"で区切られた範囲）
+            // まずカッコや曜日を除去
+            let timePart = dateStr.replace(/^[^(]*(\([^)]+\))?/, '').trim();
+            // "11時〜12時" -> "11:00〜12:00" のように正規化
+            timePart = timePart.replace(/時/g, ':').replace(/分/g, '').replace(/〜/g, '-').replace(/~/g, '-');
+
+            // 範囲抽出
+            const times = timePart.match(/(\d{1,2})[:]?(\d{2})?\s*-\s*(\d{1,2})[:]?(\d{2})?/);
+
+            let startHour = 10, startMin = 0;
+            let endHour = 12, endMin = 0;
+
+            if (times) {
+                startHour = parseInt(times[1]);
+                startMin = times[2] ? parseInt(times[2]) : 0;
+                endHour = parseInt(times[3]);
+                endMin = times[4] ? parseInt(times[4]) : 0;
+            } else {
+                // 時間が見つからない場合は単一時刻を探す
+                const singleTime = timePart.match(/(\d{1,2})[:]?(\d{2})?/);
+                if (singleTime) {
+                    startHour = parseInt(singleTime[1]);
+                    startMin = singleTime[2] ? parseInt(singleTime[2]) : 0;
+                    endHour = startHour + 2; // デフォルト2時間
+                    endMin = startMin;
+                }
+            }
+
+            // Dateオブジェクト生成（日本時間前提）
+            // 注意: new Date(y, m, d...) はローカル時間（ブラウザ設定）を使用
+            const start = new Date(year, month, day, startHour, startMin);
+            const end = new Date(year, month, day, endHour, endMin);
+
+            return {
+                start: start,
+                end: end
+            };
         }
 
 
