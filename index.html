@@ -911,6 +911,17 @@
             transform: translateY(-1px);
         }
 
+        .apple-map-button {
+            background: linear-gradient(135deg, rgba(203, 213, 225, 0.1), rgba(148, 163, 184, 0.1));
+            border-color: rgba(148, 163, 184, 0.3);
+            color: #cbd5e1;
+        }
+
+        .apple-map-button:hover {
+            background: linear-gradient(135deg, rgba(203, 213, 225, 0.2), rgba(148, 163, 184, 0.2));
+            border-color: rgba(203, 213, 225, 0.5);
+        }
+
         .event-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -1031,9 +1042,14 @@
                         </div>
                         ` : ''}
                         <div class="event-buttons">
-                            <a href="${mapUrl}" target="_blank" class="map-button">
-                                🗺️ 地図を開く
-                            </a>
+                            <div class="map-buttons-container" style="display:flex; gap:0.5rem;">
+                                <a href="${mapUrl}" target="_blank" class="map-button">
+                                    🗺️ Google
+                                </a>
+                                <a href="http://maps.apple.com/?q=${mapQuery}" target="_blank" class="map-button apple-map-button">
+                                    🍎 Apple
+                                </a>
+                            </div>
                             ${applicationHtml ? `<div class="apply-button">✉️ 申込: ${applicationHtml}</div>` : ''}
                         </div>
                     </div>
