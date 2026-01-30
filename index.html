@@ -1020,7 +1020,25 @@
                 if (!response.ok) throw new Error('Failed to fetch');
 
                 const csvText = await response.text();
-                const events = parseCSV(csvText);
+                const allEvents = parseCSV(csvText);
+
+                // 表示チェック(A列)がTRUE、かつ日時が有効なもののみ抽出
+                const events = allEvents.filter(event => {
+                    // チェックボックス判定 (TRUE or true)
+                    const isChecked = event.displayChk === true || String(event.displayChk).toUpperCase() === 'TRUE';
+
+                    // 日時判定（クライアント側でも過ぎたものを非表示にする場合）
+                    if (isChecked) {
+                        // 日付文字列のパースに失敗した場合は念のため表示しておくか、非表示にするか。
+                        // ここでは安全に非表示にする（あるいはパース成功したものだけ表示）
+                        const dateInfo = parseEventDateString(event.dateTime);
+                        if (dateInfo && dateInfo.end < new Date()) {
+                            return false; // すでに終わっている
+                        }
+                        return true;
+                    }
+                    return false;
+                });
 
                 if (events.length === 0) {
                     container.innerHTML = '<p class="no-events">現在予定されているイベントはありません</p>';
@@ -1097,33 +1115,24 @@
             // ヘッダー行をスキップして2行目から処理
             for (let i = 1; i < lines.length; i++) {
                 const values = parseCSVLine(lines[i]);
-                if (values.length >= 5) {
+                // values[0]: displayChk
+                // values[1]: dateTime
+                // values[2]: location
+                // ...
+                if (values.length >= 6) {
                     events.push({
-                        dateTime: values[0],
-                        location: values[1],
-                        address: values[2],
-                        title: values[3],
-                        category: values[4] || '',
-                        fee: values[5] || '',
-                        application: values[6] || '',
-                        organizer: values[7] || '',
-                        coOrganizer: values[8] || '',
-                        note: values[9] || '',
-                        target: values[10] || ''
-                    });
-                } else if (values.length >= 4) {
-                    events.push({
-                        dateTime: values[0],
-                        location: values[1],
-                        address: values[2],
-                        title: values[3],
-                        category: '',
-                        fee: '',
-                        application: '',
-                        organizer: '',
-                        coOrganizer: '',
-                        note: '',
-                        target: ''
+                        displayChk: values[0],
+                        dateTime: values[1],
+                        location: values[2],
+                        address: values[3],
+                        title: values[4],
+                        category: values[5] || '',
+                        fee: values[6] || '',
+                        application: values[7] || '',
+                        organizer: values[8] || '',
+                        coOrganizer: values[9] || '',
+                        note: values[10] || '',
+                        target: values[11] || ''
                     });
                 }
             }
@@ -1526,7 +1535,7 @@
             <h1>てぃあんだぁクラブ universe</h1>
             <p class="subtitle">
                 <span style="display: inline-block;">学び・実践・創作の記録を、</span>
-                <span style="display: inline-block;">必要な人へ届ける場所。</span>
+                <span style="display: inline-block;">必要な人が閲覧できる場所。</span>
             </p>
         </header>
 
