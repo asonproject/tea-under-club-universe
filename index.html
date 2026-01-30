@@ -1243,7 +1243,9 @@
 
             // 時刻部分抽出（"〜"や"-"で区切られた範囲）
             // まずカッコや曜日を除去
-            let timePart = dateStr.replace(/^[^(]*(\([^)]+\))?/, '').trim();
+            // 日付部分（YYYY/MM/DD ...）を除去して時間部分を抽出
+            // 全角カッコ '（' '）' にも対応し、日付の前の文字も含めて除去する
+            let timePart = dateStr.replace(/^.*?\d{4}[\/-]\d{1,2}[\/-]\d{1,2}\s*([(\uff08][^)\uff09]*[)\uff09])?\s*/, '').trim();
             // "11時〜12時" -> "11:00〜12:00" のように正規化
             timePart = timePart.replace(/時/g, ':').replace(/分/g, '').replace(/〜/g, '-').replace(/~/g, '-');
 
