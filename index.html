@@ -1013,10 +1013,11 @@
 
             const SHEET_ID = '1z_NGWc9_tapcu7mC44K6AMp4DZKpMKaFecSUk2xtHWs';
             const GID = '200700104';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+            // キャッシュを防ぐためにタイムスタンプを追加
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&t=${new Date().getTime()}`;
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(url, { cache: "no-store" }); // no-store でキャッシュを明示的に禁止
                 if (!response.ok) throw new Error('Failed to fetch');
 
                 const csvText = await response.text();
