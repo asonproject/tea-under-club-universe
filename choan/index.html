@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合同会社 長安 (ちょうあん)</title>
+    <title>長安 (ちょうあん)ケータリング</title>
     <meta name="description" content="食を囲む宴（縁）は私たちの生活に彩りを与えます。ケータリング企画、手配、運営、各種仕出し弁当、オードブル手配、マッチングサービス。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,9 +146,13 @@
         }
 
         .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
         }
 
         .cta-button-header {
@@ -280,6 +284,7 @@
             margin-bottom: 1rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -539,7 +544,9 @@
 
     <header class="site-header">
         <div class="container">
-            <div class="logo">合同会社 長安</div>
+            <div class="logo">
+                <img src="./assets/choan-20240207.png" alt="合同会社 長安">
+            </div>
             <a href="#contact" class="cta-button-header">お問い合わせ</a>
         </div>
     </header>
@@ -611,32 +618,51 @@
                 <h2>サービス</h2>
                 <div class="services-container">
 
-                    <!-- Service 1 -->
+                    <!-- Service 1: オードブル・仕出し弁当 -->
                     <div class="service-block fade-in-section">
-                        <div class="service-image catering">
+                        <div class="service-image bento"
+                            style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
                             <span>🍱</span>
                         </div>
                         <div class="service-content">
-                            <h3 class="service-title">ケータリング</h3>
+                            <h3 class="service-title">オードブル・仕出し弁当</h3>
                             <p class="service-desc">
-                                各種仕出し弁当・オードブルのご手配、配達を承ります。
-                                特別な日の演出から、ビジネスミーティングのランチまで、
-                                シーンに合わせた食をご提案します。
+                                各種仕出し弁当・オードブルのご手配、配達を承ります。<br>
+                                ビジネスミーティングのランチから、親しい方との集まりまで、
+                                シーンに合わせた食をお届けします。
                             </p>
                             <a href="#" class="btn-main">詳細はこちら</a>
                         </div>
                     </div>
 
-                    <!-- Service 2 -->
+                    <!-- Service 2: ケータリング -->
                     <div class="service-block fade-in-section">
-                        <div class="service-image matching">
+                        <div class="service-image catering"
+                            style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
+                            <span>🍽️</span>
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-title">ケータリング</h3>
+                            <p class="service-desc">
+                                パーティーやイベントのケータリング企画、手配、運営を行います。<br>
+                                空間演出を含めたトータルコーディネートで、
+                                特別なひとときを作り上げます。
+                            </p>
+                            <a href="#" class="btn-main">詳細はこちら</a>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: 会宴マッチング -->
+                    <div class="service-block fade-in-section">
+                        <div class="service-image matching"
+                            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
                             <span>🤝</span>
                         </div>
                         <div class="service-content">
                             <h3 class="service-title">会宴マッチング</h3>
                             <p class="service-desc">
-                                「企業・団体の会議や宴会」のニーズと「地域の名店・飲食店」をマッチング。
-                                新しい出会いと、記憶に残るひとときをコーディネートします。
+                                「企業・団体の会議や宴会」のニーズと「地域の名店・飲食店」をマッチング。<br>
+                                新しい出会いと、記憶に残る食の体験をつなぎます。
                             </p>
                             <a href="#" class="btn-main">詳細はこちら</a>
                         </div>
