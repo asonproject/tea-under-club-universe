@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>オードブル・仕出し弁当 | 長安 (ちょうあん)</title>
-    <meta name="description" content="長安の仕出し弁当・オードブル。「Ristorante Aico × co」とのコラボレーションによる本格的な味をお楽しみください。">
+    <title>ケータリングプラン | 長安 (ちょうあん)</title>
+    <meta name="description" content="長安のケータリングプラン。「Ristorante Aico × co」とのコラボレーションによる本格ビュッフェをご提供します。">
     <link rel="icon" type="image/png" href="./assets/choan-20240207.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,13 +193,28 @@
             font-size: 0.95rem;
         }
 
-        .box-info {
-            background: #f9f9f9;
-            padding: 1rem;
+        .option-section {
+            margin-top: 4rem;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-item {
+            background: var(--color-accent-light);
+            padding: 0.8rem;
             border-radius: 8px;
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: auto;
+            text-align: center;
+            font-weight: 500;
+            color: var(--color-primary);
         }
 
         /* Contact Box */
@@ -277,105 +292,114 @@
         <section class="section">
             <div class="container">
                 <div class="collaboration-note fade-in-section">
-                    <h3>仕出し弁当・オードブル</h3>
+                    <h3>Pro quality to your place</h3>
                     <p style="font-size: 1.1rem; color: var(--color-primary); font-weight: bold; margin: 1rem 0;">
                         「Ristorante Aico × co」コラボレーション</p>
-                    <p>プロのお料理を職場へご家庭へお届けいたします。</p>
+                    <p>店長自慢のビュッフェ料理をお店と変わらぬクオリティでお手軽に楽しんでいただけるよう、<br>職場へご家庭へお届けいたします。</p>
                 </div>
 
-                <h2>お弁当メニュー</h2>
+                <h2>ケータリングプラン</h2>
                 <div class="menu-grid">
-                    <!-- 松花堂 -->
+                    <!-- A Plan -->
                     <div class="menu-card fade-in-section">
-                        <h3>松花堂弁当</h3>
-                        <p class="price-tag">2,750円 <span>(税込)</span></p>
+                        <h3>Aプラン</h3>
+                        <p class="price-tag">4,000円 <span>(税込) / 1名様</span></p>
+                        <p style="font-size:0.9rem; color:#888; margin-bottom: 1rem;">20名様〜</p>
                         <ul class="menu-items">
-                            <li>魚の照り焼き・鰻・梅甘露煮</li>
-                            <li>天婦羅(茄子 里芋 獅子唐)</li>
-                            <li>アーサ入りだし巻き卵・海老寿司・フキの生ハム巻き</li>
-                            <li>苦瓜豆腐・ほうれん草とキノコのお浸し・枝豆</li>
-                            <li>スーチカー</li>
-                            <li>煮物(蟹しんじょう筍 南瓜里芋 ブロッコリー)</li>
-                            <li>白米・香の物</li>
+                            <li>刺身三種盛り合せ</li>
+                            <li>AICO×CO海鮮マリネ</li>
+                            <li>生ハム盛り合せ</li>
+                            <li>AICO×COバンバンジー</li>
+                            <li>料理長お勧めシークァーサー風味ミミガー</li>
+                            <li>料理長特製エビチリ</li>
+                            <li>揚げ物二種</li>
+                            <li>ゴーヤーチャンプルー</li>
+                            <li>三枚肉の煮込み</li>
+                            <li>魚の甘酢餡かけ</li>
+                            <li>AICO×CO特製パスタ</li>
                         </ul>
-                        <div class="box-info">
-                            ※容器サイズ(回収容器/メラミン素材): 縦24cm・横24cm
-                        </div>
+                        <p style="text-align: right; color: var(--color-accent); font-weight: bold;">全11品</p>
                     </div>
 
-                    <!-- 梅A -->
+                    <!-- B Plan -->
                     <div class="menu-card fade-in-section">
-                        <h3>梅弁当A</h3>
-                        <p class="price-tag">1,650円 <span>(税込)</span></p>
+                        <h3>Bプラン</h3>
+                        <p class="price-tag">5,000円 <span>(税込) / 1名様</span></p>
+                        <p style="font-size:0.9rem; color:#888; margin-bottom: 1rem;">20名様〜</p>
                         <ul class="menu-items">
-                            <li>有頭海老の塩焼き・鮭の塩焼き</li>
-                            <li>玉子焼き</li>
-                            <li>かぼちゃ・サラダ・ミニトマト・フルーツ</li>
-                            <li>人参しりしり・チキナー</li>
-                            <li>白米・香の物</li>
+                            <li>特選刺身三種盛り合せ</li>
+                            <li>和琉前菜三種盛り合せ</li>
+                            <li>中華前菜盛り合せ</li>
+                            <li>AICO×CO海鮮マリネ</li>
+                            <li>生ハム盛り合せ</li>
+                            <li>料理長お勧めシークァーサー風味ミミガー</li>
+                            <li>料理長特製エビチリ</li>
+                            <li>揚げ物二種</li>
+                            <li>ゴーヤーチャンプルー</li>
+                            <li>三枚肉の煮込み</li>
+                            <li>白身魚の蒸し煮</li>
+                            <li>沖縄風炊き込みご飯 or AICO×CO特製パスタ</li>
                         </ul>
-                        <div class="box-info">
-                            ※容器サイズ: 縦16cm・横25cm
-                        </div>
+                        <p style="text-align: right; color: var(--color-accent); font-weight: bold;">全11品</p>
                     </div>
 
-                    <!-- 華弁当 -->
+                    <!-- C Plan -->
                     <div class="menu-card fade-in-section">
-                        <h3>華弁当</h3>
-                        <p class="price-tag">1,100円 <span>(税込)</span></p>
+                        <h3>Cプラン</h3>
+                        <p class="price-tag">6,000円 <span>(税込) / 1名様</span></p>
+                        <p style="font-size:0.9rem; color:#888; margin-bottom: 1rem;">20名様〜</p>
                         <ul class="menu-items">
-                            <li>海老フライ・豚カツ</li>
-                            <li>焼売・春巻き</li>
-                            <li>酢鶏・青椒肉絲</li>
-                            <li>ポテトサラダ・ミニトマト</li>
-                            <li>人参しりしり・チキナー</li>
-                            <li>白米・香の物</li>
+                            <li>特選刺身盛り合せ</li>
+                            <li>和琉前菜盛り合せ</li>
+                            <li>中華前菜盛り合せ</li>
+                            <li>AICO×CO海鮮マリネ</li>
+                            <li>生ハム盛り合せ</li>
+                            <li>料理長有頭特製エビチリ</li>
+                            <li>牛肉とニンニクの芽炒め</li>
+                            <li>ゴーヤーチャンプルー</li>
+                            <li>三枚肉の煮込み</li>
+                            <li>白身魚のポワレ</li>
+                            <li>料理長特製炒飯 or AICO×CO特製二種パスタ</li>
                         </ul>
-                        <div class="box-info">
-                            ※容器サイズ: 縦16cm・横25cm
-                        </div>
+                        <p style="text-align: right; color: var(--color-accent); font-weight: bold;">全11品</p>
                     </div>
                 </div>
 
-                <h2 style="margin-top: 5rem;">オードブル</h2>
-                <p style="text-align: center; margin-bottom: 2rem; color: #666;">各5~6人前</p>
-                <div class="menu-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                    <div class="menu-card fade-in-section" style="text-align: center;">
-                        <h3 style="display: inline-block;">大皿オードブル (L)</h3>
-                        <p class="price-tag" style="font-size: 1.5rem;">8,800円 <span>(税込)</span></p>
-                        <p>※器サイズ：縦30cm 横40cm</p>
+                <div class="option-section fade-in-section">
+                    <h3>ドリンクプラン (2時間)</h3>
+                    <div
+                        style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+                        <div
+                            style="text-align: center; border: 1px solid #ddd; padding: 1rem; border-radius: 8px; flex:1; min-width:280px;">
+                            <h4 style="color: var(--color-primary); margin-bottom:0.5rem;">ソフトドリンクプラン</h4>
+                            <p style="font-size: 1.2rem; font-weight: bold; color: var(--color-accent);">1,100円<span
+                                    style="font-size:0.8rem; color:#666;">(税込)</span></p>
+                            <hr style="border:0; border-top:1px solid #eee; margin: 0.5rem 0;">
+                            <p style="font-size: 0.9rem; color: #666;">ウーロン茶、オレンジジュース、コーラ、ミネラルウォーター</p>
+                        </div>
+                        <div
+                            style="text-align: center; border: 1px solid #ddd; padding: 1rem; border-radius: 8px; flex:1; min-width:280px;">
+                            <h4 style="color: var(--color-primary); margin-bottom:0.5rem;">スタンダードプラン</h4>
+                            <p style="font-size: 1.2rem; font-weight: bold; color: var(--color-accent);">1,980円<span
+                                    style="font-size:0.8rem; color:#666;">(税込)</span></p>
+                            <hr style="border:0; border-top:1px solid #eee; margin: 0.5rem 0;">
+                            <p style="font-size: 0.9rem; color: #666;">ビール、ハイボール、泡盛、サワー、ノンアルコールビール、ソフトドリンク各種</p>
+                        </div>
                     </div>
-                    <div class="menu-card fade-in-section" style="text-align: center;">
-                        <h3 style="display: inline-block;">円形オードブル (M)</h3>
-                        <p class="price-tag" style="font-size: 1.5rem;">5,500円 <span>(税込)</span></p>
-                        <p>※器サイズ：直径40cm</p>
-                    </div>
-                </div>
 
-                <div class="option-section fade-in-section"
-                    style="margin-top: 3rem; background:white; padding:2rem; border-radius:12px; box-shadow: 0 4px 6px rgba(0,0,0,0.03);">
-                    <h3 style="text-align:center; color: var(--color-primary); margin-bottom: 1.5rem;">オプションメニュー</h3>
-                    <ul style="max-width: 500px; margin: 0 auto; list-style: none;">
-                        <li
-                            style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                            <span>お茶 (ペットボトル)</span>
-                            <span>165円 (税込)</span>
-                        </li>
-                        <li
-                            style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                            <span>お茶 (紙パック)</span>
-                            <span>110円 (税込)</span>
-                        </li>
-                        <li
-                            style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                            <span>ケーキセット</span>
-                            <span>990円 (税込)</span>
-                        </li>
-                        <li style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span>その他 (セルフコーヒー hot/ice)</span>
-                            <span>お問い合わせ</span>
-                        </li>
-                    </ul>
+                    <h3 style="border-top: 1px solid #eee; padding-top: 2rem;">オプションメニュー</h3>
+                    <div class="option-list">
+                        <div class="option-item">握り寿司</div>
+                        <div class="option-item">沖縄そば</div>
+                        <div class="option-item">ローストビーフ</div>
+                        <div class="option-item">刺身盛り合せ</div>
+                        <div class="option-item">北京ダック</div>
+                        <div class="option-item">マグロ解体</div>
+                        <div class="option-item">子豚の丸焼き</div>
+                        <div class="option-item">デザート各種</div>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #888;">
+                        ※各料金、お届け地域、ご利用規約などはご予約時にご確認ください。</p>
                 </div>
 
                 <div class="company-info-wrapper fade-in-section" id="contact">
