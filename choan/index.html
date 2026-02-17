@@ -2,1136 +2,730 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>てぃあんだぁクラブ universe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合同会社 長安 (ちょうあん)</title>
+    <meta name="description" content="食を囲む宴（縁）は私たちの生活に彩りを与えます。ケータリング企画、手配、運営、各種仕出し弁当、オードブル手配、マッチングサービス。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-
     <style>
         :root {
+            /* Palette: Japanese Modern / Warm Dining */
+            --color-bg: #fcfcf9;
+            --color-text-main: #2c2c2c;
+            --color-text-muted: #6e6e6e;
+            --color-accent: #d35400;
+            /* Burnt Orange for 'banquet' feel */
+            --color-accent-light: #fbeee6;
+            --color-primary: #5d4037;
+            /* Dark Wood */
+            --color-secondary: #8d6e63;
+            --color-surface: #ffffff;
+            --border-radius: 12px;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.08);
+            --font-main: 'Zen Maru Gothic', sans-serif;
+            --max-width: 1000px;
+        }
 
-            --bg-color: #0f172a;
-            /* 夜の宇宙（ほぼ黒） */
-            --text-main: #e5e7eb;
-            /* 月明かり */
-            --text-muted: #94a3b8;
-            /* 遠くの星 */
-            --accent-color: #a5b4fc;
-            /* 星雲っぽい青紫 */
-            --card-bg: rgba(255, 255, 255, 0.92);
-            /* 宇宙に浮かぶ紙 */
-            --card-shadow:
-                0 20px 40px rgba(15, 23, 42, 0.6);
-            --radius: 18px;
+        /* Reset & Base */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
             line-height: 1.8;
-            margin: 0;
-            padding: 0;
             -webkit-font-smoothing: antialiased;
-            background: linear-gradient(to bottom,
-                    #0b1026 0%,
-                    /* 夜空（濃紺） */
-                    #1a2b5c 35%,
-                    /* 深い青 */
-                    #234f7a 55%,
-                    /* 海の青 */
-                    #f28c6a 100%,
-                    /* 夕焼けオレンジ */
-                );
-
+            overflow-x: hidden;
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
-            background-size: 160px 160px;
-            /* 星を減らす */
-            opacity: 0.35;
-            /* 存在感を上げる */
-            pointer-events: none;
-            z-index: 0;
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-
-        section {
-            margin-bottom: 4rem;
+        a:hover {
+            color: var(--color-accent);
         }
 
-
-
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            position: relative;
-            z-index: 10;
-            /* カードなどを月より手前に表示 */
+        ul {
+            list-style: none;
         }
 
-        /* Header */
-        header {
-            padding: 4rem 0 2rem;
-            text-align: center;
-            position: relative;
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
-        h1 {
-            letter-spacing: 0.12em;
-            text-shadow: 0 0 12px rgba(165, 180, 252, 0.15);
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        /* Grid Layout for Shelves */
-        .shelves-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .shelves-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Shelf Card */
-        .shelf-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            padding: 2rem;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            color: #1f2937;
-        }
-
-        .shelf-card h2 {
-            color: #3730a3
-        }
-
-
-        .shelf-card:hover {
-            transform: translateY(-6px);
-            box-shadow:
-                0 30px 60px rgba(15, 23, 42, 0.8);
+        /* Typography */
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
 
         h2 {
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background-color: var(--color-accent);
+            border-radius: 2px;
+        }
+
+        /* Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-accent);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Layout Utility */
+        .container {
+            width: 90%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        /* Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(252, 252, 249, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
             font-size: 1.25rem;
-            color: var(--accent-color);
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .cta-button-header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .cta-button-header:hover {
+            color: white;
+            background-color: var(--color-accent);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            height: 90vh;
+            /* Full viewport height for impact */
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             margin-top: 0;
+            /* Behind transparent header if we want, but header is sticky */
+            padding-top: 60px;
+            /* Offset for header */
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.9);
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            /* Depending on image lightness */
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero-title {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .hero-text {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        /* Concept / Message */
+        .concept-section {
+            background-color: white;
+            text-align: center;
+        }
+
+        .concept-text {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--color-primary);
+        }
+
+        .concept-highlight {
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+
+        /* News Section */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #f0f0f0;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .news-date {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
             margin-bottom: 0.5rem;
-            border-bottom: 2px solid #e1e8ef;
-            padding-bottom: 0.5rem;
+            display: block;
         }
 
-        /* footer直前のsectionの余白（月を見せるためにスマホでは余白確保） */
-        section:last-of-type {
-            margin-bottom: 6rem;
+        .news-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            flex-grow: 1;
         }
 
-        @media (min-width: 900px) {
-            section:last-of-type {
+        .news-excerpt {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .read-more {
+            font-size: 0.9rem;
+            color: var(--color-accent);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .read-more::after {
+            content: '→';
+            margin-left: 4px;
+            transition: margin 0.3s;
+        }
+
+        .news-card:hover .read-more::after {
+            margin-left: 8px;
+        }
+
+        /* Categories */
+        .categories {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tag {
+            background: var(--color-accent-light);
+            color: var(--color-accent);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .category-tag:hover {
+            background: #eddcd2;
+        }
+
+        /* Services */
+        .services-section {
+            background-color: #f7f3f0;
+            /* Slight warm tint */
+        }
+
+        .services-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+        }
+
+        .service-block {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (min-width: 768px) {
+            .service-block {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            .service-block:nth-child(even) {
+                flex-direction: row-reverse;
+            }
+        }
+
+        .service-image {
+            background-color: #ddd;
+            min-height: 250px;
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Placeholder for service images relying on simple colors/patterns if real images prevent placeholders */
+        .service-image.catering {
+            background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .service-image.matching {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .service-content {
+            flex: 1;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+
+        .service-desc {
+            margin-bottom: 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .btn-main {
+            display: inline-block;
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .btn-main:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+        }
+
+        /* Company Info */
+        .company-info-wrapper {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            /* Reduced padding for mobile */
+            box-shadow: var(--shadow-sm);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 600px) {
+            .company-info-wrapper {
+                padding: 3rem;
+            }
+        }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+
+        @media (min-width: 600px) {
+            .info-row {
+                flex-direction: row;
+            }
+        }
+
+        .info-label {
+            width: 140px;
+            font-weight: 700;
+            color: var(--color-primary);
+            flex-shrink: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (min-width: 600px) {
+            .info-label {
                 margin-bottom: 0;
             }
         }
 
-        /* スマホでの月の見え方調整 */
-        @media (max-width: 900px) {
-            .moon {
-                top: -70px;
-                right: 1.5rem;
-                width: 50px;
-                height: 50px;
-            }
-
-            .moon-reflection {
-                right: 1.5rem;
-                width: 50px;
-            }
-        }
-
-        .card-description {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .info-value {
             flex-grow: 1;
-            color: #374151;
         }
 
-        .shelf-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1.5rem 0;
-            background: #f0f4f8;
-            border-radius: 8px;
-            padding: 1rem;
+        .info-row:last-child {
+            border-bottom: none;
         }
-
-        .shelf-list li {
-            margin-bottom: 0.5rem;
-            position: relative;
-            padding-left: 1.2rem;
-            font-size: 0.9rem;
-            color: #1f2937;
-        }
-
-        .shelf-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--accent-color);
-        }
-
-        .shelf-list li:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Media Section in Card */
-        .media-box {
-            margin-top: 1rem;
-            border-top: 1px dashed #e1e8ef;
-            padding-top: 0.75rem;
-        }
-
-        .media-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .media-item {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .media-item:hover {
-            text-decoration: underline;
-            color: var(--text-main);
-        }
-
-        .note {
-            font-size: 0.85rem;
-            color: #4b5563;
-            margin: 0;
-            margin-top: auto;
-
-        }
-
-        /* Page Sections */
-        .section-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            margin-top: 0;
-        }
-
-        .section-title {
-            margin-bottom: 1rem;
-        }
-
-
-
-
-
 
         /* Footer */
-        footer {
-            position: relative;
-            z-index: 1;
-            /* overflow: hidden; Removed to allow horizon float to be visible */
-
-            background: linear-gradient(to top,
-                    #0b3c5d 5%,
-                    #0e7490 40%,
-                    #f59e7d 45%,
-                    #1a2b5c 80%,
-                    #0f172a 100%);
-
-            color: #fde68a;
-            padding: 4rem 1.5rem 3rem;
-
-            /* ✅ これが“動かない水平線” */
-            /* border-top: 1px solid rgba(255, 235, 205, 0.35); */
+        .site-footer {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
         }
 
-        footer .container {
-            position: relative;
-            z-index: 2;
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
-        /* 波っぽい薄い筋（背景用） */
-        footer::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-
-
-            /* 🌊 波の揺らぎ */
-            background:
-                linear-gradient(to top,
-                    rgba(255, 255, 255, 0.03) 0%,
-                    rgba(255, 255, 255, 0.015) 20%,
-                    transparent 55%);
-
-            background-size: 200% 100%;
-            animation: wave-drift 18s ease-in-out infinite;
-
-
-
-            opacity: 0.55;
-            background: repeating-linear-gradient(to top,
-                    rgba(255, 255, 255, 0.01),
-                    rgba(255, 255, 255, 0.01) 1px,
-                    transparent 8px,
-                    transparent 16px);
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
         }
 
-        footer::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            width: 160px;
-            top: 10%;
-            transform: translateX(-50%);
-            /* ← border-top と完全一致 */
-            height: 65%;
-            pointer-events: none;
-
-            background: linear-gradient(to bottom,
-                    rgba(255, 255, 255, 0.12),
-                    rgba(255, 255, 255, 0.04),
-                    transparent);
-
-            filter: blur(6px);
-            opacity: 0.35;
-            pointer-events: none;
-
-            /* にじみは上方向だけ */
-            box-shadow:
-                0 -6px 18px rgba(245, 158, 125, 0.28),
-                0 -2px 10px rgba(255, 200, 150, 0.25);
-
-            /* 水平線をゆらめかせる */
-            animation: horizonFloat 6s ease-in-out infinite;
-
-
-        }
-
-
-        footer a {
-            color: #fde68a;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        footer a:hover {
-            color: #fff7ed;
+        .footer-links a:hover {
+            color: white;
             text-decoration: underline;
         }
 
-        a {
-            color: var(--accent-color);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-
-
         .copyright {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            opacity: 0.7;
-            color: #fed7aa;
-        }
-
-        .mini-tags {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .mini-tag {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 999px;
-            background: #f1f5f9;
-            color: var(--text-muted);
-            text-decoration: none;
-            border: 1px solid #e1e8ef;
-        }
-
-        .mini-tag:hover {
-            background: #e9eff5;
-            color: var(--text-main);
-        }
-
-        .timeline-link {
-            margin-left: 0.5rem;
             font-size: 0.8rem;
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .timeline-link::before {
-            content: "→";
-            margin-right: 0.2rem;
-            color: var(--text-muted);
-        }
-
-        @keyframes horizonFloat {
-
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            50% {
-                transform: translateX(-50%) translateY(-6px);
-            }
-        }
-
-        @keyframes wave-drift {
-            0% {
-                background-position: 0% 0%;
-                opacity: 0.12;
-            }
-
-            50% {
-                background-position: 50% 0%;
-                opacity: 0.18;
-            }
-
-            100% {
-                background-position: 100% 0%;
-                opacity: 0.12;
-            }
-        }
-
-        @keyframes twinkle {
-            0% {
-                opacity: 0.2;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-
-            100% {
-                opacity: 0.25;
-            }
-        }
-
-
-
-        .stars {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .stars span {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-        /* 星座ウィジェット */
-        .constellation-widget {
-            position: absolute;
-            left: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 140px;
-            height: 140px;
-            overflow: visible;
-            cursor: pointer;
-            z-index: 20;
             opacity: 0.6;
-            transition: opacity 0.3s;
         }
 
-        .constellation-widget:hover {
+        /* Fade In Animation Class */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
             opacity: 1;
+            transform: none;
         }
 
-        /* スマホ向け調整 */
-        @media (max-width: 900px) {
-            .constellation-widget {
-                position: relative;
-                left: auto;
-                top: auto;
-                transform: none;
-                margin: 0 auto 1rem;
-                width: 120px;
-                height: 120px;
-            }
-        }
-
-        .star-point {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 4px #fff;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-
-        .star-point.main {
-            width: 4px;
-            height: 4px;
-            box-shadow: 0 0 8px #a5b4fc;
-        }
-
-        .star-point.sub {
-            width: 2px;
-            height: 2px;
-            opacity: 0.7;
-        }
-
-        .constellation-lines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        .constellation-lines path {
-            stroke: rgba(165, 180, 252, 0.5);
-            stroke-width: 1;
-            fill: none;
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            transition: stroke-dashoffset 2s ease;
-        }
-
-        .constellation-widget.active .constellation-lines {
-            opacity: 1;
-        }
-
-        .constellation-widget.active .constellation-lines path {
-            stroke-dashoffset: 0;
-        }
-
-        .constellation-obj-name {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.9);
-            color: var(--accent-color);
-            padding: 0.3rem 0.8rem;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            border: 1px solid rgba(165, 180, 252, 0.3);
-        }
-
-        .constellation-widget.active .constellation-obj-name {
-            opacity: 1;
-        }
-
-        .moon {
-            position: absolute;
-            /* Footer内を基準に配置 */
-            top: -90px;
-            /* 水平線（Footer上辺）の少し上 */
-            right: 8%;
-            /* 右側に寄せる */
-            width: 60px;
-            /* 月の直径変数 */
-            height: 60px;
-            border-radius: 50%;
-            background: #fde68a;
-            background: radial-gradient(circle at 35% 35%,
-                    #fffbe6,
-                    #fde68a 60%,
-                    #eec758 100%);
-
-            transform: scale(0.2);
-            opacity: 0;
-            pointer-events: auto;
-            /* クリック可能に */
-            cursor: pointer;
-            z-index: 20;
-            /* コンテンツより前に */
-            transition: filter 0.3s;
-
-            /* アニメーション適用 */
-            animation: moon-rise 18s ease-out forwards;
-            animation-delay: 1s;
-        }
-
-        .moon:hover {
-            filter: drop-shadow(0 0 15px rgba(253, 230, 138, 0.9));
-        }
-
-        /* 月の名前ラベル */
-        .moon-label {
-            position: absolute;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: rgba(15, 23, 42, 0.95);
-            color: #fde68a;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            opacity: 0;
-            transition: all 0.4s ease;
-            pointer-events: none;
-            border: 1px solid rgba(253, 230, 138, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .moon-label.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .moon-name {
-            display: block;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.2rem;
-            color: #fff;
-        }
-
-        .moon-age {
-            font-size: 0.75rem;
-            color: #cbd5e1;
-            font-family: monospace;
-        }
-
-        /* 海面に映る月明かり */
-        .moon-reflection {
-            position: absolute;
-            top: auto;
-            bottom: 0;
-            /* #0e7490 40% の位置から下に配置 */
-            right: 8%;
-            /* 月と同じ位置 */
-            width: 60px;
-            height: 40%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
-            /* 月が出るまで見えない */
-
-            background: linear-gradient(to bottom,
-                    rgba(253, 230, 138, 0.6) 0%,
-                    rgba(253, 230, 138, 0.3) 40%,
-                    rgba(253, 230, 138, 0.1) 80%,
-                    transparent 100%);
-
-            filter: blur(8px);
-            transform-origin: top;
-            animation: reflection-shimmer 18s ease-out forwards;
-            animation-delay: 1.5s;
-            /* 月より少し遅れて出る */
-        }
-
-        @keyframes moon-rise {
-            0% {
-                transform: translateY(20px) scale(0.2);
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
                 opacity: 0;
+                transform: translateY(30px);
             }
 
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 0.9;
-            }
-        }
-
-        @keyframes reflection-shimmer {
-            0% {
-                opacity: 0;
-                transform: scaleY(0.5) scaleX(0.8);
-            }
-
-            100% {
-                opacity: 0.6;
-                transform: scaleY(1) scaleX(1.2);
-                /* 横に揺らめく感じは別途filterなどで代用 */
-            }
-        }
-
-        /* iPhone 12 / Mobile Optimizations */
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            header {
-                padding: 2.5rem 0 1.5rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .shelf-card {
-                padding: 1.5rem;
-            }
-
-            /* スマホで星座ウィジェットを少し小さく */
-            .constellation-widget {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 0.5rem;
-            }
-
-            /* カード内のリスト間隔を少し詰める */
-            .shelf-list li {
-                margin-bottom: 0.4rem;
-                padding-left: 1rem;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initStars();
-            initMoon();
-            initConstellation();
-        });
-
-        // --- 星の生成 ---
-        function initStars() {
-            const starCount = 120;
-            const stars = document.querySelector('.stars');
-            if (!stars) return;
-
-            const fragment = document.createDocumentFragment();
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('span');
-                const size = Math.random() * 1.5 + 0.5;
-                const duration = Math.random() * 6 + 4; // 4〜10秒
-
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                star.style.top = Math.random() * 100 + 'vh';
-                star.style.left = Math.random() * 100 + 'vw';
-                star.style.opacity = Math.random() * 0.4 + 0.2;
-
-                star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
-                star.style.animationDelay = `${Math.random() * duration}s`;
-
-                fragment.appendChild(star);
-            }
-            stars.appendChild(fragment);
-        }
-
-        // --- 今日の月の形（沖縄の現在の月）を計算 ---
-        function initMoon() {
-            const moon = document.querySelector('.moon');
-            if (!moon) return;
-
-            const getMoonPhase = () => {
-                const date = new Date();
-                // 基準：2000年1月6日 18:14 UTC (新月)
-                const synodic = 29.53058867;
-                const baseDate = new Date('2000-01-06T18:14:00Z');
-                const diff = date.getTime() - baseDate.getTime();
-                const age = (diff / 86400000) % synodic;
-                let phase = age / synodic; // 0.0 (新月) 〜 0.5 (満月) 〜 1.0 (新月)
-                return phase;
-            };
-
-            const phase = getMoonPhase();
-            const diameter = 60; // CSSに合わせて変更
-            let shadowOffset = 0;
-            const shadowColor = 'rgba(11, 16, 38, 0.9)';
-
-            // 影の計算
-            if (phase <= 0.5) {
-                // Waxing (新月 -> 満月)
-                shadowOffset = (1 - (phase / 0.5)) * diameter;
-            } else {
-                // Waning (満月 -> 新月)
-                shadowOffset = -((phase - 0.5) / 0.5) * diameter;
-            }
-
-            // 影と光彩を適用
-            moon.style.boxShadow = `inset ${shadowOffset.toFixed(1)}px 0 12px ${shadowColor}, 0 0 50px rgba(255, 241, 160, 0.5)`;
-
-            // クリック機能
-            moon.addEventListener('click', (e) => {
-                e.stopPropagation();
-
-                // 既存ラベル削除
-                const old = moon.querySelector('.moon-label');
-                if (old) old.remove();
-
-                const moonAge = phase * 29.53;
-                const ageInt = Math.round(moonAge);
-                const name = getMoonName(ageInt);
-
-                const label = document.createElement('div');
-                label.className = 'moon-label';
-                label.innerHTML = `<span class="moon-name">${name}</span><span class="moon-age">月齢 ${moonAge.toFixed(1)}</span>`;
-
-                moon.appendChild(label);
-
-                // 表示アニメーション
-                requestAnimationFrame(() => label.classList.add('visible'));
-
-                // 自動消去
-                setTimeout(() => {
-                    if (label.parentNode) {
-                        label.classList.remove('visible');
-                        setTimeout(() => label.remove(), 500);
-                    }
-                }, 4000);
-            });
-        }
-
-        // 月の名前を取得するヘルパー
-        function getMoonName(ageInt) {
-            if (ageInt === 0) return '新月';
-            if (ageInt === 1) return '二日月';
-            if (ageInt === 2) return '二日月・三日月';
-            if (ageInt === 3) return '三日月';
-            if (ageInt >= 4 && ageInt <= 6) return '夕月';
-            if (ageInt >= 7 && ageInt <= 8) return '上弦の月';
-            if (ageInt >= 9 && ageInt <= 12) return '十日夜';
-            if (ageInt === 13) return '十三夜';
-            if (ageInt === 14) return '小望月';
-            if (ageInt === 15) return '満月';
-            if (ageInt === 16) return '十六夜';
-            if (ageInt === 17) return '立待月';
-            if (ageInt === 18) return '居待月';
-            if (ageInt === 19) return '寝待月';
-            if (ageInt === 20) return '更待月';
-            if (ageInt >= 21 && ageInt <= 22) return '下弦の月';
-            if (ageInt >= 23 && ageInt <= 28) return '有明の月';
-            return '晦日（つごもり）';
-        }
-
-        // --- 星座ウィジェット ---
-        function initConstellation() {
-            const header = document.querySelector('header');
-            if (!header) return;
-
-            const widget = document.createElement('div');
-            widget.className = 'constellation-widget';
-            header.insertBefore(widget, header.firstChild);
-
-            // 簡易星座データ
-            const constellations = getConstellationData();
-
-            // 今の月 (0-11)
-            const month = new Date().getMonth();
-            const targetConstellation = constellations[month];
-
-            // 星を描画
-            targetConstellation.stars.forEach((pos, index) => {
-                const star = document.createElement('div');
-                star.className = 'star-point ' + (index < 4 ? 'main' : 'sub');
-                star.style.left = pos[0] + '%';
-                star.style.top = pos[1] + '%';
-                star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ${Math.random()}s`;
-                widget.appendChild(star);
-            });
-
-            // 線を描画 (SVG)
-            const svgNS = "http://www.w3.org/2000/svg";
-            const svg = document.createElementNS(svgNS, "svg");
-            svg.classList.add('constellation-lines');
-            svg.setAttribute('viewBox', '0 0 100 100');
-
-            targetConstellation.lines.forEach(lineIdx => {
-                const p1 = targetConstellation.stars[lineIdx[0]];
-                const p2 = targetConstellation.stars[lineIdx[1]];
-                const path = document.createElementNS(svgNS, "path");
-                path.setAttribute('d', `M ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]}`);
-                svg.appendChild(path);
-            });
-            widget.appendChild(svg);
-
-            // 名前ラベル
-            const nameLabel = document.createElement('div');
-            nameLabel.className = 'constellation-obj-name';
-            nameLabel.textContent = targetConstellation.name;
-            widget.appendChild(nameLabel);
-
-            // クリックイベント
-            widget.addEventListener('click', (e) => {
-                e.stopPropagation();
-                widget.classList.toggle('active');
-            });
-        }
-
-        // 星座データを返すヘルパー
-        function getConstellationData() {
-            return [
-                {
-                    name: 'みずがめ座 Aquqrius',
-                    stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60], [40, 70], [70, 50], [80, 60], [75, 80]],
-                    lines: [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [3, 6], [6, 7], [7, 8]]
-                },
-                {
-                    name: 'うお座 Pisces',
-                    stars: [[20, 30], [30, 50], [40, 70], [60, 80], [80, 60], [85, 40], [70, 30]],
-                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
-                },
-                {
-                    name: 'おひつじ座 Aries',
-                    stars: [[20, 60], [50, 50], [70, 40], [80, 55]],
-                    lines: [[0, 1], [1, 2], [2, 3]]
-                },
-                {
-                    name: 'おうし座 Taurus',
-                    stars: [[20, 50], [40, 50], [50, 70], [50, 30], [70, 40], [80, 50]],
-                    lines: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5]]
-                },
-                {
-                    name: 'ふたご座 Gemini',
-                    stars: [[30, 20], [30, 80], [60, 80], [60, 20]],
-                    lines: [[0, 1], [2, 3], [0, 3], [1, 2]]
-                },
-                {
-                    name: 'かに座 Cancer',
-                    stars: [[50, 50], [30, 30], [30, 70], [70, 30], [70, 70]],
-                    lines: [[0, 1], [0, 2], [0, 3], [0, 4]]
-                },
-                {
-                    name: 'しし座 Leo',
-                    stars: [[50, 30], [70, 20], [80, 40], [70, 60], [50, 50], [30, 70]],
-                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [4, 5]]
-                },
-                {
-                    name: 'おとめ座 Virgo',
-                    stars: [[30, 30], [50, 50], [50, 80], [70, 50], [90, 30]],
-                    lines: [[0, 1], [1, 2], [1, 3], [3, 4]]
-                },
-                {
-                    name: 'てんびん座 Libra',
-                    stars: [[50, 20], [30, 60], [70, 60], [50, 80]],
-                    lines: [[0, 1], [1, 3], [3, 2], [2, 0]]
-                },
-                {
-                    name: 'さそり座 Scorpius',
-                    stars: [[80, 20], [70, 30], [60, 40], [50, 50], [50, 70], [60, 80], [80, 70]],
-                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
-                },
-                {
-                    name: 'いて座 Sagittarius',
-                    stars: [[30, 60], [50, 60], [50, 40], [70, 40], [70, 80], [40, 30]],
-                    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [1, 4], [2, 5]]
-                },
-                {
-                    name: 'やぎ座 Capricornus',
-                    stars: [[20, 30], [50, 50], [80, 30], [50, 80]],
-                    lines: [[0, 1], [1, 2], [2, 3], [3, 0]]
-                }
-            ];
-        }
-    </script>
-
 </head>
 
 <body>
-    <div class="stars"></div>
 
-    <div class="container">
-        <header>
-            <h1>長安</h1>
-            <p class="subtitle">学び・実践・創作の記録を、必要な人へ届ける場所。</p>
-        </header>
+    <a href="#main-content" class="skip-link">内容をスキップ</a>
 
-        <section class="shelves-grid">
-            <!-- 教材の棚 -->
-            <article class="shelf-card">
-                <h2>📚 教材の棚</h2>
-                <div class="card-description">
-                    家庭での学びを、あとから振り返りたいときに。学びの途中で残ったもの。<br>
-                </div>
-                <ul class="shelf-list">
-
-                    <li><a href="/training/english-training.html" target="_blank">英語トレーニング</a></li>
-                    <li><a href="/training/grade2-typing.html" target="_blank">タイピング練習（2年生）</a></li>
-                    <li><a href="/training/kanji_test.html" target="_blank">漢字テスト</a></li>
-                    <!--                    <li><a href="/rekishi/sweet_potato_history.html" target="_blank">歴史：サツマイモの歴史</a></li>
-                    <li><a href="/Research/ayurveda-dosha-quiz.html" target="_blank">アーユルヴェーダ・ドーシャ診断</a></li> -->
-                    <li>HTML教材（家庭学習・社会学習）</li>
-                    <li>note教材・連載</li>
-                    <li>ツアー事前／事後テキスト</li>
-                </ul>
-                <p class="note">※ 一人で読み返せる形のものを中心に置いています</p>
-            </article>
-
-            <!-- 実践の棚 -->
-            <article class="shelf-card">
-                <h2>🌱 実践の棚</h2>
-                <div class="card-description">
-                    子どもを支える中で、立ち止まった人たちの記録。<br>
-                </div>
-                <ul class="shelf-list">
-                    <!-- <li><a href="/heiwa/ansin_sinrai.html" target="_blank">安心と信頼</a></li>
-                    <li><a href="/heiwa/yaruki.html" target="_blank">やる気について</a></li>
-                    <li><a href="/Research/yomitanpersonalizedguide.html" target="_blank">読谷村パーソナライズガイド</a></li>
-                    <li><a href="/training/okinawa_bungeifurima_meeting_1weekago.html" target="_blank">沖縄文芸フリマ
-                            1週間前ミーティング</a></li> -->
-                    <li>声かけ・関わり方のメモ</li>
-                    <li>うまくいかなかった事例</li>
-                    <li>研究会まとめZINE</li>
-                </ul>
-                <p class="note">※ 正解探しではなく、考える材料として。</p>
-            </article>
-
-            <!-- 創作の棚 -->
-            <article class="shelf-card">
-                <h2>🎨 創作の棚</h2>
-                <div class="card-description">
-                    気持ちや経験を、言葉や形にして外に出した表現の跡。<br>
-                </div>
-                <ul class="shelf-list">
-                    <!--
-                    <li><a href="/Research/plastic_infographic.html" target="_blank">プラスチック・インフォグラフィック</a></li>
-                    <li><a href="/training/LLM.html" target="_blank">LLM（大規模言語モデル）の実験</a></li>
-                    <li><a href="/training/moritown-251129.html" target="_blank">モリタウン 251129</a></li> -->
-                    <li>詩・エッセイ・ポエム</li>
-                    <li>ZINE・冊子</li>
-                    <li>親子合作の作品</li>
-                </ul>
-                <p class="note">※ 上手さより、出てきた言葉や形を残しています。</p>
-            </article>
-
-            <!-- ご縁の棚 -->
-            <article class="shelf-card">
-                <h2>🤝 ご縁の棚</h2>
-                <div class="card-description">
-                    人や社会とつながった、その記録。<br>
-                </div>
-                <ul class="shelf-list">
-                    <!-- <li><a href="/kuraku-teikan.html" target="_blank">てぃあんだぁクラブ定款</a></li> -->
-                    <li>文芸フリマ出展の記録</li>
-                    <li>参加者の声</li>
-                    <li>つながった人・場</li>
-                </ul>
-                <div class="media-box">
-                    <p class="media-label">
-                        メディア掲載・インタビュー
-                    </p>
-
-                    <a href="https://drive.google.com/file/d/0BxHVWALbJxS0eTlzcjZwQ0w3Wms/view?usp=sharing&resourcekey=0-81PZ6esNEMQTRik0J6xv-A"
-                        target="_blank" class="media-item">
-                        📰 日経新聞「ワンコインの居場所 心育む」（2014年4月13日）
-                    </a>
-
-                    <a href="https://www.okinawatimes.co.jp/articles/-/17792" target="_blank" class="media-item">
-                        📰 沖縄タイムス「ワンコインで自習室」（2015年8月18日）
-                    </a>
-
-                    <a href="https://www.tsuushinsei-navi.com/real/expert/354/" target="_blank" class="media-item">
-                        🎤 通信制高校ナビ インタビュー（2016年9月19日）
-                    </a>
-                </div>
-
-            </article>
-        </section>
-
-        <section>
-            <h2 class="section-title">📅 時間の棚</h2>
-
-            <p class="section-desc">
-                これまでの取り組みを、成果ではなく「積み重なり」として残しています。
-            </p>
-
-            <ul class="shelf-list">
-                <li><strong>2013</strong>｜てぃあんだぁクラブ・ワンコイン勉強会・子育て勉強会 開始</li>
-                <li><strong>2014</strong>｜日経新聞 掲載</li>
-                <li><strong>2015</strong>｜沖縄タイムス 掲載</li>
-                <li><strong>2019</strong>｜アルパカすく〜る 開始</li>
-                <li><strong>2024</strong>｜子どものMIKATA研究会 発足</li>
-                <li><strong>2025</strong>｜親子の創作活動が文芸フリマへ
-                    <a href="https://furima.ryukyu-tane.com" class="timeline-link">沖縄文芸フリマ</a>
-                </li>
-
-            </ul>
-        </section>
-
-        <section class="now-moving">
-            <h2>🕊 今、動いている場</h2>
-            <p class="section-desc">
-                記録の背景にある、現在進行形の取り組みです。
-            </p>
-
-            <ul class="shelf-list">
-                <li>
-                    <a href="/kosodate-study/index.html">
-                        子育て勉強会（開催案内）
-                    </a>
-                </li>
-                <li>
-                    <a href="/mikata/index.html">
-                        子どものMIKATA研究会（開催案内）
-                    </a>
-                </li>
-            </ul>
-        </section>
-
-    </div>
-
-
-    <footer>
-        <div class="moon"></div>
-        <div class="moon-reflection"></div>
+    <header class="site-header">
         <div class="container">
-            <p>
-                てぃあんだぁクラブ universe には、<br>
-                現在は無料で読める記録・資料が中心です。
-            </p>
+            <div class="logo">合同会社 長安</div>
+            <a href="#contact" class="cta-button-header">お問い合わせ</a>
+        </div>
+    </header>
 
-            <div class="mini-tags">
-                <a href="https://tea-under.club" class="mini-tag">お母さんの安心づくり：てぃあんだぁクラブ</a>
-                <a href="https://alpaca-school.okinawa" target="_blank" class="mini-tag">社会を学ぶ：アルパカすく〜る</a>
-                <a href="https://furima.ryukyu-tane.com" target="_blank" class="mini-tag">社会への橋：沖縄文芸フリマ</a>
-                <a href="https://yumetsumugi.ainoie1962.com/" target="_blank" class="mini-tag">自分を整える：わたしの夢つむぎ</a>
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <!-- Ensure ./assets/hero.png exists or use placeholder logic if failed. 
+                 Using the relative path as per user instruction context "same folder" -->
+            <img src="./assets/hero.png" alt="食卓の風景" class="hero-bg">
+            <div class="hero-content">
+                <h1 class="hero-title">食を囲む宴（縁）は<br>私たちの生活に<br>彩りを与えます。</h1>
+                <p class="hero-text">
+                    お客様 も パートナー も<br>
+                    大切にすることで<br>
+                    彩りの範囲を広げます。
+                </p>
             </div>
+        </section>
 
-            <p class="copyright">
-                © てぃあんだぁクラブ
-            </p>
+        <!-- News Section -->
+        <section class="section">
+            <div class="container">
+                <h2>新着情報</h2>
+                <div class="news-grid">
+                    <!-- Article 1 -->
+                    <article class="news-card fade-in-section">
+                        <span class="news-date">2024年6月12日</span>
+                        <h3 class="news-title">某協会様 へケータリングサービスをご提供しました</h3>
+                        <p class="news-excerpt">製造(調理)パートナー様とケータリングサービスを提供しました...</p>
+                        <a href="#" class="read-more">続きを読む</a>
+                    </article>
+
+                    <!-- Article 2 -->
+                    <article class="news-card fade-in-section">
+                        <span class="news-date">2024年2月13日</span>
+                        <h3 class="news-title">[うんちく]チューフィングディッシュとは?</h3>
+                        <p class="news-excerpt">ちょうあんのサイト管理者です。ケータリングなどの料飲サービス...</p>
+                        <a href="#" class="read-more">続きを読む</a>
+                    </article>
+
+                    <!-- Article 3 -->
+                    <article class="news-card fade-in-section">
+                        <span class="news-date">2024年1月21日</span>
+                        <h3 class="news-title">某団体様 へケータリングサービスをご提供しました</h3>
+                        <p class="news-excerpt">製造(調理)パートナー様とケータリングサービスを提供しました...</p>
+                        <a href="#" class="read-more">続きを読む</a>
+                    </article>
+
+                    <!-- Article 4 -->
+                    <article class="news-card fade-in-section">
+                        <span class="news-date">2023年9月1日</span>
+                        <h3 class="news-title">某団体様 へケータリングサービス（屋外）ご提供しました</h3>
+                        <p class="news-excerpt">製造(調理)パートナー様とケータリングサービス（屋外）を提供...</p>
+                        <a href="#" class="read-more">続きを読む</a>
+                    </article>
+                </div>
+
+                <div class="categories fade-in-section">
+                    <span class="category-tag">うんちく (1)</span>
+                    <span class="category-tag">ケータリング (3)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Section -->
+        <section class="section services-section">
+            <div class="container">
+                <h2>サービス</h2>
+                <div class="services-container">
+
+                    <!-- Service 1 -->
+                    <div class="service-block fade-in-section">
+                        <div class="service-image catering">
+                            <span>🍱</span>
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-title">ケータリング</h3>
+                            <p class="service-desc">
+                                各種仕出し弁当・オードブルのご手配、配達を承ります。
+                                特別な日の演出から、ビジネスミーティングのランチまで、
+                                シーンに合わせた食をご提案します。
+                            </p>
+                            <a href="#" class="btn-main">詳細はこちら</a>
+                        </div>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="service-block fade-in-section">
+                        <div class="service-image matching">
+                            <span>🤝</span>
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-title">会宴マッチング</h3>
+                            <p class="service-desc">
+                                「企業・団体の会議や宴会」のニーズと「地域の名店・飲食店」をマッチング。
+                                新しい出会いと、記憶に残るひとときをコーディネートします。
+                            </p>
+                            <a href="#" class="btn-main">詳細はこちら</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Company Info Section -->
+        <section class="section">
+            <div class="container">
+                <h2>会社概要</h2>
+                <div class="company-info-wrapper fade-in-section">
+                    <div class="info-row">
+                        <div class="info-label">社名</div>
+                        <div class="info-value">合同会社 長安 (ちょうあん)</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">設立</div>
+                        <div class="info-value">2023年6月28日</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">代表</div>
+                        <div class="info-value">山川 進</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">事業内容</div>
+                        <div class="info-value">
+                            ・ケータリング企画、手配、運営<br><br>
+                            ・各種仕出し弁当・オードブル手配、配達<br><br>
+                            ・「企業・団体の会議や宴会」ニーズと「飲食店」のマッチング
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">所在</div>
+                        <div class="info-value">
+                            〒902-0063<br>
+                            沖縄県那覇市三原3丁目18番31号
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">tel</div>
+                        <div class="info-value">050–3163–9877</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">email</div>
+                        <div class="info-value">inquiry@choan.jp</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer" id="contact">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">お問い合わせ</a>
+                <a href="#">個人情報保護方針</a>
+            </div>
+            <p class="copyright">Copyright © Choan, LLC.</p>
         </div>
     </footer>
 
+    <script>
+        // Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.fade-in-section');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
 </body>
 
 </html>
