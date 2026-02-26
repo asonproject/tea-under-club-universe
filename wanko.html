@@ -1,194 +1,519 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
-    <title>ワンコ通信 ジェネレーター v1.5.1</title>
+    <title>ワンコ通信 ジェネレーター v1.2</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 20px; margin: 0; }
-        .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 95%; max-width: 600px; text-align: left; }
-        .control-group { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
-        input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 4px; font-size: 14px; }
-        input[type="range"] { width: 100%; cursor: pointer; margin-top: 5px; }
-        .checkbox-group { display: flex; align-items: center; gap: 8px; font-size: 14px; background: #fff3e0; padding: 8px; border-radius: 6px; border: 1px dashed #ff9800; }
-        button { width: 100%; padding: 15px; cursor: pointer; background: #2196F3; color: white; border: none; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 16px; }
-        #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: crosshair; margin-top: 10px; }
-        canvas { max-width: 100%; height: auto; display: block; touch-action: none; }
-        .version { font-size: 11px; color: #bbb; margin-top: 10px; text-align: center; }
-        h3 { margin: 0 0 10px 0; text-align: center; color: #444; border-bottom: 2px solid #4CAF50; padding-bottom: 8px; }
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            background: white;
+            border: 2px solid #333;
+            cursor: crosshair;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .version {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="controls">
-    <h3>ワンコ通信 作成ツール <small>v1.5.1</small></h3>
-    
-    <div class="control-group">
-        <label>① 画像をアップロード</label>
-        <input type="file" id="bgUpload" accept="image/*">
-    </div>
+    <div class="controls">
+        <h3>ワンコ通信 ジェネレーター <small>v1.2</small></h3>
+        <p style="font-size:12px; color:#666;">ふりがな、候、タイトルをそれぞれドラッグで動かせます</p>
+        <div
+            style="margin-bottom:10px; text-align:left; font-size:14px; font-weight:bold; color:#333; padding-left:10%;">
+            ① 画像をアップロード</div>
+        <input type="file" id="bgUpload" accept="image/*"><br>
+        <div
+            style="margin-top:10px; margin-bottom:10px; text-align:left; font-size:14px; font-weight:bold; color:#333; padding-left:10%;">
+            ② 七十二候の選択</div>
+        <select id="kouSelect" style="width:80%; padding:8px; margin:5px; border:1px solid #ccc; border-radius:4px;"
+            onchange="updateKou(); draw()"></select>
 
-    <div class="control-group">
-        <label>② お知らせ内容（最大4行）</label>
-        <div class="checkbox-group" style="margin-bottom:8px;">
-            <input type="checkbox" id="showBox" onchange="draw()"> 
-            <span style="color:#e65100;">背景に緑の帯（お知らせ枠）をつける場合はチェック</span>
+        <div
+            style="margin-top:10px; margin-bottom:10px; text-align:left; font-size:14px; font-weight:bold; color:#333; padding-left:10%;">
+            ③ タイトル編集</div>
+        <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに">
+        <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの"><br>
+        <div style="margin-top:8px; text-align:left; font-size:12px; color:#555; padding-left:10%;">タイトルの行間調整</div>
+        <input type="range" id="gapRange" min="0.5" max="2.5" step="0.05" value="1.35"
+            style="width:80%; cursor:pointer;" oninput="draw()">
+
+        <div
+            style="margin-top:10px; margin-bottom:5px; text-align:left; font-size:14px; font-weight:bold; color:#333; padding-left:10%;">
+            ④ お知らせ枠編集
+            <label style="font-size:12px; font-weight:normal; margin-left:10px; cursor:pointer; color:#e65100;">
+                <input type="checkbox" id="showInfoBox" onchange="draw()" checked> 枠を表示する
+            </label>
+            <div style="margin-top:5px; font-size:12px; font-weight:normal; color:#555;">
+                文字サイズ: <input type="range" id="infoFontSize" min="0.02" max="0.06" step="0.001" value="0.035"
+                    style="width:100px; vertical-align:middle; cursor:pointer;" oninput="draw()">
+            </div>
         </div>
-        <input type="text" id="info1" placeholder="お知らせ1行目" value="〜 第六十八候「水泉動」 〜" oninput="draw()">
-        <input type="text" id="info2" placeholder="お知らせ2行目" value="しみずあたたかをふくむ" oninput="draw()">
-        <input type="text" id="info3" placeholder="3行目" value="" oninput="draw()">
-        <input type="text" id="info4" placeholder="4行目" value="" oninput="draw()">
+        <textarea id="infoText" rows="7"
+            style="width:80%; padding:10px; margin:5px; border:1px solid #ccc; border-radius:4px; font-family:sans-serif; text-align:left; font-size:13px;"
+            oninput="draw()">2026/3/7（土）14:00〜18:00
+子育て応援セミナー
+📍 cafeLUANA（豊見城市真玉橋１８２）
+💰 各回500円
+👥 関心ある方どなたでも
+🏛️ 主催: くらくサポート
+📝 子連れOK、飲食持ち込みOK</textarea>
+
+        <button onclick="downloadImage()" style="background:#2196F3; width:80%; margin-top:15px;">画像として保存</button>
     </div>
 
-    <div class="control-group">
-        <label>③ 赤タイトル入力（ドラッグ移動・行間調整）</label>
-        <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに" oninput="draw()">
-        <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの" oninput="draw()">
-        <input type="range" id="gapRange" min="0.5" max="2.5" step="0.05" value="1.3" oninput="draw()">
+    <div id="canvas-container">
+        <canvas id="myCanvas"></canvas>
     </div>
 
-    <button onclick="downloadImage()">画像を保存する</button>
-</div>
+    <div class="version">App Version 1.2.0 - 各パーツ独立移動モード</div>
 
-<div id="canvas-container">
-    <canvas id="myCanvas"></canvas>
-</div>
+    <script>
+        const kouData = [
+            { n: "東風解凍", k: "はるかぜこおりをとく" }, { n: "黄鶯睍睆", k: "うぐいすなく" }, { n: "魚上氷", k: "うおこおりをいずる" },
+            { n: "土脉潤起", k: "つちのしょううるおいおこる" }, { n: "霞始靆", k: "かすみはじめてたなびく" }, { n: "草木萌動", k: "そうもくめばえいずる" },
+            { n: "蟄虫啓戸", k: "すごもりむしとをひらく" }, { n: "桃始笑", k: "ももはじめてわらう" }, { n: "菜虫化蝶", k: "なむしちょうとなる" },
+            { n: "雀始巣", k: "すずめはじめてすくう" }, { n: "桜始開", k: "さくらはじめてひらく" }, { n: "雷乃発声", k: "かみなりすなわちこえをはっす" },
+            { n: "玄鳥至", k: "つばめきたる" }, { n: "鴻雁北", k: "こうがんかえる" }, { n: "虹始見", k: "にじはじめてあらわる" },
+            { n: "葭始生", k: "あしはじめてしょうず" }, { n: "霜止出苗", k: "しもやみてなえいづる" }, { n: "牡丹華", k: "ぼたんはなさく" },
+            { n: "蛙始鳴", k: "かわずはじめてなく" }, { n: "蚯蚓出", k: "みみずいづる" }, { n: "竹笋生", k: "たけのこしょうず" },
+            { n: "蚕起食桑", k: "かいこおきてくわをはむ" }, { n: "紅花栄", k: "べにばなさく" }, { n: "麦秋至", k: "むぎのときいたる" },
+            { n: "螳螂生", k: "かまきりしょうず" }, { n: "腐草為蛍", k: "くされたるくさほたるとなる" }, { n: "梅子黄", k: "うめのみきばむ" },
+            { n: "乃東枯", k: "なつかれくさかる" }, { n: "菖蒲華", k: "あやめはなさく" }, { n: "半夏生", k: "はんげしょうず" },
+            { n: "温風至", k: "あつかぜいたる" }, { n: "蓮始華", k: "はすはじめてひらく" }, { n: "鷹乃学習", k: "たかすなわちわざをならう" },
+            { n: "桐始結花", k: "きりははじめてはなをむすぶ" }, { n: "土潤溽暑", k: "つちうるおうてむしあつし" }, { n: "大雨時行", k: "たいうときどきふる" },
+            { n: "涼風至", k: "すずかぜいたる" }, { n: "寒蝉鳴", k: "ひぐらしなく" }, { n: "蒙霧升降", k: "ふかききりまつおう" },
+            { n: "綿柎開", k: "わたのはなしべひらく" }, { n: "天地始粛", k: "てんちはじめてさむし" }, { n: "禾乃登", k: "こくものすなわちみのる" },
+            { n: "草露白", k: "くさのつゆしろし" }, { n: "鶺鴒鳴", k: "せきれいなく" }, { n: "玄鳥去", k: "つばめさる" },
+            { n: "雷乃収声", k: "かみなりすなわちこえをおさめる" }, { n: "蟄虫坏戸", k: "むしかくれてとをふさぐ" }, { n: "水始涸", k: "みずはじめてかれる" },
+            { n: "鴻雁来", k: "こうがんきたる" }, { n: "菊花開", k: "きくのはなひらく" }, { n: "蟋蟀在戸", k: "きりぎりすとにあり" },
+            { n: "霜始降", k: "しもはじめてふる" }, { n: "霎時施", k: "こさめときどきふる" }, { n: "楓蔦黄", k: "もみじつたきばむ" },
+            { n: "山茶始開", k: "つばきはじめてひらく" }, { n: "地始凍", k: "ちはじめてこおる" }, { n: "金盞香", k: "きんせんかさく" },
+            { n: "虹蔵不見", k: "にじかくれてみえず" }, { n: "朔風払葉", k: "きたかぜこのはをはらう" }, { n: "橘始黄", k: "たちばなはじめてきばむ" },
+            { n: "閉塞成冬", k: "そらさむくふゆとなる" }, { n: "熊蟄穴", k: "くまあなにこもる" }, { n: "鱖魚群", k: "さけのうおむらがる" },
+            { n: "乃東生", k: "なつかれくさしょうず" }, { n: "麋角解", k: "おおしかのつのおつる" }, { n: "雪下出麦", k: "ゆきわたりてむぎのびる" },
+            { n: "芹乃栄", k: "せりすなわちさかう" }, { n: "水泉動", k: "しみずあたたかをふくむ" }, { n: "雉始雊", k: "きじはじめてなく" },
+            { n: "款冬華", k: "ふきのはなはなさく" }, { n: "水沢腹堅", k: "さわみずこおりつめる" }, { n: "鶏始乳", k: "にわとりはじめてとやにつく" }
+        ];
 
-<div class="version">App Version 1.5.1 / No-Box Default Mode</div>
+        const kouDetails = [
+            "第一候「東風解凍」(立春・初候)　2/4～2/8頃",
+            "第二候「黄鶯睍睆」(立春・次候)　2/9～2/13頃",
+            "第三候「魚上氷」(立春・末候)　2/14～2/18頃",
+            "第四候「土脉潤起」(雨水・初候)　2/19～2/23頃",
+            "第五候「霞始靆」(雨水・次候)　2/24～2/28頃",
+            "第六候「草木萌動」(雨水・末候)　3/1～3/4頃",
+            "第七候「蟄虫啓戸」(啓蟄・初候)　3/5～3/9頃",
+            "第八候「桃始笑」(啓蟄・次候)　3/10～3/14頃",
+            "第九候「菜虫化蝶」(啓蟄・末候)　3/15～3/19頃",
+            "第十候「雀始巣」(春分・初候)　3/20～3/24頃",
+            "第十一候「桜始開」(春分・次候)　3/25～3/29頃",
+            "第十二候「雷乃発声」(春分・末候)　3/30～4/3頃",
+            "第十三候「玄鳥至」(清明・初候)　4/4～4/8頃",
+            "第十四候「鴻雁北」(清明・次候)　4/9～4/13頃",
+            "第十五候「虹始見」(清明・末候)　4/14～4/19頃",
+            "第十六候「葭始生」(穀雨・初候)　4/20～4/24頃",
+            "第十七候「霜止出苗」(穀雨・次候)　4/25～4/29頃",
+            "第十八候「牡丹華」(穀雨・末候)　4/30～5/4頃",
+            "第十九候「蛙始鳴」(立夏・初候)　5/5～5/9頃",
+            "第二十候「蚯蚓出」(立夏・次候)　5/10～5/14頃",
+            "第二十一候「竹笋生」(立夏・末候)　5/15～5/20頃",
+            "第二十二候「蚕起食桑」(小満・初候)　5/21～5/25頃",
+            "第二十三候「紅花栄」(小満・次候)　5/26～5/30頃",
+            "第二十四候「麦秋至」(小満・末候)　5/31～6/4頃",
+            "第二十五候「螳螂生」(芒種・初候)　6/5～6/9頃",
+            "第二十六候「腐草為蛍」(芒種・次候)　6/10～6/15頃",
+            "第二十七候「梅子黄」(芒種・末候)　6/16～6/20頃",
+            "第二十八候「乃東枯」(夏至・初候)　6/21～6/25頃",
+            "第二十九候「菖蒲華」(夏至・次候)　6/26～6/30頃",
+            "第三十候「半夏生」(夏至・末候)　7/1～7/6頃",
+            "第三十一候「温風至」(小暑・初候)　7/7～7/11頃",
+            "第三十二候「蓮始華」(小暑・次候)　7/12～7/16頃",
+            "第三十三候「鷹乃学習」(小暑・末候)　7/17～7/21頃",
+            "第三十四候「桐始結花」(大暑・初候)　7/22～7/27頃",
+            "第三十五候「土潤溽暑」(大暑・次候)　7/28～8/1頃",
+            "第三十六候「大雨時行」(大暑・末候)　8/2～8/6頃",
+            "第三十七候「涼風至」(立秋・初候)　8/7～8/11頃",
+            "第三十八候「寒蝉鳴」(立秋・次候)　8/12～8/16頃",
+            "第三十九候「蒙霧升降」(立秋・末候)　8/17～8/22頃",
+            "第四十候「綿柎開」(処暑・初候)　8/23～8/27頃",
+            "第四十一候「天地始粛」(処暑・次候)　8/28～9/1頃",
+            "第四十二候「禾乃登」(処暑・末候)　9/2～9/6頃",
+            "第四十三候「草露白」(白露・初候)　9/7～9/11頃",
+            "第四十四候「鶺鴒鳴」(白露・次候)　9/12～9/16頃",
+            "第四十五候「玄鳥去」(白露・末候)　9/17～9/21頃",
+            "第四十六候「雷乃収声」(秋分・初候)　9/22～9/27頃",
+            "第四十七候「蟄虫坏戸」(秋分・次候)　9/28～10/2頃",
+            "第四十八候「水始涸」(秋分・末候)　10/3～10/7頃",
+            "第四十九候「鴻雁来」(寒露・初候)　10/8～10/12頃",
+            "第五十候「菊花開」(寒露・次候)　10/13～10/17頃",
+            "第五十一候「蟋蟀在戸」(寒露・末候)　10/18～10/22頃",
+            "第五十二候「霜始降」(霜降・初候)　10/23～10/27頃",
+            "第五十三候「霎時施」(霜降・次候)　10/28～11/1頃",
+            "第五十四候「楓蔦黄」(霜降・末候)　11/2～11/6頃",
+            "第五十五候「山茶始開」(立冬・初候)　11/7～11/11頃",
+            "第五十六候「地始凍」(立冬・次候)　11/12～11/16頃",
+            "第五十七候「金盞香」(立冬・末候)　11/17～11/21頃",
+            "第五十八候「虹蔵不見」(小雪・初候)　11/22～11/26頃",
+            "第五十九候「朔風払葉」(小雪・次候)　11/27～12/1頃",
+            "第六十候「橘始黄」(小雪・末候)　12/2～12/6頃",
+            "第六十一候「閉塞成冬」(大雪・初候)　12/7～12/11頃",
+            "第六十二候「熊蟄穴」(大雪・次候)　12/12～12/15頃",
+            "第六十三候「鱖魚群」(大雪・末候)　12/16～12/20頃",
+            "第六十四候「乃東生」(冬至・初候)　12/21～12/25頃",
+            "第六十五候「麋角解」(冬至・次候)　12/26～12/30頃",
+            "第六十六候「雪下出麦」(冬至・末候)　12/31～1/4頃",
+            "第六十七候「芹乃栄」(小寒・初候)　1/5～1/9頃",
+            "第六十八候「水泉動」(小寒・次候)　1/10～1/14頃",
+            "第六十九候「雉始雊」(小寒・末候)　1/15～1/19頃",
+            "第七十候「款冬華」(大寒・初候)　1/20～1/24頃",
+            "第七十一候「水沢腹堅」(大寒・次候)　1/25～1/29頃",
+            "第七十二候「鶏始乳」(大寒・末候)　1/30～2/3頃"
+        ];
 
-<script>
-const canvas = document.getElementById('myCanvas');
-const ctx = canvas.getContext('2d');
-let bgImg = new Image();
+        let kou = {};
 
-let pos = {
-    infoArea: { x: 0, y: 0 },
-    titleArea: { x: 0, y: 0 },
-    isDragging: false,
-    target: null
-};
+        function initKouSelect() {
+            const select = document.getElementById('kouSelect');
+            select.innerHTML = '';
 
-document.getElementById('bgUpload').onchange = function(e) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        bgImg.src = event.target.result;
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1;
+            const currentDate = now.getDate();
+
+            // 現在の日付に合わせて該当する候のインデックスを探す
+            let currentIndex = 0;
+            for (let i = 0; i < kouDetails.length; i++) {
+                // "2/4～2/8頃" のような文字列から月日を抽出する
+                const match = kouDetails[i].match(/([0-9]{1,2})\/([0-9]{1,2})～([0-9]{1,2})\/([0-9]{1,2})頃/);
+                if (match) {
+                    const m1 = parseInt(match[1]), d1 = parseInt(match[2]);
+                    const m2 = parseInt(match[3]), d2 = parseInt(match[4]);
+
+                    // 月またぎの考慮
+                    if (m1 === m2) {
+                        if (currentMonth === m1 && currentDate >= d1 && currentDate <= d2) {
+                            currentIndex = i;
+                            break;
+                        }
+                    } else {
+                        // 12/31〜1/4頃など
+                        if ((currentMonth === m1 && currentDate >= d1) || (currentMonth === m2 && currentDate <= d2)) {
+                            currentIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 現在の候の前後3つをプルダウンに表示する
+            for (let i = -3; i <= 3; i++) {
+                let idx = currentIndex + i;
+                if (idx < 0) idx += 72;
+                if (idx >= 72) idx -= 72;
+
+                const option = document.createElement('option');
+                option.value = idx;
+                option.text = kouDetails[idx];
+                if (i === 0) {
+                    option.selected = true;
+                    option.text += " ★現在";
+                }
+                select.appendChild(option);
+            }
+            updateKou();
+        }
+
+        function updateKou() {
+            const idx = parseInt(document.getElementById('kouSelect').value);
+            kou = { name: kouData[idx].n, kana: kouData[idx].k, num: idx + 1 };
+        }
+
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        let bgImg = new Image();
+
+        initKouSelect();
+
+        // 位置データの初期化（個別に動かせるように分離）
+        let pos = {
+            kana: { x: 0, y: 0 },
+            kou: { x: 0, y: 0 },
+            title: { x: 0, y: 0 },
+            infoBox: { x: 0, y: 0, w: 0, h: 0 },
+            isDragging: false,
+            target: null,
+            dragOffsetX: 0,
+            dragOffsetY: 0
+        };
+
+        // 画像読み込み完了時の初期化処理
         bgImg.onload = () => {
             canvas.width = bgImg.width;
             canvas.height = bgImg.height;
+            // 初期配置
             const cx = canvas.width / 2;
-            pos.infoArea = { x: cx, y: canvas.height * 0.22 };
-            pos.titleArea = { x: cx, y: canvas.height * 0.55 };
+            pos.kana = { x: cx, y: canvas.height * 0.18 };
+            pos.kou = { x: cx, y: canvas.height * 0.25 };
+            pos.title = { x: cx, y: canvas.height * 0.55 };
+            pos.infoBox = { x: canvas.width * 0.05, y: canvas.height * 0.65, w: 0, h: 0 };
             draw();
         };
-    };
-    reader.readAsDataURL(e.target.files[0]);
-};
 
-function draw() {
-    if (!bgImg.src) return;
-    ctx.drawImage(bgImg, 0, 0);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+        // 初期画像をセット
+        bgImg.src = "assets/wanko-moto.jpg";
 
-    const infoLines = [
-        document.getElementById('info1').value,
-        document.getElementById('info2').value,
-        document.getElementById('info3').value,
-        document.getElementById('info4').value
-    ].filter(text => text !== "");
+        document.getElementById('bgUpload').onchange = function (e) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // bgImg.onloadは上で定義済みなので、srcを変えるだけで再描画される
+                bgImg.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
 
-    const infoFontSize = canvas.width * 0.045;
-    const infoLineGap = infoFontSize * 1.2;
+        function draw() {
+            if (!bgImg.src) return;
+            ctx.drawImage(bgImg, 0, 0);
 
-    // 緑の帯の描画（チェックが入っている時だけ）
-    if(document.getElementById('showBox').checked) {
-        ctx.fillStyle = "rgba(0, 100, 0, 0.45)"; 
-        const boxPadding = 40;
-        const boxHeight = (infoLines.length * infoLineGap) + boxPadding;
-        ctx.fillRect(0, pos.infoArea.y - boxHeight/2 + (infoLineGap/2), canvas.width, boxHeight);
-    }
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
 
-    // 文字（お知らせ）
-    ctx.fillStyle = "white";
-    ctx.shadowBlur = 0;
-    ctx.font = `bold ${infoFontSize}px sans-serif`;
-    infoLines.forEach((text, i) => {
-        ctx.fillText(text, pos.infoArea.x, pos.infoArea.y + (i * infoLineGap));
-    });
+            // 1. ふりがな
+            const kouFontSize = canvas.width * 0.055;
+            const kanaFontSize = kouFontSize * 0.35;
+            ctx.font = `bold ${kanaFontSize}px sans-serif`;
+            ctx.fillStyle = "white";
+            ctx.fillText(kou.kana, pos.kana.x, pos.kana.y);
 
-    // タイトル
-    const line1 = document.getElementById('line1').value;
-    const line2 = document.getElementById('line2').value;
-    const titleSize = canvas.width * 0.10;
-    const gapMultiplier = document.getElementById('gapRange').value;
-    const titleLineGap = titleSize * gapMultiplier;
+            // 2. 七十二候 本体
+            ctx.font = `bold ${kouFontSize}px sans-serif`;
 
-    drawTitleText(line1, pos.titleArea.x, pos.titleArea.y, titleSize);
-    if(line2) {
-        drawTitleText(line2, pos.titleArea.x, pos.titleArea.y + titleLineGap, titleSize);
-    }
+            // 数字を漢数字に変換する簡単な関数 (1〜72専用)
+            const toKanjiNumeral = (num) => {
+                const kanji = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+                if (num <= 9) return kanji[num];
+                if (num === 10) return "十";
+                if (num < 20) return "十" + kanji[num % 10];
+                const tens = Math.floor(num / 10);
+                const ones = num % 10;
+                return kanji[tens] + "十" + kanji[ones];
+            };
+            const kanjiNum = toKanjiNumeral(kou.num);
 
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "rgba(255,255,255,0.3)";
-    ctx.textAlign = "right";
-    ctx.fillText("v1.5.1", canvas.width - 20, canvas.height - 20);
-}
+            ctx.fillText(`〜 第${kanjiNum}候「${kou.name}」 〜`, pos.kou.x, pos.kou.y);
 
-function drawTitleText(text, x, y, fontSize) {
-    ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.shadowBlur = 12;
-    ctx.shadowOffsetX = 6;
-    ctx.shadowOffsetY = 6;
-    ctx.shadowColor = "#FF4500"; 
-    ctx.fillStyle = "white";
-    ctx.fillText(text, x, y);
-    ctx.shadowBlur = 4;
-    ctx.fillText(text, x, y);
-    ctx.shadowColor = "transparent";
-}
+            // 3. タイトル（白文字＋濃いオレンジ影）
+            const line1 = document.getElementById('line1').value;
+            const line2 = document.getElementById('line2').value;
+            const titleSize = canvas.width * 0.10;
+            const gapMultiplier = document.getElementById('gapRange').value;
+            const lineGap = titleSize * gapMultiplier;
 
-function getCanvasPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-        x: (clientX - rect.left) * (canvas.width / rect.width),
-        y: (clientY - rect.top) * (canvas.height / rect.height)
-    };
-}
+            drawTitleText(line1, pos.title.x, pos.title.y, titleSize);
+            if (line2) {
+                drawTitleText(line2, pos.title.x, pos.title.y + lineGap, titleSize);
+            }
 
-const handleStart = (e) => {
-    if (!bgImg.src) return;
-    const m = getCanvasPos(e);
-    const dInfo = Math.sqrt((m.x - pos.infoArea.x)**2 + (m.y - pos.infoArea.y)**2);
-    const dTitle = Math.sqrt((m.x - pos.titleArea.x)**2 + (m.y - pos.titleArea.y)**2);
-    if (dInfo < 150) { pos.target = 'infoArea'; pos.isDragging = true; }
-    else if (dTitle < 200) { pos.target = 'titleArea'; pos.isDragging = true; }
-};
+            // 4. お知らせ枠
+            if (document.getElementById('showInfoBox') && document.getElementById('showInfoBox').checked) {
+                const infoText = document.getElementById('infoText').value;
+                const infoLines = infoText.split('\n').filter(t => t.trim() !== "");
 
-const handleMove = (e) => {
-    if (!pos.isDragging) return;
-    e.preventDefault();
-    const m = getCanvasPos(e);
-    pos[pos.target].x = m.x;
-    pos[pos.target].y = m.y;
-    draw();
-};
+                if (infoLines.length > 0) {
+                    const fontSizeRatio = document.getElementById('infoFontSize') ? parseFloat(document.getElementById('infoFontSize').value) : 0.035;
+                    const infoFontSize = canvas.width * fontSizeRatio;
+                    const infoLineHeight = infoFontSize * 1.5;
+                    const padding = 20;
 
-canvas.addEventListener('mousedown', handleStart);
-window.addEventListener('mousemove', handleMove);
-window.addEventListener('mouseup', () => pos.isDragging = false);
-canvas.addEventListener('touchstart', handleStart, {passive: false});
-window.addEventListener('touchmove', handleMove, {passive: false});
-window.addEventListener('touchend', () => pos.isDragging = false);
+                    ctx.font = `bold ${infoFontSize}px sans-serif`;
 
-function downloadImage() {
-    const link = document.createElement('a');
-    link.download = `wanko_v1.5.1.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-}
-</script>
+                    let maxWidth = 0;
+                    infoLines.forEach(text => {
+                        const w = ctx.measureText(text).width;
+                        if (w > maxWidth) maxWidth = w;
+                    });
+
+                    const boxWidth = maxWidth + padding * 2;
+                    const boxHeight = (infoLines.length * infoLineHeight) + padding * 1.5;
+
+                    // 背景（黄色半透明に変更）
+                    ctx.fillStyle = "rgba(255, 235, 59, 0.9)"; // イエロー系の背景
+                    ctx.shadowColor = "rgba(0,0,0,0.2)";
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetX = 3;
+                    ctx.shadowOffsetY = 3;
+                    ctx.fillRect(pos.infoBox.x, pos.infoBox.y, boxWidth, boxHeight);
+
+                    // 枠線は削除・透明化
+                    ctx.shadowColor = "transparent";
+
+                    // テキスト
+                    ctx.fillStyle = "#333";
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    infoLines.forEach((text, i) => {
+                        ctx.fillText(text, pos.infoBox.x + padding, pos.infoBox.y + padding + (i * infoLineHeight));
+                    });
+
+                    // ドラッグ用の当たり判定更新
+                    pos.infoBox.w = boxWidth;
+                    pos.infoBox.h = boxHeight;
+                }
+            }
+
+            // バージョン
+            ctx.font = "20px Arial";
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.textAlign = "right";
+            ctx.fillText("v1.2", canvas.width - 20, canvas.height - 20);
+        }
+
+        function drawTitleText(text, x, y, fontSize) {
+            ctx.font = `bold ${fontSize}px sans-serif`;
+            ctx.textAlign = "center";
+
+            // 影をより濃く太いオレンジに変更
+            ctx.shadowColor = "#FF4500"; // OrangeRed: より濃い赤みのあるオレンジ
+            ctx.shadowBlur = 12; // ぼかしを少し強めに
+            ctx.shadowOffsetX = 6; // オフセットを少し大きく（ずらす）
+            ctx.shadowOffsetY = 6;
+
+            ctx.fillStyle = "white";
+            ctx.fillText(text, x, y);
+
+            // さらに輪郭を強調するためにもう一度描画（濃さを足す）
+            ctx.shadowBlur = 4;
+            ctx.fillText(text, x, y);
+
+            // リセット
+            ctx.shadowColor = "transparent";
+        }
+
+        document.getElementById('line1').oninput = draw;
+        document.getElementById('line2').oninput = draw;
+
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        const handleStart = (e) => {
+            if (!bgImg.src) return;
+            const m = getCanvasPos(e);
+
+            // 各パーツとの距離を計算
+            const distKana = Math.sqrt((m.x - pos.kana.x) ** 2 + (m.y - pos.kana.y) ** 2);
+            const distKou = Math.sqrt((m.x - pos.kou.x) ** 2 + (m.y - pos.kou.y) ** 2);
+            const distTitle = Math.sqrt((m.x - pos.title.x) ** 2 + (m.y - pos.title.y) ** 2);
+
+            let target = null;
+            if (document.getElementById('showInfoBox')?.checked &&
+                m.x >= pos.infoBox.x && m.x <= pos.infoBox.x + pos.infoBox.w &&
+                m.y >= pos.infoBox.y && m.y <= pos.infoBox.y + pos.infoBox.h) {
+                target = 'infoBox';
+                pos.dragOffsetX = m.x - pos.infoBox.x;
+                pos.dragOffsetY = m.y - pos.infoBox.y;
+            } else if (distKana < 80) { target = 'kana'; }
+            else if (distKou < 120) { target = 'kou'; }
+            else if (distTitle < 200) { target = 'title'; }
+
+            if (target) {
+                pos.target = target;
+                pos.isDragging = true;
+            }
+        };
+
+        const handleMove = (e) => {
+            if (!pos.isDragging) return;
+            e.preventDefault();
+            const m = getCanvasPos(e);
+            if (pos.target === 'infoBox') {
+                pos.infoBox.x = m.x - pos.dragOffsetX;
+                pos.infoBox.y = m.y - pos.dragOffsetY;
+            } else if (pos.target === 'kou' || pos.target === 'title') {
+                // 七十二候とタイトルは水平方向のみ中央固定（Y方向だけドラッグ移動可能）
+                pos[pos.target].x = canvas.width / 2;
+                pos[pos.target].y = m.y;
+            } else {
+                // ふりがな等、その他は自由に動かせる
+                pos[pos.target].x = m.x;
+                pos[pos.target].y = m.y;
+            }
+            draw();
+        };
+
+        canvas.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', () => pos.isDragging = false);
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        window.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', () => pos.isDragging = false);
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = `wanko_v1.2.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+    </script>
 </body>
+
 </html>
