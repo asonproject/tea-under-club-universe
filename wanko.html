@@ -49,10 +49,15 @@
             background: white;
             border: 2px solid #333;
             cursor: crosshair;
+            width: 50%;
+            /* 画面幅の50%にする */
+            max-width: 800px;
+            /* 大きくなりすぎないように上限を設ける */
         }
 
         canvas {
-            max-width: 100%;
+            width: 100%;
+            /* コンテナ（50%）に追従する */
             height: auto;
             display: block;
             touch-action: none;
