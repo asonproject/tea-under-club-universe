@@ -2,22 +2,21 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ワンコ通信 ジェネレーター（ドラッグ対応版）</title>
+    <title>ワンコ通信 ジェネレーター v1.1</title>
     <style>
         body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 20px; margin: 0; }
         .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 90%; max-width: 600px; }
         input[type="text"] { width: 80%; padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
         button { padding: 10px 20px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; margin: 5px; }
-        #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: move; }
-        canvas { max-width: 100%; height: auto; display: block; }
-        p.hint { font-size: 12px; color: #666; margin: 5px 0; }
+        #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: crosshair; }
+        canvas { max-width: 100%; height: auto; display: block; touch-action: none; }
+        .version { font-size: 12px; color: #999; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="controls">
-    <h3>ワンコ通信 ジェネレーター</h3>
-    <p class="hint">①画像アップロード → ②タイトル入力 → ③文字をドラッグして移動</p>
+    <h3>ワンコ通信 ジェネレーター <small>v1.1</small></h3>
     <input type="file" id="bgUpload" accept="image/*"><br>
     <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに">
     <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの"><br>
@@ -27,6 +26,8 @@
 <div id="canvas-container">
     <canvas id="myCanvas"></canvas>
 </div>
+
+<div class="version">App Version 1.1.0</div>
 
 <script>
 const kouData = [
@@ -68,12 +69,11 @@ const ctx = canvas.getContext('2d');
 let bgImg = new Image();
 let kou = getKouInfo();
 
-// 位置データ（初期値）
 let pos = {
     kouX: 0, kouY: 0,
     titleX: 0, titleY: 0,
     isDragging: false,
-    target: null // 'kou' or 'title'
+    target: null
 };
 
 document.getElementById('bgUpload').onchange = function(e) {
@@ -83,11 +83,10 @@ document.getElementById('bgUpload').onchange = function(e) {
         bgImg.onload = () => {
             canvas.width = bgImg.width;
             canvas.height = bgImg.height;
-            // 初期位置を中央付近にセット
             pos.kouX = canvas.width / 2;
             pos.kouY = canvas.height * 0.25;
             pos.titleX = canvas.width / 2;
-            pos.titleY = canvas.height * 0.5;
+            pos.titleY = canvas.height * 0.55;
             draw();
         };
     };
@@ -96,92 +95,105 @@ document.getElementById('bgUpload').onchange = function(e) {
 
 function draw() {
     if (!bgImg.src) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(bgImg, 0, 0);
 
-    const centerX = canvas.width / 2;
-
-    // 1. 七十二候の描画
+    // 1. 七十二候（ふりがな位置修正）
     const kouFontSize = canvas.width * 0.055;
     const kanaFontSize = kouFontSize * 0.35;
     ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
     ctx.fillStyle = "white";
+    // ふりがな（漢字の真上）
     ctx.font = `bold ${kanaFontSize}px sans-serif`;
-    ctx.fillText(kou.kana, pos.kouX, pos.kouY - kouFontSize * 0.85);
+    ctx.fillText(kou.kana, pos.kouX, pos.kouY - (kouFontSize * 0.8));
+    // 漢字本体
     ctx.font = `bold ${kouFontSize}px sans-serif`;
     ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, pos.kouX, pos.kouY);
 
-    // 2. タイトルの描画
+    // 2. タイトル（白文字＋オレンジ影）
     const line1 = document.getElementById('line1').value;
     const line2 = document.getElementById('line2').value;
     const titleSize = canvas.width * 0.10;
-    const lineGap = titleSize * 1.3; // 行間を少し広げました
+    const lineGap = titleSize * 1.35;
 
-    drawTextWithOutline(line1, pos.titleX, pos.titleY, titleSize, "#e60000");
+    drawTitleText(line1, pos.titleX, pos.titleY, titleSize);
     if(line2) {
-        drawTextWithOutline(line2, pos.titleX, pos.titleY + lineGap, titleSize, "#e60000");
+        drawTitleText(line2, pos.titleX, pos.titleY + lineGap, titleSize);
     }
+    
+    // 右下にバージョン表記
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.textAlign = "right";
+    ctx.fillText("v1.1", canvas.width - 20, canvas.height - 20);
 }
 
-function drawTextWithOutline(text, x, y, fontSize, color) {
+function drawTitleText(text, x, y, fontSize) {
     ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.textAlign = "center";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 4;
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = fontSize * 0.15;
-    ctx.strokeText(text, x, y);
-    ctx.shadowColor = "transparent";
-    ctx.fillStyle = color;
+    
+    // オレンジ色の影
+    ctx.shadowColor = "orange";
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetX = 6;
+    ctx.shadowOffsetY = 6;
+    
+    // 白文字
+    ctx.fillStyle = "white";
     ctx.fillText(text, x, y);
+    
+    // 影をリセット
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 }
 
-// 入力欄変更時にリアルタイム更新
 document.getElementById('line1').oninput = draw;
 document.getElementById('line2').oninput = draw;
 
-// --- ドラッグ操作の処理 ---
-function getMousePos(e) {
+// ドラッグ処理の改善
+function getCanvasPos(e) {
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-        x: (e.clientX || e.touches[0].clientX - rect.left) * scaleX,
-        y: (e.clientY || e.touches[0].clientY - rect.top) * scaleY
+        x: (clientX - rect.left) * (canvas.width / rect.width),
+        y: (clientY - rect.top) * (canvas.height / rect.height)
     };
 }
 
-const startDrag = (e) => {
-    const m = getMousePos(e);
-    // 七十二候に近いか判定
-    if (Math.abs(m.y - pos.kouY) < 100) { pos.target = 'kou'; pos.isDragging = true; }
-    // タイトルに近いか判定
-    else if (Math.abs(m.y - pos.titleY) < 150) { pos.target = 'title'; pos.isDragging = true; }
+const handleStart = (e) => {
+    if (!bgImg.src) return;
+    const m = getCanvasPos(e);
+    // 判定距離を大きく（タッチ操作しやすく）
+    const distKou = Math.sqrt((m.x - pos.kouX)**2 + (m.y - pos.kouY)**2);
+    const distTitle = Math.sqrt((m.x - pos.titleX)**2 + (m.y - pos.titleY)**2);
+
+    if (distKou < 150) { pos.target = 'kou'; pos.isDragging = true; }
+    else if (distTitle < 200) { pos.target = 'title'; pos.isDragging = true; }
 };
 
-const doDrag = (e) => {
+const handleMove = (e) => {
     if (!pos.isDragging) return;
     e.preventDefault();
-    const m = getMousePos(e);
+    const m = getCanvasPos(e);
     if (pos.target === 'kou') { pos.kouX = m.x; pos.kouY = m.y; }
     if (pos.target === 'title') { pos.titleX = m.x; pos.titleY = m.y; }
     draw();
 };
 
-const stopDrag = () => { pos.isDragging = false; pos.target = null; };
-
-canvas.addEventListener('mousedown', startDrag);
-window.addEventListener('mousemove', doDrag);
-window.addEventListener('mouseup', stopDrag);
-canvas.addEventListener('touchstart', startDrag);
-window.addEventListener('touchmove', doDrag, {passive: false});
-window.addEventListener('touchend', stopDrag);
+canvas.addEventListener('mousedown', handleStart);
+window.addEventListener('mousemove', handleMove);
+window.addEventListener('mouseup', () => pos.isDragging = false);
+canvas.addEventListener('touchstart', handleStart, {passive: false});
+window.addEventListener('touchmove', handleMove, {passive: false});
+window.addEventListener('touchend', () => pos.isDragging = false);
 
 function downloadImage() {
     const link = document.createElement('a');
-    link.download = `wanko_image.png`;
+    link.download = `wanko_v1.1.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 }
