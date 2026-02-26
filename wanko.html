@@ -2,24 +2,28 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ワンコ通信 ジェネレーター（ふりがな付）</title>
+    <title>ワンコ通信 ジェネレーター（配置修正版）</title>
     <style>
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; text-align: center; background: #f0f0f0; padding: 20px; }
-        .controls { background: white; padding: 20px; border-radius: 8px; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        input[type="text"] { width: 300px; padding: 10px; font-size: 16px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 20px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; margin: 5px; }
-        #canvas-container { border: 2px solid #ddd; display: inline-block; background: white; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; text-align: center; background: #f6f6f6; padding: 20px; }
+        .controls { background: white; padding: 25px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #eee; }
+        input[type="text"] { width: 320px; padding: 12px; font-size: 16px; margin: 8px; border: 2px solid #ddd; border-radius: 6px; outline: none; }
+        input[type="text"]:focus { border-color: #4CAF50; }
+        button { padding: 12px 24px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 6px; font-weight: bold; margin: 5px; font-size: 16px; transition: 0.2s; }
+        button:hover { background: #45a049; }
+        #canvas-container { border: 1px solid #ccc; display: inline-block; background: #fff; line-height: 0; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         canvas { max-width: 100%; height: auto; }
+        h2 { margin-top: 0; color: #333; }
     </style>
 </head>
 <body>
 
 <div class="controls">
     <h2>ワンコ通信 作成ツール</h2>
+    <p style="font-size:14px; color:#666;">① 元画像をアップロード → ② タイトル入力 → ③ 保存</p>
     <input type="file" id="bgUpload" accept="image/*"><br><br>
     <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに"><br>
     <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの"><br><br>
-    <button onclick="generateImage()">画像を更新・生成</button>
+    <button onclick="generateImage()">表示を更新</button>
     <button onclick="downloadImage()" style="background:#2196F3;">画像を保存する</button>
 </div>
 
@@ -28,7 +32,7 @@
 </div>
 
 <script>
-// 七十二候データ（名称とふりがな）
+// 七十二候データ（2026年2月26日は「霞始靆」付近）
 const kouData = [
     {n:"東風解凍", k:"はるかぜこおりをとく"}, {n:"黄鶯睍睆", k:"うぐいすなく"}, {n:"魚上氷", k:"うおこおりをいずる"},
     {n:"土脈潤起", k:"つちのしょううるおいおこる"}, {n:"霞始靆", k:"かすみはじめてたなびく"}, {n:"草木萌動", k:"そうもくめばえいずる"},
@@ -40,7 +44,7 @@ const kouData = [
     {n:"蟷螂生", k:"かまきりしょうず"}, {n:"腐草為蛍", k:"くされたるくさほたるとなる"}, {n:"梅子黄", k:"うめのみきばむ"},
     {n:"夏至", k:"げし"}, {n:"乃東枯", k:"なつかれくさかる"}, {n:"菖蒲華", k:"あやめはなさく"},
     {n:"温風至", k:"あつかぜいたる"}, {n:"蓮始開", k:"はすはじめてひらく"}, {n:"鷹乃学習", k:"たかすなわちわざをならう"},
-    {n:"大暑", k:"たいしょ"}, {n:"桐始結花", k:"きりはじめてはなをむすぶ"}, {n:"土潤溽暑", k:"つちうるおうてむしあつし"},
+    {n:"大暑", k:"たいしょ"}, {n:"桐始結花", k:"きりははじめてはなをむすぶ"}, {n:"土潤溽暑", k:"つちうるおうてむしあつし"},
     {n:"大雨時行", k:"たいうときどきふる"}, {n:"涼風至", k:"すずかぜいたる"}, {n:"寒蝉鳴", k:"ひぐらしなく"},
     {n:"立秋", k:"りっしゅう"}, {n:"蒙霧升降", k:"ふかききりまつおう"}, {n:"綿柎開", k:"わたのはなしべひらく"},
     {n:"草露白", k:"くさのつゆしろし"}, {n:"鶺鴒鳴", k:"せきれいなく"}, {n:"玄鳥去", k:"つばめさる"},
@@ -52,7 +56,7 @@ const kouData = [
     {n:"閉塞成冬", k:"そらさむくふゆとなる"}, {n:"鹿角解", k:"しかのつのおつる"}, {n:"雪下出麦", k:"ゆきわたりてむぎのびる"},
     {n:"小雪", k:"しょうせつ"}, {n:"芹乃栄", k:"せりすなわちさかう"}, {n:"水泉動", k:"しみずあたたかをふくむ"},
     {n:"雉始雊", k:"きじはじめてなく"}, {n:"款冬華", k:"ふきのはなはなさく"}, {n:"水沢腹堅", k:"さわみずこおりつめる"},
-    {n:"大寒", k:"だいかん"}, {n:"鶏始乳", k:"にわとりはじめてとやにつく"}, {n:"征鳥厲疾", k:"せいちょうはげしくすばやし"},
+    {n:"大寒", k:"たいしょ"}, {n:"鶏始乳", k:"にわとりはじめてとやにつく"}, {n:"征鳥厲疾", k:"せいちょうはげしくすばやし"},
     {n:"東風解凍", k:"はるかぜこおりをとく"}
 ];
 
@@ -78,7 +82,7 @@ document.getElementById('bgUpload').onchange = function(e) {
 
 function drawTextWithOutline(text, x, y, fontSize, color, hasShadow=true) {
     ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.textAlign = "center";
+    ctx.textAlign = "center"; // センタリング設定
     
     if(hasShadow) {
         ctx.shadowColor = "rgba(0,0,0,0.4)";
@@ -88,7 +92,7 @@ function drawTextWithOutline(text, x, y, fontSize, color, hasShadow=true) {
     }
 
     ctx.strokeStyle = "white";
-    ctx.lineWidth = fontSize * 0.2;
+    ctx.lineWidth = fontSize * 0.15;
     ctx.strokeText(text, x, y);
 
     ctx.shadowColor = "transparent";
@@ -105,35 +109,42 @@ function generateImage() {
     const kou = getKouInfo();
     const centerX = canvas.width / 2;
 
-    // 七十二候とふりがなの描画
+    // --- 七十二候エリア ---
     const kouY = canvas.height * 0.25;
     const kouFontSize = canvas.width * 0.055;
     const kanaFontSize = kouFontSize * 0.35;
 
-    // ふりがな（漢字の上に小さく）
-    ctx.font = `bold ${kanaFontSize}px sans-serif`;
+    ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(kou.kana, centerX, kouY - kouFontSize * 0.8);
+    
+    // ふりがな描画
+    ctx.font = `bold ${kanaFontSize}px sans-serif`;
+    ctx.fillText(kou.kana, centerX, kouY - kouFontSize * 0.85);
 
-    // 候の本体
+    // 候本体の描画
     ctx.font = `bold ${kouFontSize}px sans-serif`;
     ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, centerX, kouY);
 
-    // タイトル2行
+    // --- タイトルエリア（行間を詰める） ---
     const line1 = document.getElementById('line1').value;
     const line2 = document.getElementById('line2').value;
-    const titleSize = canvas.width * 0.09;
-
-    drawTextWithOutline(line1, centerX, canvas.height * 0.45, titleSize, "#e60000");
+    const titleSize = canvas.width * 0.10; // 少し大きく
+    
+    // 行間の調整：1行目と2行目の距離を近づける
+    const line1Y = canvas.height * 0.45;
+    const lineGap = titleSize * 1.1; // 行間をフォントサイズの1.1倍に（以前より詰めました）
+    
+    drawTextWithOutline(line1, centerX, line1Y, titleSize, "#e60000");
     if(line2) {
-        drawTextWithOutline(line2, centerX, canvas.height * 0.61, titleSize, "#e60000");
+        drawTextWithOutline(line2, centerX, line1Y + lineGap, titleSize, "#e60000");
     }
 }
 
 function downloadImage() {
+    if (!bgImg.src) { alert("画像をアップロードしてください"); return; }
     const link = document.createElement('a');
-    link.download = `wanko_${new Date().getMonth()+1}_${new Date().getDate()}.png`;
-    link.href = canvas.toDataURL();
+    link.download = `wanko_image.png`;
+    link.href = canvas.toDataURL("image/png");
     link.click();
 }
 </script>
