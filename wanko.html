@@ -6,16 +6,16 @@
     <style>
         body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 20px; margin: 0; }
         .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 90%; max-width: 600px; text-align: left; }
-        .control-group { margin-bottom: 10px; }
+        .control-group { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         label { font-size: 14px; font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
         input[type="text"] { width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         input[type="range"] { width: 100%; cursor: pointer; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 14px; }
         button { width: 100%; padding: 12px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 10px; font-size: 16px; }
         #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: crosshair; margin-top: 10px; }
         canvas { max-width: 100%; height: auto; display: block; touch-action: none; }
         .version { font-size: 12px; color: #999; margin-top: 10px; }
-        h3 { margin-top: 0; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .hint-text { font-size: 11px; color: #888; margin-top: 5px; }
+        h3 { margin-top: 0; text-align: center; color: #444; }
     </style>
 </head>
 <body>
@@ -24,9 +24,8 @@
     <h3>ワンコ通信 ジェネレーター <small>v1.4</small></h3>
     
     <div class="control-group">
-        <label>① 画像設定（自動で基本画像を読み込んでいます）</label>
+        <label>① 背景画像をアップロード</label>
         <input type="file" id="bgUpload" accept="image/*">
-        <div class="hint-text">※別の画像を使いたい場合のみ選択してください</div>
     </div>
 
     <div class="control-group">
@@ -36,8 +35,16 @@
     </div>
 
     <div class="control-group">
-        <label>③ タイトルの行間調整</label>
-        <input type="range" id="gapRange" min="0.5" max="2.5" step="0.05" value="1.3">
+        <label>③ お知らせ枠の設定</label>
+        <div class="checkbox-group">
+            <input type="checkbox" id="showBox" checked onchange="draw()"> 
+            <span>お知らせ枠（半透明の帯）を表示する</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label>④ タイトルの行間調整</label>
+        <input type="range" id="gapRange" min="0.5" max="2.5" step="0.05" value="1.3" oninput="draw()">
     </div>
 
     <button onclick="downloadImage()" style="background:#2196F3;">画像として完成・保存</button>
@@ -47,10 +54,9 @@
     <canvas id="myCanvas"></canvas>
 </div>
 
-<div class="version">App Version 1.4.0 - GitHub画像自動読み込み対応</div>
+<div class="version">App Version 1.4.0 - お知らせ枠ON/OFF復活版</div>
 
 <script>
-// 七十二候データ
 const kouData = [
     {n:"東風解凍", k:"はるかぜこおりをとく"}, {n:"黄鶯睍睆", k:"うぐいすなく"}, {n:"魚上氷", k:"うおこおりをいずる"},
     {n:"土脈潤起", k:"つちのしょううるおいおこる"}, {n:"霞始靆", k:"かすみはじめてたなびく"}, {n:"草木萌動", k:"そうもくめばえいずる"},
@@ -98,34 +104,20 @@ let pos = {
     target: null
 };
 
-// --- 初期設定：GitHubの画像を自動読み込み ---
-const defaultImageUrl = "https://raw.githubusercontent.com/asonproject/tea-under-club-universe/main/assets/issue2_base.jpg"; // 仮の直接リンク。Issueから抽出したURLを反映
-
-// 画像の読み込み処理
-function loadAndDraw(src) {
-    bgImg.crossOrigin = "Anonymous"; // 保存時のエラー回避
-    bgImg.src = src;
-    bgImg.onload = () => {
-        canvas.width = bgImg.width;
-        canvas.height = bgImg.height;
-        const cx = canvas.width / 2;
-        // 未設定の場合のみ初期位置をセット
-        if(pos.kana.x === 0) {
+document.getElementById('bgUpload').onchange = function(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        bgImg.src = event.target.result;
+        bgImg.onload = () => {
+            canvas.width = bgImg.width;
+            canvas.height = bgImg.height;
+            const cx = canvas.width / 2;
             pos.kana = { x: cx, y: canvas.height * 0.18 };
             pos.kou = { x: cx, y: canvas.height * 0.25 };
             pos.title = { x: cx, y: canvas.height * 0.55 };
-        }
-        draw();
+            draw();
+        };
     };
-}
-
-// 起動時にIssueの画像（URL）を読み込む
-// ※ GitHubのIssue内画像URLは期限があるため、実際のリポジトリ内の画像URLに置き換えると永続します。
-loadAndDraw("https://private-user-images.githubusercontent.com/5318819/555159433-5520e3c0-42c0-41e1-ab42-c3149e3f98ac.jpeg?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzIwODEwNjMsIm5iZiI6MTc3MjA4MDc2MywicGF0aCI6Ii81MzE4ODE5LzU1NTE1OTQzMy01NTIwZTNjMC00MmMwLTQxZTEtYWI0Mi1jMzE0OWUzZjk4YWMuanBlZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAyMjYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMjI2VDA0MzkyM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTdiZDhhMjRhZDUzOWFlYTUzMjkyZTYyZDY1NGY2YzgxZjRkMzc3N2E5ZjlkZWE5NDViZjhmZDQ2ODQxMTcyOGUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.eHi0dcYHwZ2-pzlaS0QdCGyFavRza_UNjpBLtuhKx2s");
-
-document.getElementById('bgUpload').onchange = function(e) {
-    const reader = new FileReader();
-    reader.onload = (event) => loadAndDraw(event.target.result);
     reader.readAsDataURL(e.target.files[0]);
 };
 
@@ -135,15 +127,25 @@ function draw() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
+    // 0. お知らせ枠（ONの時のみ描画）
+    if(document.getElementById('showBox').checked) {
+        ctx.fillStyle = "rgba(0, 128, 0, 0.4)"; // 緑色の半透明
+        const boxHeight = canvas.height * 0.15;
+        ctx.fillRect(0, pos.kou.y - boxHeight/2, canvas.width, boxHeight);
+    }
+
+    // 1. ふりがな
     const kouFontSize = canvas.width * 0.055;
     const kanaFontSize = kouFontSize * 0.35;
     ctx.font = `bold ${kanaFontSize}px sans-serif`;
     ctx.fillStyle = "white";
     ctx.fillText(kou.kana, pos.kana.x, pos.kana.y);
 
+    // 2. 七十二候
     ctx.font = `bold ${kouFontSize}px sans-serif`;
     ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, pos.kou.x, pos.kou.y);
 
+    // 3. タイトル
     const line1 = document.getElementById('line1').value;
     const line2 = document.getElementById('line2').value;
     const titleSize = canvas.width * 0.10;
@@ -155,6 +157,7 @@ function draw() {
         drawTitleText(line2, pos.title.x, pos.title.y + lineGap, titleSize);
     }
     
+    // バージョン
     ctx.font = "20px Arial";
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.textAlign = "right";
@@ -167,7 +170,7 @@ function drawTitleText(text, x, y, fontSize) {
     ctx.shadowBlur = 12;
     ctx.shadowOffsetX = 6;
     ctx.shadowOffsetY = 6;
-    ctx.shadowColor = "#FF4500";
+    ctx.shadowColor = "#FF4500"; 
     ctx.fillStyle = "white";
     ctx.fillText(text, x, y);
     ctx.shadowBlur = 4;
@@ -177,7 +180,6 @@ function drawTitleText(text, x, y, fontSize) {
 
 document.getElementById('line1').oninput = draw;
 document.getElementById('line2').oninput = draw;
-document.getElementById('gapRange').oninput = draw;
 
 function getCanvasPos(e) {
     const rect = canvas.getBoundingClientRect();
