@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ワンコ通信 ジェネレーター v1.1</title>
+    <title>ワンコ通信 ジェネレーター v1.2</title>
     <style>
         body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 20px; margin: 0; }
         .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 90%; max-width: 600px; }
@@ -16,7 +16,8 @@
 <body>
 
 <div class="controls">
-    <h3>ワンコ通信 ジェネレーター <small>v1.1</small></h3>
+    <h3>ワンコ通信 ジェネレーター <small>v1.2</small></h3>
+    <p style="font-size:12px; color:#666;">ふりがな、候、タイトルをそれぞれドラッグで動かせます</p>
     <input type="file" id="bgUpload" accept="image/*"><br>
     <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに">
     <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの"><br>
@@ -27,7 +28,7 @@
     <canvas id="myCanvas"></canvas>
 </div>
 
-<div class="version">App Version 1.1.0</div>
+<div class="version">App Version 1.2.0 - 各パーツ独立移動モード</div>
 
 <script>
 const kouData = [
@@ -69,9 +70,11 @@ const ctx = canvas.getContext('2d');
 let bgImg = new Image();
 let kou = getKouInfo();
 
+// 位置データの初期化（個別に動かせるように分離）
 let pos = {
-    kouX: 0, kouY: 0,
-    titleX: 0, titleY: 0,
+    kana: { x: 0, y: 0 },
+    kou: { x: 0, y: 0 },
+    title: { x: 0, y: 0 },
     isDragging: false,
     target: null
 };
@@ -83,10 +86,11 @@ document.getElementById('bgUpload').onchange = function(e) {
         bgImg.onload = () => {
             canvas.width = bgImg.width;
             canvas.height = bgImg.height;
-            pos.kouX = canvas.width / 2;
-            pos.kouY = canvas.height * 0.25;
-            pos.titleX = canvas.width / 2;
-            pos.titleY = canvas.height * 0.55;
+            // 初期配置
+            const cx = canvas.width / 2;
+            pos.kana = { x: cx, y: canvas.height * 0.18 };
+            pos.kou = { x: cx, y: canvas.height * 0.25 };
+            pos.title = { x: cx, y: canvas.height * 0.55 };
             draw();
         };
     };
@@ -97,63 +101,58 @@ function draw() {
     if (!bgImg.src) return;
     ctx.drawImage(bgImg, 0, 0);
 
-    // 1. 七十二候（ふりがな位置修正）
-    const kouFontSize = canvas.width * 0.055;
-    const kanaFontSize = kouFontSize * 0.35;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    
-    ctx.fillStyle = "white";
-    // ふりがな（漢字の真上）
-    ctx.font = `bold ${kanaFontSize}px sans-serif`;
-    ctx.fillText(kou.kana, pos.kouX, pos.kouY - (kouFontSize * 0.8));
-    // 漢字本体
-    ctx.font = `bold ${kouFontSize}px sans-serif`;
-    ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, pos.kouX, pos.kouY);
 
-    // 2. タイトル（白文字＋オレンジ影）
+    // 1. ふりがな
+    const kouFontSize = canvas.width * 0.055;
+    const kanaFontSize = kouFontSize * 0.35;
+    ctx.font = `bold ${kanaFontSize}px sans-serif`;
+    ctx.fillStyle = "white";
+    ctx.fillText(kou.kana, pos.kana.x, pos.kana.y);
+
+    // 2. 七十二候 本体
+    ctx.font = `bold ${kouFontSize}px sans-serif`;
+    ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, pos.kou.x, pos.kou.y);
+
+    // 3. タイトル（白文字＋濃いオレンジ影）
     const line1 = document.getElementById('line1').value;
     const line2 = document.getElementById('line2').value;
     const titleSize = canvas.width * 0.10;
     const lineGap = titleSize * 1.35;
 
-    drawTitleText(line1, pos.titleX, pos.titleY, titleSize);
+    drawTitleText(line1, pos.title.x, pos.title.y, titleSize);
     if(line2) {
-        drawTitleText(line2, pos.titleX, pos.titleY + lineGap, titleSize);
+        drawTitleText(line2, pos.title.x, pos.title.y + lineGap, titleSize);
     }
     
-    // 右下にバージョン表記
+    // バージョン
     ctx.font = "20px Arial";
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.textAlign = "right";
-    ctx.fillText("v1.1", canvas.width - 20, canvas.height - 20);
+    ctx.fillText("v1.2", canvas.width - 20, canvas.height - 20);
 }
 
 function drawTitleText(text, x, y, fontSize) {
     ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.textAlign = "center";
     
-    // オレンジ色の影
-    ctx.shadowColor = "orange";
-    ctx.shadowBlur = 15;
-    ctx.shadowOffsetX = 6;
-    ctx.shadowOffsetY = 6;
+    // 影を濃いオレンジに変更
+    ctx.shadowColor = "#FF8C00"; // DarkOrange
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
     
-    // 白文字
     ctx.fillStyle = "white";
     ctx.fillText(text, x, y);
     
-    // 影をリセット
+    // リセット
     ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
 }
 
 document.getElementById('line1').oninput = draw;
 document.getElementById('line2').oninput = draw;
 
-// ドラッグ処理の改善
 function getCanvasPos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -167,11 +166,14 @@ function getCanvasPos(e) {
 const handleStart = (e) => {
     if (!bgImg.src) return;
     const m = getCanvasPos(e);
-    // 判定距離を大きく（タッチ操作しやすく）
-    const distKou = Math.sqrt((m.x - pos.kouX)**2 + (m.y - pos.kouY)**2);
-    const distTitle = Math.sqrt((m.x - pos.titleX)**2 + (m.y - pos.titleY)**2);
+    
+    // 各パーツとの距離を計算
+    const distKana = Math.sqrt((m.x - pos.kana.x)**2 + (m.y - pos.kana.y)**2);
+    const distKou = Math.sqrt((m.x - pos.kou.x)**2 + (m.y - pos.kou.y)**2);
+    const distTitle = Math.sqrt((m.x - pos.title.x)**2 + (m.y - pos.title.y)**2);
 
-    if (distKou < 150) { pos.target = 'kou'; pos.isDragging = true; }
+    if (distKana < 80) { pos.target = 'kana'; pos.isDragging = true; }
+    else if (distKou < 120) { pos.target = 'kou'; pos.isDragging = true; }
     else if (distTitle < 200) { pos.target = 'title'; pos.isDragging = true; }
 };
 
@@ -179,8 +181,8 @@ const handleMove = (e) => {
     if (!pos.isDragging) return;
     e.preventDefault();
     const m = getCanvasPos(e);
-    if (pos.target === 'kou') { pos.kouX = m.x; pos.kouY = m.y; }
-    if (pos.target === 'title') { pos.titleX = m.x; pos.titleY = m.y; }
+    pos[pos.target].x = m.x;
+    pos[pos.target].y = m.y;
     draw();
 };
 
@@ -193,7 +195,7 @@ window.addEventListener('touchend', () => pos.isDragging = false);
 
 function downloadImage() {
     const link = document.createElement('a');
-    link.download = `wanko_v1.1.png`;
+    link.download = `wanko_v1.2.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 }
