@@ -2,13 +2,17 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ワンコ通信 ジェネレーター v1.2</title>
+    <title>ワンコ通信 ジェネレーター v1.3</title>
     <style>
         body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 20px; margin: 0; }
-        .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 90%; max-width: 600px; }
-        input[type="text"] { width: 80%; padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 20px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; margin: 5px; }
-        #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: crosshair; }
+        .controls { background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; width: 90%; max-width: 650px; text-align: left; }
+        .input-group { margin: 10px 0; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
+        input[type="text"], textarea { width: 95%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        textarea { height: 60px; resize: vertical; }
+        .checkbox-group { background: #e9f7ef; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        button { padding: 10px 20px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+        #canvas-container { position: relative; display: inline-block; background: white; border: 2px solid #333; cursor: crosshair; margin-top: 10px; }
         canvas { max-width: 100%; height: auto; display: block; touch-action: none; }
         .version { font-size: 12px; color: #999; margin-top: 10px; }
     </style>
@@ -16,19 +20,36 @@
 <body>
 
 <div class="controls">
-    <h3>ワンコ通信 ジェネレーター <small>v1.2</small></h3>
-    <p style="font-size:12px; color:#666;">ふりがな、候、タイトルをそれぞれドラッグで動かせます</p>
-    <input type="file" id="bgUpload" accept="image/*"><br>
-    <input type="text" id="line1" placeholder="タイトル1行目" value="成長とともに">
-    <input type="text" id="line2" placeholder="タイトル2行目" value="外れていくもの"><br>
-    <button onclick="downloadImage()" style="background:#2196F3;">画像として保存</button>
+    <h3 style="text-align:center; margin-top:0;">ワンコ通信 作成ツール v1.3</h3>
+    
+    <div class="input-group">
+        <label>① 画像アップロード</label>
+        <input type="file" id="bgUpload" accept="image/*">
+    </div>
+
+    <div class="input-group">
+        <label>② メインタイトル（ドラッグ移動可）</label>
+        <input type="text" id="line1" value="成長とともに">
+        <input type="text" id="line2" value="外れていくもの">
+    </div>
+
+    <div class="checkbox-group">
+        <label><input type="checkbox" id="infoVisible" checked onchange="draw()"> ✅ 左下のお知らせ枠を表示する</label>
+        <textarea id="infoText" oninput="draw()" placeholder="お知らせの内容を入力してください">● 2026/1/30 (金) 11時
+古聖中学校授業参観内
+「子どもの可能性を開く大人の勉強会」</textarea>
+    </div>
+
+    <div style="text-align:center;">
+        <button onclick="downloadImage()" style="background:#2196F3;">画像として保存</button>
+    </div>
 </div>
 
 <div id="canvas-container">
     <canvas id="myCanvas"></canvas>
 </div>
 
-<div class="version">App Version 1.2.0 - 各パーツ独立移動モード</div>
+<div class="version">App Version 1.3.0 - お知らせ枠機能追加</div>
 
 <script>
 const kouData = [
@@ -70,11 +91,11 @@ const ctx = canvas.getContext('2d');
 let bgImg = new Image();
 let kou = getKouInfo();
 
-// 位置データの初期化（個別に動かせるように分離）
 let pos = {
     kana: { x: 0, y: 0 },
     kou: { x: 0, y: 0 },
     title: { x: 0, y: 0 },
+    info: { x: 0, y: 0 }, // お知らせ枠も移動可能に
     isDragging: false,
     target: null
 };
@@ -86,11 +107,11 @@ document.getElementById('bgUpload').onchange = function(e) {
         bgImg.onload = () => {
             canvas.width = bgImg.width;
             canvas.height = bgImg.height;
-            // 初期配置
             const cx = canvas.width / 2;
             pos.kana = { x: cx, y: canvas.height * 0.18 };
             pos.kou = { x: cx, y: canvas.height * 0.25 };
             pos.title = { x: cx, y: canvas.height * 0.55 };
+            pos.info = { x: canvas.width * 0.05, y: canvas.height * 0.68 };
             draw();
         };
     };
@@ -101,53 +122,76 @@ function draw() {
     if (!bgImg.src) return;
     ctx.drawImage(bgImg, 0, 0);
 
+    // 1. 候とふりがな
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-
-    // 1. ふりがな
     const kouFontSize = canvas.width * 0.055;
-    const kanaFontSize = kouFontSize * 0.35;
-    ctx.font = `bold ${kanaFontSize}px sans-serif`;
+    ctx.font = `bold ${kouFontSize * 0.35}px sans-serif`;
     ctx.fillStyle = "white";
     ctx.fillText(kou.kana, pos.kana.x, pos.kana.y);
-
-    // 2. 七十二候 本体
     ctx.font = `bold ${kouFontSize}px sans-serif`;
     ctx.fillText(`〜 第${kou.num}候「${kou.name}」 〜`, pos.kou.x, pos.kou.y);
 
-    // 3. タイトル（白文字＋濃いオレンジ影）
+    // 2. タイトル
     const line1 = document.getElementById('line1').value;
     const line2 = document.getElementById('line2').value;
     const titleSize = canvas.width * 0.10;
-    const lineGap = titleSize * 1.35;
-
     drawTitleText(line1, pos.title.x, pos.title.y, titleSize);
-    if(line2) {
-        drawTitleText(line2, pos.title.x, pos.title.y + lineGap, titleSize);
+    if(line2) drawTitleText(line2, pos.title.x, pos.title.y + titleSize * 1.35, titleSize);
+
+    // 3. お知らせ枠（チェックが入っている時のみ）
+    if(document.getElementById('infoVisible').checked) {
+        drawInfoBox();
     }
     
     // バージョン
     ctx.font = "20px Arial";
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.textAlign = "right";
-    ctx.fillText("v1.2", canvas.width - 20, canvas.height - 20);
+    ctx.fillText("v1.3", canvas.width - 20, canvas.height - 20);
 }
 
 function drawTitleText(text, x, y, fontSize) {
     ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.textAlign = "center";
-    
-    // 影を濃いオレンジに変更
-    ctx.shadowColor = "#FF8C00"; // DarkOrange
+    ctx.shadowColor = "#FF8C00";
     ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 5;
     ctx.shadowOffsetY = 5;
-    
     ctx.fillStyle = "white";
     ctx.fillText(text, x, y);
-    
-    // リセット
     ctx.shadowColor = "transparent";
+}
+
+function drawInfoBox() {
+    const boxW = canvas.width * 0.45;
+    const boxH = canvas.height * 0.28;
+    const x = pos.info.x;
+    const y = pos.info.y;
+
+    // 白背景の枠
+    ctx.fillStyle = "white";
+    ctx.shadowColor = "rgba(0,0,0,0.2)";
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.roundRect(x, y, boxW, boxH, 15);
+    ctx.fill();
+    ctx.shadowColor = "transparent";
+
+    // 「お知らせ」ヘッダー
+    ctx.fillStyle = "#e60000";
+    ctx.textAlign = "center";
+    ctx.font = `bold ${canvas.width * 0.035}px sans-serif`;
+    ctx.fillText("お知らせ", x + boxW/2, y + boxH * 0.15);
+
+    // テキスト内容
+    ctx.fillStyle = "#333";
+    ctx.textAlign = "left";
+    ctx.font = `${canvas.width * 0.025}px sans-serif`;
+    const lines = document.getElementById('infoText').value.split('\n');
+    lines.forEach((line, i) => {
+        ctx.fillText(line, x + 20, y + boxH * 0.35 + (i * canvas.width * 0.035));
+    });
 }
 
 document.getElementById('line1').oninput = draw;
@@ -166,15 +210,15 @@ function getCanvasPos(e) {
 const handleStart = (e) => {
     if (!bgImg.src) return;
     const m = getCanvasPos(e);
-    
-    // 各パーツとの距離を計算
     const distKana = Math.sqrt((m.x - pos.kana.x)**2 + (m.y - pos.kana.y)**2);
     const distKou = Math.sqrt((m.x - pos.kou.x)**2 + (m.y - pos.kou.y)**2);
     const distTitle = Math.sqrt((m.x - pos.title.x)**2 + (m.y - pos.title.y)**2);
+    const distInfo = Math.sqrt((m.x - pos.info.x)**2 + (m.y - pos.info.y)**2);
 
     if (distKana < 80) { pos.target = 'kana'; pos.isDragging = true; }
     else if (distKou < 120) { pos.target = 'kou'; pos.isDragging = true; }
     else if (distTitle < 200) { pos.target = 'title'; pos.isDragging = true; }
+    else if (distInfo < 200) { pos.target = 'info'; pos.isDragging = true; }
 };
 
 const handleMove = (e) => {
@@ -195,7 +239,7 @@ window.addEventListener('touchend', () => pos.isDragging = false);
 
 function downloadImage() {
     const link = document.createElement('a');
-    link.download = `wanko_v1.2.png`;
+    link.download = `wanko_v1.3.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 }
