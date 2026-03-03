@@ -416,18 +416,40 @@
             if (inquiryForm) {
                 inquiryForm.addEventListener('submit', (e) => {
                     e.preventDefault();
+
+                    // GASのウェブアプリURLをここに貼り付けてください
+                    const GAS_URL = 'https://script.google.com/macros/s/AKfycby5tXN6T8hG7zFjH8Y_uX9X_vX_XXXXXX/exec'; // 暫定URL
+
                     submitBtn.disabled = true;
                     submitBtn.textContent = '送信中...';
                     formMessage.style.display = 'none';
 
-                    setTimeout(() => {
-                        formMessage.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
-                        formMessage.className = 'success';
-                        formMessage.style.display = 'block';
-                        submitBtn.textContent = '送信完了';
-                        inquiryForm.reset();
-                        formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 1500);
+                    const formData = new FormData(inquiryForm);
+
+                    // fetch で GAS へ送信
+                    fetch(GAS_URL, {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'no-cors' // GASの制約上 no-cors を使用することが多い
+                    })
+                        .then(() => {
+                            // 成功時の処理
+                            formMessage.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
+                            formMessage.className = 'success';
+                            formMessage.style.display = 'block';
+                            submitBtn.textContent = '送信完了';
+                            inquiryForm.reset();
+                            formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        })
+                        .catch((error) => {
+                            // エラー時の処理
+                            console.error('Error:', error);
+                            formMessage.textContent = '送信中にエラーが発生しました。時間をおいて再度お試しいただくか、直接お電話にてお問い合わせください。';
+                            formMessage.className = 'error'; // スタイルが必要な場合は追加
+                            formMessage.style.display = 'block';
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = '内容を送信する';
+                        });
                 });
             }
         });
