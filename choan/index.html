@@ -526,6 +526,7 @@
             transform: none;
         }
 
+
         /* Animation */
         @keyframes fadeInUp {
             from {
@@ -552,7 +553,7 @@
                     <img src="./assets/choan-20240207.png" alt="合同会社 長安">
                 </a>
             </div>
-            <a href="#contact" class="cta-button-header">お問い合わせ</a>
+            <a href="./inquiry.html" class="cta-button-header">お問い合わせ</a>
         </div>
     </header>
 
@@ -830,13 +831,14 @@
             </div>
         </section>
 
+
     </main>
 
     <footer class="site-footer" id="contact">
         <div class="container">
             <div class="footer-links">
-                <a href="#">お問い合わせ</a>
-                <a href="#">個人情報保護方針</a>
+                <a href="./inquiry.html">お問い合わせ</a>
+                <a href="./privacypolicy.html">個人情報保護方針</a>
                 <a href="https://www.instagram.com/choan.jp" target="_blank" rel="noopener noreferrer"
                     style="display: inline-flex; align-items: center; gap: 4px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -872,6 +874,22 @@
             const sections = document.querySelectorAll('.fade-in-section');
             sections.forEach(section => {
                 observer.observe(section);
+            });
+
+            // Navigation scroll adjustment
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#' || href.startsWith('./')) return;
+
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
         });
     </script>

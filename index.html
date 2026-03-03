@@ -793,6 +793,51 @@
             margin: 1.5rem 0;
         }
 
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            /* Above mobile nav */
+            width: 44px;
+            height: 44px;
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(165, 180, 252, 0.2);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            bottom: 90px;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            background-color: #fff;
+            color: #3730a3;
+        }
+
+        @media (min-width: 901px) {
+            .back-to-top {
+                bottom: 30px;
+            }
+
+            .back-to-top.visible {
+                bottom: 40px;
+            }
+        }
+
         .loading-text {
             color: var(--text-muted);
             font-style: italic;
@@ -1727,6 +1772,14 @@
         </a>
     </nav>
 
+    <!-- Back to Top Button -->
+    <div id="backToTop" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </div>
+
     <script>
         // Smooth scroll for bottom nav
         function scrollToShelf(e, keyword) {
@@ -1739,6 +1792,16 @@
                 }
             }
         }
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
     </script>
 
 </body>
