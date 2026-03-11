@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>琉球のタネ — 地域文化振興モデル</title>
+    <meta name="description" content="9つのプロジェクトを世界プロジェクト成長5段階モデルに当てはめ、地域知識文明として可視化するインタラクティブマップ">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&family=Noto+Serif+JP:wght@700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- 変数定義 (通常モード) --- */
+        :root {
+            /* jsxに定義されていたカラーパレットを採用 */
+            --brand-tiandaa: #f97316;
+            /* オレンジ寄り */
+            --brand-mikata: #06b6d4;
+            /* シアン */
+            --brand-alpaca: #22c55e;
+            /* 緑 */
+            --brand-news: #eab308;
+            /* 黄色 */
+            --brand-bungei: #e11d48;
+            /* 赤 */
+            --brand-universe: #a855f7;
+            /* 紫 */
+
+            --bg-color: #fcfdfe;
+            --text-main: #333333;
+            --text-secondary: #666666;
+            --border-color: #e5e7eb;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --bg-inviting: rgba(34, 197, 94, 0.05);
+            /* アルパカ色ベース */
+
+            /* アクセシビリティ用の変数 */
+            --border-width-thick: 5px;
+            --link-decoration: none;
+            --base-font-size: 100%;
+            --font-weight-base: normal;
+
+            /* フォント */
+            --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            --font-serif: 'Noto Serif JP', serif;
+        }
+
+        /* --- 視覚サポートモード (色覚異常・弱視・色盲 対応) --- */
+        body.accessibility-mode {
+            --brand-tiandaa: #D55E00;
+            --brand-mikata: #0072B2;
+            --brand-alpaca: #009E73;
+            --brand-news: #E69F00;
+            --brand-bungei: #CC79A7;
+            --brand-universe: #56B4E9;
+
+            --bg-color: #ffffff;
+            --text-main: #000000;
+            --text-secondary: #222222;
+            --border-color: #000000;
+            --nav-bg: #ffffff;
+            --bg-inviting: #f4f4f4;
+
+            --base-font-size: 105%;
+            --font-weight-base: 500;
+            --border-width-thick: 8px;
+            --link-decoration: underline;
+        }
+
+        /* --- リセット & ベース --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: var(--base-font-size);
+            font-weight: var(--font-weight-base);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s, font-size 0.3s;
+        }
+
+        h1,
+        h2 {
+            font-family: var(--font-serif);
+        }
+
+        a {
+            text-decoration: var(--link-decoration);
+            color: inherit;
+            text-underline-offset: 4px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            margin-bottom: 15px;
+            color: #2a1a0e;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: clamp(0.95rem, 3vw, 1.05rem);
+            margin-bottom: 50px;
+        }
+
+        body.accessibility-mode .section-title {
+            color: #000;
+        }
+
+        /* --- ナビゲーション --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 12px 0;
+            transition: background-color 0.3s;
+        }
+
+        body:not(.accessibility-mode) .navbar {
+            backdrop-filter: blur(10px);
+        }
+
+        body.accessibility-mode .navbar {
+            border-bottom-width: 3px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none !important;
+            font-family: var(--font-serif);
+        }
+
+        .nav-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            min-height: 44px;
+            min-width: 44px;
+            color: var(--text-main);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            padding: 10px 5px;
+            display: block;
+        }
+
+        /* --- 視覚サポート切替ボタン --- */
+        .theme-toggle-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 9999;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: 2px solid var(--text-main);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, background-color 0.3s, color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        body.accessibility-mode .theme-toggle-btn {
+            background: #ffffff;
+            color: #000000;
+            border: 3px solid #000000;
+        }
+
+        /* --- ヒーロー --- */
+        .hero {
+            padding: 140px 0 80px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(6, 182, 212, 0.08));
+        }
+
+        body.accessibility-mode .hero {
+            background: #f8f8f8;
+            border-bottom: 2px solid #000;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--brand-tiandaa), var(--brand-bungei));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.accessibility-mode .gradient-text {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-width: 140px;
+            border: 1px solid var(--border-color);
+        }
+
+        body.accessibility-mode .hero-stat {
+            border: 2px solid #000;
+        }
+
+        .hero-stat .number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--brand-alpaca);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        /* --- 各種レイアウト --- */
+        .stages-timeline,
+        .seven-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .four-models-grid,
+        .people-strategy {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .projects-grid,
+        .brand-accordion {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .inviting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin-top: 40px;
+            gap: 30px;
+        }
+
+        /* --- Stage カード --- */
+        .stage-item {
+            display: flex;
+            gap: 15px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border-left: var(--border-width-thick) solid var(--brand-mikata);
+        }
+
+        body.accessibility-mode .stage-item {
+            border: 2px solid #000;
+            border-left-width: var(--border-width-thick);
+        }
+
+        .stage-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--brand-mikata);
+            font-family: var(--font-serif);
+        }
+
+        .stage-en {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .stage-project-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin: 5px 5px 0 0;
+            font-weight: bold;
+        }
+
+        body.accessibility-mode .stage-project-tag {
+            border: 1px solid #000;
+        }
+
+        /* --- 琉球のタネ マップ --- */
+        .civ-map {
+            text-align: center;
+        }
+
+        .civ-map-node {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px auto;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left-width: var(--border-width-thick) !important;
+            border-left-style: solid;
+        }
+
+        body.accessibility-mode .civ-map-node {
+            border: 2px solid #000;
+            border-left-width: var(--border-width-thick);
+        }
+
+        .civ-map-arrow {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .civ-map-cycle {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        body.accessibility-mode .civ-map-cycle {
+            background: #fff;
+            border: 3px solid var(--text-main);
+        }
+
+        /* --- 動的カード (JSで生成されるカードの基本スタイル) --- */
+        .content-card {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        body.accessibility-mode .content-card {
+            border: 2px solid #000;
+        }
+
+        /* プロジェクト用のトップライン */
+        .content-card.top-line {
+            border-top-style: solid;
+            border-top-width: var(--border-width-thick);
+        }
+
+        body.accessibility-mode .content-card.top-line {
+            border-top-width: var(--border-width-thick);
+        }
+
+        /* ブランド用のレフトライン (クリック可能デザイン) */
+        .content-card.left-line {
+            border-left-style: solid;
+            border-left-width: var(--border-width-thick);
+            cursor: pointer;
+        }
+
+        .content-card.left-line:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body.accessibility-mode .content-card.left-line {
+            border-left-width: var(--border-width-thick);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card-icon-inline {
+            font-size: 2.8rem;
+            margin-right: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2a1a0e;
+            font-family: var(--font-serif);
+            text-align: center;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .card-role {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        /* 左寄せ用のタイトル */
+        .card-title-left {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2a1a0e;
+            font-family: var(--font-serif);
+        }
+
+        body.accessibility-mode .card-title,
+        body.accessibility-mode .card-title-left {
+            color: #000;
+        }
+
+        /* --- テーブル・その他 --- */
+        .model-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+
+        body.accessibility-mode .model-card {
+            border: 2px solid #000;
+        }
+
+        .model-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .model-example {
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            color: var(--brand-mikata);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: var(--border-width-thick) solid var(--brand-bungei);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        body.accessibility-mode .step-item {
+            border: 2px solid #000;
+            border-left-width: var(--border-width-thick);
+        }
+
+        .step-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--brand-bungei);
+            min-width: 30px;
+        }
+
+        .step-connector {
+            text-align: center;
+            font-weight: bold;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+        }
+
+        .comparison-table-wrap {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.accessibility-mode .comparison-table-wrap {
+            border: 2px solid #000;
+        }
+
+        .comparison-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: bold;
+            border-bottom: 2px solid var(--text-main);
+        }
+
+        body.accessibility-mode .comparison-table th {
+            background: #e0e0e0;
+            color: #000;
+        }
+
+        .people-ring {
+            background: white;
+            padding: 20px;
+            border-radius: 50%;
+            width: 230px;
+            height: 230px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-width: var(--border-width-thick);
+            border-style: solid;
+        }
+
+        .ring-number {
+            font-size: 3rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 5px;
+            font-family: var(--font-serif);
+        }
+
+        .ring-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .ring-list {
+            text-align: left;
+            font-size: 0.85rem;
+            padding-left: 15px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        #inviting-region {
+            background: var(--bg-inviting);
+            transition: background-color 0.3s;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .inviting-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border-bottom-style: solid;
+            border-bottom-width: var(--border-width-thick);
+        }
+
+        body.accessibility-mode .inviting-card {
+            border: 2px solid #000;
+            border-bottom-width: var(--border-width-thick);
+        }
+
+        .inviting-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .inviting-link {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            background: #2a1a0e;
+            color: white;
+            font-weight: bold;
+            font-family: var(--font-serif);
+            letter-spacing: 1px;
+        }
+
+        body.accessibility-mode .footer {
+            background: #000000;
+            color: #ffffff;
+            border-top: 5px solid #ffffff;
+        }
+
+        /* --- モーダル (ポップアップ画面) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            padding: 50px 40px;
+            border-radius: 16px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.accessibility-mode .modal-content {
+            border: 4px solid var(--text-main);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #f1f5f9;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+        }
+
+        body.accessibility-mode .modal-close {
+            background: #000;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        #modalIcon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #modalTitle {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-family: var(--font-serif);
+        }
+
+        #modalRole {
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        #modalDesc {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        #modalDesc p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        /* --- モバイル対応 --- */
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                background: var(--bg-color);
+                padding: 10px 0;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                text-align: center;
+                padding: 5px 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .stage-item,
+            .step-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stage-item {
+                border-left: none;
+                border-top-style: solid;
+                border-top-width: var(--border-width-thick);
+                border-top-color: var(--brand-mikata);
+            }
+
+            body.accessibility-mode .stage-item {
+                border: 2px solid #000;
+                border-top-width: var(--border-width-thick);
+            }
+
+            .step-item {
+                border-left: none;
+                border-top-style: solid;
+                border-top-width: var(--border-width-thick);
+                border-top-color: var(--brand-bungei);
+            }
+
+            body.accessibility-mode .step-item {
+                border: 2px solid #000;
+                border-top-width: var(--border-width-thick);
+            }
+
+            .hero-stat {
+                flex: 1 1 45%;
+                min-width: auto;
+                padding: 15px;
+            }
+
+            .people-ring {
+                width: 100%;
+                height: auto;
+                border-radius: 12px;
+                padding: 30px;
+            }
+
+            .content-card.left-line {
+                border-left: none;
+                border-top-style: solid;
+                border-top-width: var(--border-width-thick);
+            }
+
+            body.accessibility-mode .content-card.left-line {
+                border-top-width: var(--border-width-thick);
+            }
+
+            .card-icon-inline {
+                margin-bottom: 15px;
+                text-align: center;
+                display: block;
+                width: 100%;
+            }
+
+            .card-title-left,
+            .card-role {
+                text-align: center;
+            }
+
+            .left-line>div {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#hero" class="nav-logo">🌺 琉球のタネ</a>
+            <button class="nav-toggle" id="navToggle" aria-label="メニュー">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#stages">5段階モデル</a></li>
+                <li><a href="#projects">9つのプロジェクト</a></li>
+                <li><a href="#civ-map">琉球のタネ</a></li>
+                <li><a href="#inviting-region">よばれる地域</a></li>
+                <li><a href="#four-models">4つの文明</a></li>
+                <li><a href="#brands">文化ブランド</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="hero-content container">
+            <div class="hero-badge">
+                <span class="dot">●</span> Community Knowledge Civilization
+            </div>
+            <h1>
+                <span class="gradient-text">琉球のタネ</span><br>
+                地域文化振興プロジェクト
+            </h1>
+            <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                9つのプロジェクトが織りなす「経験知コモンズ」。<br>
+                家庭から始まり、地域を超え、世界に広がる<br>
+                <strong>沖縄型地域文化振興プロジェクト</strong>の全体像。
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="number">9</div>
+                    <div class="label">プロジェクト</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">5</div>
+                    <div class="label">成長段階</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">6</div>
+                    <div class="label">文明ブランド</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">7</div>
+                    <div class="label">拡張ステップ</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="stages">
+        <div class="container">
+            <h2 class="section-title">世界プロジェクト成長の5段階モデル</h2>
+            <p class="section-subtitle">
+                小さな活動 → 知識化 → メディア化 → ネットワーク化 → 文化化。<br>
+                世界の成功例（Khan Academy / Barefoot College / StoryCorps）もこの順番で拡大している。
+            </p>
+
+            <div class="stages-timeline">
+                <div class="stage-item">
+                    <div class="stage-number-wrap">
+                        <div class="stage-number">①</div>
+                    </div>
+                    <div class="stage-card">
+                        <h3>実験段階</h3>
+                        <div class="stage-en">Pilot — ここはすでに強い</div>
+                        <p>少人数・柔軟・試行錯誤が重要。小さな実験から文明が始まる。</p>
+                        <div class="stage-projects">
+                            <span class="stage-project-tag">📚 ワンコイン勉強室</span>
+                            <span class="stage-project-tag">👨‍👩‍👧 子育て勉強会</span>
+                            <span class="stage-project-tag">📖 文芸フリマ</span>
+                            <span class="stage-project-tag">🦙 アルパカすく〜る</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-item">
+                    <div class="stage-number-wrap">
+                        <div class="stage-number">②</div>
+                    </div>
+                    <div class="stage-card">
+                        <h3>コミュニティ段階</h3>
+                        <div class="stage-en">Community — 参加者同士の関係が生まれる</div>
+                        <p>すでに出来ている段階。人が集まり、つながりが生まれ、共同体になる。</p>
+                        <div class="stage-projects">
+                            <span class="stage-project-tag">🏠 てぃあんだぁクラブ</span>
+                            <span class="stage-project-tag">🛡️ 子どものMIKATA</span>
+                            <span class="stage-project-tag">🐕 わんこNEWS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-item">
+                    <div class="stage-number-wrap">
+                        <div class="stage-number">③</div>
+                    </div>
+                    <div class="stage-card">
+                        <h3>知識資産段階</h3>
+                        <div class="stage-en">Knowledge Assets — 次の重要ステージ</div>
+                        <p>事例収集・データ化・記録・教材化。地域の知恵を知識資産にする。</p>
+                        <div class="stage-projects">
+                            <span class="stage-project-tag">🔬 子どものMIKATA研究会</span>
+                            <span class="stage-project-tag">🐕 わんこNEWS</span>
+                            <span class="stage-project-tag">📖 文芸フリマ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-item">
+                    <div class="stage-number-wrap">
+                        <div class="stage-number">④</div>
+                    </div>
+                    <div class="stage-card">
+                        <h3>ネットワーク段階</h3>
+                        <div class="stage-en">Network — 各活動のハブ・他地域連携</div>
+                        <p>各活動のハブとなり、他地域との連携やオンライン拡張が進む段階。</p>
+                        <div class="stage-projects">
+                            <span class="stage-project-tag">🌏 てぃあんだぁクラブuniverse</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-item">
+                    <div class="stage-number-wrap">
+                        <div class="stage-number">⑤</div>
+                    </div>
+                    <div class="stage-card">
+                        <h3>文化・運動段階</h3>
+                        <div class="stage-en">Culture & Movement — 琉球のタネ</div>
+                        <p>単なる活動ではなく文化になる。地域文化→教育→メディア→社会運動という循環。</p>
+                        <div class="stage-projects">
+                            <span class="stage-project-tag">🌺 琉球のタネ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="projects" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">9つのプロジェクト</h2>
+            <p class="section-subtitle">
+                教育 → 福祉 → 文化 → メディアを全部つないでいる構造。<br>
+                社会教育・コミュニティデザイン・市民メディアの交差点。
+            </p>
+
+            <div class="projects-grid" id="projectsGrid">
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="civ-map">
+        <div class="container">
+            <h2 class="section-title">琉球のタネ 循環マップ</h2>
+            <p class="section-subtitle">
+                6つのブランドが循環する文化振興装置。<br>
+                体験 → 学び → 記録 → 表現 → 文化 → 世界 → 新しい体験
+            </p>
+
+            <div class="civ-map">
+                <div class="civ-map-flow">
+                    <div class="civ-map-node" style="border-left-color: var(--brand-tiandaa);">
+                        <div class="node-emoji">🏠</div>
+                        <h4>てぃあんだぁクラブ</h4>
+                        <div class="node-role">文化・共同体基盤</div>
+                    </div>
+                    <div class="civ-map-arrow">▼</div>
+                    <div class="civ-map-node" style="border-left-color: var(--brand-mikata);">
+                        <div class="node-emoji">🛡️</div>
+                        <h4>子どものMIKATA</h4>
+                        <div class="node-role">相談・教育入口</div>
+                    </div>
+                    <div class="civ-map-arrow">▼</div>
+                    <div class="civ-map-node" style="border-left-color: var(--brand-alpaca);">
+                        <div class="node-emoji">🦙</div>
+                        <h4>アルパカすく〜る</h4>
+                        <div class="node-role">学習・教育</div>
+                    </div>
+                    <div class="civ-map-arrow">▼</div>
+                    <div class="civ-map-node" style="border-left-color: var(--brand-news);">
+                        <div class="node-emoji">🐕</div>
+                        <h4>わんこNEWS</h4>
+                        <div class="node-role">地域メディア・記録</div>
+                    </div>
+                    <div class="civ-map-arrow">▼</div>
+                    <div class="civ-map-node" style="border-left-color: var(--brand-bungei);">
+                        <div class="node-emoji">📖</div>
+                        <h4>文芸フリマ</h4>
+                        <div class="node-role">物語・文化創造</div>
+                    </div>
+                    <div class="civ-map-arrow">▼</div>
+                    <div class="civ-map-node" style="border-left-color: var(--brand-universe);">
+                        <div class="node-emoji">🌏</div>
+                        <h4>てぃあんだぁクラブuniverse</h4>
+                        <div class="node-role">世界ネットワーク</div>
+                    </div>
+                </div>
+                <div class="civ-map-cycle">
+                    <span class="cycle-arrow">🔄</span> 体験 → 語る → 記録 → 知恵 → 共有 → 次の体験<br>
+                    <strong>この循環が「地域文化振興エンジン」を回す</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="four-models" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">4つの文明モデルの融合</h2>
+            <p class="section-subtitle">
+                世界の社会プロジェクトは4つの文明モデルに分類できる。<br>
+                この構想は、その4つ全部を部分的に持っている珍しいタイプ。
+            </p>
+
+            <div class="four-models-grid">
+                <div class="model-card">
+                    <div class="model-icon">📚</div>
+                    <h3>知識文明</h3>
+                    <div class="model-en" style="color: var(--brand-mikata); font-weight: bold; margin-bottom: 10px;">
+                        Knowledge</div>
+                    <div class="model-example">世界の例：Wikipedia</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">知識 → 共有 →
+                        社会の理解が増える</p>
+                    <div class="model-projects">
+                        <span class="model-tag">MIKATA研究会</span><span class="model-tag">わんこNEWS</span>
+                    </div>
+                </div>
+
+                <div class="model-card">
+                    <div class="model-icon">🎓</div>
+                    <h3>教育文明</h3>
+                    <div class="model-en" style="color: var(--brand-alpaca); font-weight: bold; margin-bottom: 10px;">
+                        Learning</div>
+                    <div class="model-example">世界の例：Khan Academy</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">学ぶ → 理解 → 社会参加</p>
+                    <div class="model-projects">
+                        <span class="model-tag">ワンコイン勉強室</span><span class="model-tag">アルパカすく〜る</span>
+                    </div>
+                </div>
+
+                <div class="model-card">
+                    <div class="model-icon">🤝</div>
+                    <h3>共同体文明</h3>
+                    <div class="model-en" style="color: var(--brand-tiandaa); font-weight: bold; margin-bottom: 10px;">
+                        Community</div>
+                    <div class="model-example">世界の例：Transition Network</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">人 → コミュニティ → 社会変化
+                    </p>
+                    <div class="model-projects">
+                        <span class="model-tag">てぃあんだぁクラブ</span><span class="model-tag">子育て勉強会</span>
+                    </div>
+                </div>
+
+                <div class="model-card">
+                    <div class="model-icon">✨</div>
+                    <h3>物語文明</h3>
+                    <div class="model-en" style="color: var(--brand-bungei); font-weight: bold; margin-bottom: 10px;">
+                        Narrative</div>
+                    <div class="model-example">世界の例：StoryCorps</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">人生 → 物語 → 文化</p>
+                    <div class="model-projects">
+                        <span class="model-tag">文芸フリマ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="seven-steps">
+        <div class="container">
+            <h2 class="section-title">世界規模へ伸ばす7ステップ</h2>
+            <p class="section-subtitle">
+                地域実験から「文化」化まで。<br>「経験知コモンズ」を社会インフラ級に育てる道筋。
+            </p>
+
+            <div class="seven-steps">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-info">
+                        <h4>地域実験</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Local Lab</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">📚 ワンコイン勉強室 / 👨‍👩‍👧 子育て勉強会 / 🏠 てぃあんだぁクラブ</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-info">
+                        <h4>知識化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Knowledge</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">🛡️ 子どものMIKATA / 🔬 子どものMIKATA研究会</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-info">
+                        <h4>メディア化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Media</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">🐕 わんこNEWS</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-info">
+                        <h4>教材化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Education</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">🦙 アルパカすく〜る</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <div class="step-info">
+                        <h4>ネットワーク化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Network</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">🌏 てぃあんだぁクラブuniverse</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">6</div>
+                    <div class="step-info">
+                        <h4>プラットフォーム化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Platform</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">地域知識プラットフォーム（経験記録・学習ログ・事例データ）</p>
+                    </div>
+                </div>
+                <div class="step-connector">↓</div>
+                <div class="step-item">
+                    <div class="step-num">7</div>
+                    <div class="step-info">
+                        <h4>「文化」化</h4>
+                        <div class="step-en" style="font-size: 0.8rem; color: var(--text-secondary);">Culture</div>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">📖 文芸フリマ / 文化イベント</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="comparison" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">世界の成功例との比較</h2>
+            <p class="section-subtitle">
+                世界の文明装置には必ず「中心」がある。<br>あなたの構想は「経験→知恵→次の経験」の循環型。
+            </p>
+
+            <div class="comparison-table-wrap">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>プロジェクト</th>
+                            <th>中心</th>
+                            <th>象徴行動</th>
+                            <th>文明装置</th>
+                            <th>型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📖 Wikipedia</td>
+                            <td>知識</td>
+                            <td>記事を編集する</td>
+                            <td>Wiki</td>
+                            <td>百科事典型</td>
+                        </tr>
+                        <tr>
+                            <td>🎓 Khan Academy</td>
+                            <td>教育</td>
+                            <td>動画を見る</td>
+                            <td>動画</td>
+                            <td>教育型</td>
+                        </tr>
+                        <tr>
+                            <td>🎙️ StoryCorps</td>
+                            <td>人生</td>
+                            <td>人生を録音する</td>
+                            <td>録音</td>
+                            <td>物語型</td>
+                        </tr>
+                        <tr>
+                            <td>🌿 Transition Network</td>
+                            <td>地域</td>
+                            <td>地域で学び合う</td>
+                            <td>コミュニティ</td>
+                            <td>共同体型</td>
+                        </tr>
+                        <tr style="background: rgba(249, 115, 22, 0.1); font-weight: bold;">
+                            <td>🌺 琉球のタネ</td>
+                            <td>経験</td>
+                            <td>体験を語る</td>
+                            <td>経験知コモンズ</td>
+                            <td>融合型（世界初）</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="people">
+        <div class="container">
+            <h2 class="section-title">最初の100人戦略</h2>
+            <p class="section-subtitle">
+                琉球のタネプロジェクトは「最初の100人」の作り方でほぼ未来が決まる。<br>大きく集めない。役割の違う100人を作る。
+            </p>
+
+            <div class="people-strategy">
+                <div class="people-ring" style="border-color: var(--brand-tiandaa);">
+                    <div class="ring-number" style="color: var(--brand-tiandaa);">10</div>
+                    <div class="ring-label">核メンバー</div>
+                    <div class="ring-desc"
+                        style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">エンジンの管理者</div>
+                    <ul class="ring-list">
+                        <li>📰 編集者（わんこNEWS）</li>
+                        <li>🎓 教育（アルパカすく〜る）</li>
+                        <li>🏠 共同体（てぃあんだぁ）</li>
+                        <li>🔬 研究（MIKATA研究会）</li>
+                        <li>📖 文化（文芸フリマ）</li>
+                    </ul>
+                </div>
+                <div class="people-ring" style="border-color: var(--brand-mikata);">
+                    <div class="ring-number" style="color: var(--brand-mikata);">30</div>
+                    <div class="ring-label">活動メンバー</div>
+                    <div class="ring-desc"
+                        style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">行動する人たち</div>
+                    <ul class="ring-list">
+                        <li>勉強室スタッフ</li>
+                        <li>子育て会参加者</li>
+                        <li>記録係</li>
+                        <li>記事投稿者</li>
+                    </ul>
+                </div>
+                <div class="people-ring" style="border-color: var(--brand-alpaca);">
+                    <div class="ring-number" style="color: var(--brand-alpaca);">60</div>
+                    <div class="ring-label">参加者</div>
+                    <div class="ring-desc"
+                        style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">普通の参加者</div>
+                    <ul class="ring-list">
+                        <li>👧 子ども 30人</li>
+                        <li>👨‍👩‍👧 保護者 30人</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="inviting-region">
+        <div class="container">
+            <h2 class="section-title">「よばれる地域」としての沖縄</h2>
+            <p class="section-subtitle">
+                観光地として「行く」場所から、物語によって「呼ばれる」巡礼地へ。<br>家庭から始まる巡礼型教育がつながる、物語の現場。
+            </p>
+
+            <div class="inviting-grid">
+                <div class="inviting-card" style="border-bottom-color: var(--brand-alpaca);">
+                    <div class="inviting-icon">🦙</div>
+                    <h3 style="margin-bottom: 10px; font-family: var(--font-serif);">学びの入口：予習</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 25px;">
+                        世界の家庭から「アルパカすく〜る」で現地の物語を事前に学ぶ。</p>
+                    <a href="../../../../../../../Desktop/github/www/indexのコピー.html" class="inviting-link"
+                        style="color: var(--brand-alpaca);">地域大学(アルパカ)を見る →</a>
+                </div>
+                <div class="inviting-card" style="border-bottom-color: var(--brand-news);">
+                    <div class="inviting-icon">📍</div>
+                    <h3 style="margin-bottom: 10px; font-family: var(--font-serif);">物語の現場：巡礼</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 25px;">
+                        読谷村を「聖地（物語の現場）」として訪れ、内省的な体験をする。</p>
+                    <span
+                        style="color: #64748b; font-size: 0.85rem; font-weight: bold; background: #f1f5f9; padding: 5px 15px; border-radius: 20px;">体験学習フィールド</span>
+                </div>
+                <div class="inviting-card" style="border-bottom-color: var(--brand-universe);">
+                    <div class="inviting-icon">🌏</div>
+                    <h3 style="margin-bottom: 10px; font-family: var(--font-serif);">知恵の還流：宇宙</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 25px;">
+                        体験を記録し、universeを通じて世界へ還し、また繋がる。</p>
+                    <a href="../../../../../../../Desktop/github/tea-under-club-universe/indexのコピー.html"
+                        class="inviting-link" style="color: var(--brand-universe);">巡礼マップ(Universe)を見る →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="brands">
+        <div class="container">
+            <h2 class="section-title">6つの文化ブランド</h2>
+            <p class="section-subtitle">
+                それぞれが文化振興装置の1つとして機能する、地域文化振興モデル。<br>
+                <span style="font-size: 0.9rem; font-weight: bold; color: var(--brand-tiandaa);">👇
+                    カードをクリックすると詳しい思想や説明が読めます。</span>
+            </p>
+
+            <div class="brand-accordion" id="brandAccordion">
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>体験を語る。知恵を残す。学びになる。文化になる。🌺</p>
+            <p
+                style="font-size: 0.8rem; margin-top: 15px; opacity: 0.6; font-family: var(--font-sans); font-weight: normal;">
+                琉球のタネ — 地域文化振興プロジェクト</p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" id="modalContent">
+            <button class="modal-close" id="modalClose" aria-label="閉じる">✕</button>
+            <div id="modalIcon"></div>
+            <h2 id="modalTitle"></h2>
+            <div id="modalRole"></div>
+            <div id="modalDesc"></div>
+        </div>
+    </div>
+
+    <button class="theme-toggle-btn" id="themeToggle" aria-label="視覚サポートモードの切り替え">
+        <span id="themeIcon">👁️</span> <span class="theme-text">視覚サポート</span>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ナビゲーションの開閉 ---
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => { navLinks.classList.remove('active'); });
+                });
+            }
+
+            // --- 視覚サポート機能 ---
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const themeText = themeToggleBtn.querySelector('.theme-text');
+            const body = document.body;
+            if (localStorage.getItem('visualSupportMode') === 'enabled') {
+                body.classList.add('accessibility-mode');
+                themeText.textContent = '標準デザイン';
+            }
+            themeToggleBtn.addEventListener('click', () => {
+                body.classList.toggle('accessibility-mode');
+                if (body.classList.contains('accessibility-mode')) {
+                    localStorage.setItem('visualSupportMode', 'enabled');
+                    themeText.textContent = '標準デザイン';
+                } else {
+                    localStorage.setItem('visualSupportMode', 'disabled');
+                    themeText.textContent = '視覚サポート';
+                }
+            });
+
+            // ==========================================
+            // app.js から抽出した 9つのプロジェクトデータ
+            // ==========================================
+            const projectsData = [
+                { icon: '🏠', title: 'てぃあんだぁクラブ', role: '文化ブランド / 共同体文化学部', desc: '沖縄方言「手の味」＝家庭の知恵を象徴するブランド。地域の経験知を社会資産として再発見する文化運動の中心。人が集まり、体験を語り、記録され、次の人の学びになる「知恵の循環」を生み出す場所。地域社会における教育・文化・コミュニティを結びつける土台。', color: 'var(--brand-tiandaa)' },
+                { icon: '🛡️', title: '子どものMIKATA', role: '教育ブランド / 教育福祉学部', desc: '「味方」と「見方」の二重の意味を持つ教育ブランド。家庭の困りごとを入口に、地域の知恵や経験を通して一緒に考える。相談→体験→知恵→学びの循環で、個人の経験を地域全体の教育資産に変える。学校と地域の間をつなぐ役割。文明装置の入口。', color: 'var(--brand-mikata)' },
+                { icon: '🦙', title: 'アルパカすく〜る', role: '学習ブランド / 学習教育学部', desc: '「経験から学ぶ教育」を中心にしたスクール。地域の出来事、人生の物語、社会のニュースを教材にしながら、子どもが自分の興味を起点に学ぶ。自己理解、地域文化、キャリア教育など学校の枠を越えたテーマを扱い、地域の大人の経験と子どもの学びを結びつける。', color: 'var(--brand-alpaca)' },
+                { icon: '🐕', title: 'わんこNEWS', role: 'メディアブランド / 市民メディア学部', desc: '地域の生活から生まれる小さな出来事や学びを取り上げる市民メディア。子どもの気づき、保護者の工夫、地域の人生経験を記事として共有。積み重なる記事は地域の知識アーカイブとなり、子ども自身がニュースを書く市民ジャーナリズム教育の場でもある。', color: 'var(--brand-news)' },
+                { icon: '📖', title: '文芸フリマ', role: '表現ブランド / 文化表現学部', desc: '子どもや大人が経験を文章、詩、エッセイ、物語として発表する表現の場。プロの作家だけでなく誰でも参加できる。作品が蓄積されることで地域の文化アーカイブが形成され、高齢者の人生経験を子どもが読むことで世代間の知恵が共有される。', color: 'var(--brand-bungei)' },
+                { icon: '🌏', title: 'てぃあんだぁクラブuniverse', role: '世界観ブランド / 国際文化学部', desc: '地域で生まれた知恵を他の地域や世界と共有するネットワーク。動画、記事、電子書籍、オンラインイベントを通して沖縄の知恵が世界に届く。各活動のハブとなり、他地域との連携とオンライン拡張を担う。プロジェクトの未来ビジョンを示す。', color: 'var(--brand-universe)' },
+                { icon: '🔬', title: '子どものMIKATA研究会', role: '研究機関 / 知恵化エンジン', desc: '体験を分析し、パターン化し、教材化する研究機関。ケース整理、パターン分析、学習記録を通して、地域の経験を体系的な知識資産に変換する。地域知識データベースの構築を担い、経験→知恵の変換を加速させる。', color: 'var(--brand-mikata)' },
+                { icon: '👨‍👩‍👧', title: '子育て勉強会', role: '家庭教育 / 保護者の知恵共有', desc: '保護者同士が子育ての工夫や悩みを共有する場。家庭教育の知恵が口頭から記録に変わり、地域の教育資産として蓄積される。親同士の教育共同体を形成し、家庭の孤立を防ぐ。地域学習社会の家庭層を担う。', color: 'var(--brand-tiandaa)' },
+                { icon: '📚', title: 'ワンコイン勉強室', role: '学習実験 / 誰でも参加できる入口', desc: '子どもの学習実験の場。少人数・柔軟・試行錯誤を大切にし、ワンコインで誰でも参加できる低い参入障壁が特徴。文明装置の「小さい入口」として機能し、地域学習の最初の一歩を提供する。子どもの体験学習ログが知識アーカイブの原素材になる。', color: 'var(--brand-tiandaa)' }
+            ];
+
+            const projectsGrid = document.getElementById('projectsGrid');
+            if (projectsGrid) {
+                projectsData.forEach(proj => {
+                    const card = document.createElement('div');
+                    card.className = 'content-card top-line';
+                    card.style.borderTopColor = proj.color;
+                    card.innerHTML = `
+                        <div class="card-icon">${proj.icon}</div>
+                        <h3 class="card-title">${proj.title}</h3>
+                        <div style="text-align:center; font-size:0.75rem; font-weight:bold; color:white; background:${proj.color}; border-radius:12px; padding:3px 10px; display:inline-block; margin-bottom:12px;">${proj.role}</div>
+                        <p class="card-desc">${proj.desc}</p>
+                    `;
+                    projectsGrid.appendChild(card);
+                });
+            }
+
+            // ==========================================
+            // app.js から抽出した 6つのブランド詳細データ
+            // ==========================================
+            const brandData = [
+                {
+                    icon: '🏠', title: 'てぃあんだぁクラブ', color: 'var(--brand-tiandaa)', role: '文化・共同体基盤',
+                    desc: '<p>「てぃあんだぁクラブ」は、この文明プロジェクト全体の文化的中心となるブランドである。「てぃあんだぁ」という言葉は沖縄方言で「手の味」「家庭の味」を意味し、料理だけでなく、人の暮らしの中で受け継がれてきた知恵や経験を象徴する言葉でもある。この言葉をブランド名に据えることで、プロジェクトは「家庭や地域に蓄積されている経験知」を社会資産として再発見する文化運動として位置づけられる。</p><p>てぃあんだぁクラブの基本思想は、知識は学校だけで生まれるものではなく、日々の生活や地域の関係性の中から育つという考え方である。祖父母の人生の知恵、地域の人の仕事の経験、子育ての工夫、困難を乗り越えてきた物語など、これまで教育の枠組みでは十分に扱われてこなかった生活知が、ここでは大切な学びの源になる。</p><p>このクラブは単なるコミュニティではなく、「文化を生み出す装置」として機能する。人が集まり、体験を語り、それが記録され、共有され、次の人の学びになる。こうした循環を通じて、地域の知識は徐々に文化へと変化していく。つまり、てぃあんだぁクラブは地域社会における「知恵の循環」を生み出す場所であり、教育・文化・コミュニティを結びつける土台になる。</p><p>長期的には、このクラブは地域の文化資本を育てる役割を持つ。地域の物語や経験が蓄積されることで、子どもたちは自分の地域の価値を知り、大人たちは自分の経験が社会に役立つことを実感する。</p>'
+                },
+                {
+                    icon: '🛡️', title: '子どものMIKATA', color: 'var(--brand-mikata)', role: '相談・教育入口',
+                    desc: '<p>「子どものMIKATA」は、このプロジェクトの教育的入口となるブランドである。「MIKATA」という言葉には二つの意味が込められている。一つは「味方」であり、子どもや家庭に寄り添う存在を意味する。もう一つは「見方」であり、子どもや教育を新しい視点で理解するという意味である。</p><p>このブランドの出発点は、子どもや家庭が抱える日常的な困りごとである。学校が合わない、勉強の方法がわからない、進路に迷う、家庭での関わり方が難しいなど、多くの家庭が抱える小さな問題が入口になる。MIKATAでは、その困りごとを否定するのではなく、地域の知恵や経験を通して一緒に考える。</p><p>MIKATAの特徴は、「相談→体験→知恵→学び」という循環にある。困りごとをきっかけに人が集まり、実際の体験を共有し、その体験が記録されて知恵として整理される。そしてその知恵が次の家庭の学びとして役立つ。このプロセスによって、個人の経験は地域全体の教育資産に変わっていく。</p><p>また、MIKATAは学校教育を否定するものではなく、学校と地域の間をつなぐ役割を持つ。学校では扱いきれない個別の問題や生活の知恵を地域で共有することで、子どもたちの学びの環境を広げることができる。</p>'
+                },
+                {
+                    icon: '🦙', title: 'アルパカすく〜る', color: 'var(--brand-alpaca)', role: '学習・教育',
+                    desc: '<p>「アルパカすく〜る」は、このプロジェクト全体の中で学びの実践を担う教育ブランドである。子どものMIKATAが教育の入口として家庭や地域の困りごとを受け止める役割を持つのに対し、アルパカすく〜るは、その経験や相談から生まれた知恵を具体的な学びへと変換する役割を持つ。</p><p>このスクールの特徴は、従来の学校や塾のような「教える教育」ではなく、「経験から学ぶ教育」を中心にしている点である。地域の出来事、人生の物語、社会のニュース、地域の仕事などを教材にしながら、子どもたちが自分の興味や関心を起点に学びを広げていく。</p><p>アルパカすく〜るの名前には、柔らかく親しみやすいイメージがある。アルパカは群れで穏やかに暮らす動物であり、子どもが安心して学べる場所を象徴する存在でもある。このブランドは、競争中心の教育ではなく、安心できる関係の中で学びを育てる教育を目指す。</p><p>さらに重要なのは、このスクールが地域の大人の経験とつながっている点である。地域の仕事人、職人、農家、文化活動をしている人などが登場することで、子どもたちは多様な人生モデルを知ることができる。</p>'
+                },
+                {
+                    icon: '🐕', title: 'わんこNEWS', color: 'var(--brand-news)', role: '地域メディア・記録',
+                    desc: '<p>「わんこNEWS」は、このプロジェクトの中で情報と知識を社会に広げるメディアブランドである。てぃあんだぁクラブや子どものMIKATA、アルパカすく〜るなどの活動で生まれた経験や知恵を、地域や社会へ発信する役割を担う。</p><p>このメディアの特徴は、一般的なニュースとは異なり、地域の生活の中から生まれる小さな出来事や学びを取り上げる点にある。子どもが気づいたこと、保護者が試した子育ての工夫、地域の人の人生経験、社会問題についての小さな議論など、日常の中にある知恵を記事として共有する。</p><p>「わんこ」という名前は、親しみやすさと継続性を象徴している。犬が人のそばに寄り添う存在であるように、このニュースは地域の人の生活に寄り添うメディアでありたいという意味が込められている。また「わんこそば」のように、少しずつ積み重なっていくイメージもある。</p><p>わんこNEWSの重要な役割は、活動を記録し続けることである。教育活動やコミュニティ活動は、記録されなければ消えてしまう。しかし、記録が続くと、それは地域の歴史や知識の資産になる。子どもたち自身がニュースを書くことも可能であり、市民ジャーナリズムの基礎を育てる教育にもなる。</p>'
+                },
+                {
+                    icon: '📖', title: '文芸フリマ', color: 'var(--brand-bungei)', role: '物語・文化創造',
+                    desc: '<p>「文芸フリマ」は、このプロジェクトの中で物語と表現を生み出す文化ブランドである。教育や地域活動で生まれた経験や知恵は、最終的には物語や作品として表現されることで文化へと変化する。その役割を担うのが文芸フリマである。</p><p>この場では、子どもや大人が自分の経験や考えを文章、詩、エッセイ、物語などの形で発表することができる。家庭の出来事、地域の思い出、人生の経験、社会への疑問など、さまざまなテーマが作品になる。こうした表現活動は、人が自分の経験を振り返り、意味づける重要な機会になる。</p><p>文芸フリマの特徴は、プロの作家だけの場ではなく、誰でも参加できる表現の場である点である。子どもでも大人でも、自分の言葉で作品を書くことができる。このような環境は、地域の中に「語る文化」「書く文化」を育てる。</p><p>また、作品が蓄積されることで、地域の文化アーカイブが形成される。人々の人生や地域の出来事が記録された作品は、将来の世代にとって貴重な文化資料になる。さらに、文芸フリマは世代をつなぐ場でもある。高齢者の人生経験が文章として残り、子どもがそれを読むことで、新しい学びが生まれる。</p>'
+                },
+                {
+                    icon: '🌏', title: 'てぃあんだぁクラブ<br>universe', color: 'var(--brand-universe)', role: '世界ネットワーク',
+                    desc: '<p>「てぃあんだぁクラブuniverse」は、このプロジェクトの世界観と拡張性を象徴するブランドである。てぃあんだぁクラブが地域文化の中心であるのに対し、universeはその活動が地域を越えて広がる可能性を示している。</p><p>このブランドの意味は、地域で生まれた経験や知恵が、他の地域や世界の人々と共有されることにある。地域の活動は小さく見えるが、そこから生まれる知恵は普遍的な価値を持つ。子育ての工夫、学びの方法、地域の支え合いなどは、世界中の人が共感できるテーマである。</p><p>universeは、その知恵をオンラインで共有することで、地域を越えたネットワークを作る。動画、記事、電子書籍、オンラインイベントなどを通して、沖縄で生まれた知恵が他地域の人にも届くようになる。こうした交流は、新しい学びや協力関係を生み出す。</p><p>また、このブランドは未来志向の意味も持つ。地域の知恵は過去のものではなく、未来を作る資源である。地域で育った子どもたちが世界とつながり、新しい文化や社会を作っていく。その広がりを象徴するのがuniverseという言葉である。てぃあんだぁクラブuniverseは、地域文化から世界へ広がる学習ネットワークを表すブランドとして、プロジェクトの未来のビジョンを示す存在である。</p>'
+                }
+            ];
+
+            const brandAccordion = document.getElementById('brandAccordion');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalRole = document.getElementById('modalRole');
+            const modalDesc = document.getElementById('modalDesc');
+
+            if (brandAccordion) {
+                brandData.forEach(brand => {
+                    const card = document.createElement('div');
+                    card.className = 'content-card left-line';
+                    card.style.borderLeftColor = brand.color;
+
+                    // 画像と同じ「アイコン左・文字右」のレイアウト
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <div class="card-icon-inline">${brand.icon}</div>
+                            <div>
+                                <h3 class="card-title-left">${brand.title}</h3>
+                                <div class="card-role" style="text-align: left;">${brand.role}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    // クリック時のポップアップ起動イベント
+                    card.addEventListener('click', () => {
+                        modalIcon.textContent = brand.icon;
+                        modalTitle.innerHTML = brand.title;
+                        modalRole.textContent = brand.role;
+                        modalDesc.innerHTML = brand.desc;
+                        modalOverlay.style.display = 'flex';
+                        // ポップアップを開いた時に少しフワッと出すアニメーション
+                        document.getElementById('modalContent').style.animation = "fadeIn 0.3s ease";
+                    });
+
+                    brandAccordion.appendChild(card);
+                });
+            }
+
+            // ポップアップを閉じる処理
+            const closeModal = () => { modalOverlay.style.display = 'none'; };
+            modalClose.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal(); // 黒い背景部分をクリックしても閉じる
+            });
+
+            // CSSアニメーションの追加定義
+            const style = document.createElement('style');
+            style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+
+</html>
