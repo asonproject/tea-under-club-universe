@@ -5,6 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>てぃあんだぁクラブ universe</title>
+    <!-- OGP Settings -->
+    <meta property="og:title" content="てぃあんだぁクラブ universe" />
+    <meta property="og:description" content="個人の「経験」を、社会の「知恵」へ。地域を超えてつながる経験知コモンズの宇宙。" />
+    <meta property="og:image" content="https://tea-under.club/icon-192.jpeg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json" />
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1087,7 +1094,14 @@
                 });
 
                 if (events.length === 0) {
-                    container.innerHTML = '<p class="no-events">現在予定されているイベントはありません</p>';
+                    container.innerHTML = `
+                        <div class="no-events">
+                            <p>現在予定されているイベントはありません</p>
+                            <a href="https://note.com/tea_under_club" target="_blank" class="map-button" style="margin-top: 1rem; display: inline-flex;">
+                                📖 過去の活動記録（note）を見る
+                            </a>
+                        </div>
+                    `;
                     return;
                 }
 
@@ -1508,7 +1522,7 @@
         function getConstellationData() {
             return [
                 {
-                    name: 'みずがめ座 Aquqrius',
+                    name: 'みずがめ座 Aquarius',
                     stars: [[20, 20], [30, 30], [50, 25], [60, 40], [50, 60], [40, 70], [70, 50], [80, 60], [75, 80]],
                     lines: [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [3, 6], [6, 7], [7, 8]]
                 },
@@ -1580,8 +1594,8 @@
         <header>
             <h1>てぃあんだぁクラブ universe</h1>
             <p class="subtitle">
-                <span style="display: inline-block;">学び・実践・創作の記録を、</span>
-                <span style="display: inline-block;">必要な人が閲覧できる場所。</span>
+                <span style="display: inline-block;">個人の「経験」を、社会の「知恵」へ。</span>
+                <span style="display: inline-block;">地域を超えてつながる経験知コモンズの宇宙。</span>
             </p>
         </header>
 
@@ -1623,6 +1637,7 @@
                 <h2>🌱 実践の棚</h2>
                 <div class="card-description">
                     子どもを支える中で、立ち止まった人たちの記録。<br>
+                    立ち止まった時の具体的な「問い」を見つけるために。<br>
                 </div>
                 <ul class="shelf-list">
                     <!-- <li><a href="/heiwa/ansin_sinrai.html" target="_blank">安心と信頼</a></li>
@@ -1688,7 +1703,7 @@
                 </div>
             </article>
 
-            <!-- ツールの棚 　-->
+            <!-- ツールの棚 -->
 
             <article class="shelf-card">
                 <h2>🛠️ ツールの棚</h2>
