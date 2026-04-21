@@ -1583,29 +1583,29 @@
       for (const line of lines) {
         const titleMatch = line.match(/^#\s+(.+)$/);
         if (titleMatch && !result.title) {
-          result.title = titleMatch[1].trim();
+          result.title = titleMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
           continue;
         }
         const subMatch = line.match(/^>\s+(.+)$/);
         if (subMatch && !result.subtitle) {
-          result.subtitle = subMatch[1].trim();
-          break;
+          result.subtitle = subMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
+          continue;
         }
       }
 
       const flush = () => {
         if (!section) { buffer = []; return; }
         const text = buffer.join('\n').trim();
-        const clean = text === '(未記入)' ? '' : text;
+        const clean = (text === '(未記入)' || text === '**(未記入)**') ? '' : text;
         if (section.type === 'year') result.year = clean;
         else if (section.type === 'half') result.half[section.key] = clean;
         else if (section.type === 'quarter') result.quarter[section.key] = clean;
         else if (section.type === 'month') {
           const monthLines = [];
           for (const l of text.split('\n')) {
-            const wm = l.match(/^-\s*\*\*W(\d)\*\*:\s*(.*)$/);
+            const wm = l.match(/^-\s*(\*\*|)W(\d)(:|\*\*|: \*\*|)\s*(.*?)(\*\*|)$/);
             if (wm) {
-              result.week[`${section.key}-${wm[1]}`] = wm[2].trim();
+              result.week[`${section.key}-${wm[2]}`] = wm[4].trim();
             } else {
               monthLines.push(l);
             }
@@ -1616,13 +1616,13 @@
       };
 
       for (const line of lines) {
-        if (/^##\s+年間計画/.test(line)) { flush(); section = { type: 'year' }; continue; }
-        if (/^##\s+上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
-        if (/^##\s+下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
-        const qm = line.match(/^###\s+Q(\d)/);
-        if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[1] }; continue; }
-        const mm = line.match(/^###\s+(\d+)月/);
-        if (mm) { flush(); section = { type: 'month', key: parseInt(mm[1]) }; continue; }
+        if (/^##\s+(\*\*|)年間計画(\*\*|)/.test(line)) { flush(); section = { type: 'year' }; continue; }
+        if (/^##\s+(\*\*|)上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
+        if (/^##\s+(\*\*|)下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
+        const qm = line.match(/^###\s+(\*\*|)Q(\d)(\*\*|)/);
+        if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[2] }; continue; }
+        const mm = line.match(/^###\s+(\*\*|)(\d+)月(\*\*|)/);
+        if (mm) { flush(); section = { type: 'month', key: parseInt(mm[2]) }; continue; }
         if (/^##?\s/.test(line) || /^---/.test(line)) { flush(); section = null; continue; }
         if (section) buffer.push(line);
       }
