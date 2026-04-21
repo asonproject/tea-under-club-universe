@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="light only">
   <meta name="supported-color-schemes" content="light">
   <meta name="theme-color" content="#faf6ed">
-  <title>2026年度 志有年間計画表</title>
+  <title>年間計画表</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&family=Kaisei+Decol:wght@400;500;700&family=Yomogi&display=swap"
     rel="stylesheet">
@@ -1226,10 +1226,10 @@
 
     <header class="header">
       <h1 class="title">
-        <span class="wavy" contenteditable="true" data-key="title" spellcheck="false">2026年度 志有年間計画表</span>
+        <span class="wavy" contenteditable="true" data-key="title" spellcheck="false">年間計画表</span>
       </h1>
       <div class="subtitle">
-        <span contenteditable="true" data-key="subtitle" spellcheck="false">あげな中学 2年3組 / ながしおや しょうご</span>
+        <span contenteditable="true" data-key="subtitle" spellcheck="false">自由に入れてください</span>
         <span class="date-stamp" id="todayStamp">26/04/17</span>
       </div>
       <div class="edit-hint">↑タップして編集できます</div>
@@ -1340,8 +1340,8 @@
     const STORAGE_KEY = 'nenkan_keikaku_2026';
 
     let data = {
-      title: '2026年度 志有年間計画表',
-      subtitle: 'あげな中学 2年3組 / ながしおや しょうご',
+      title: '年間計画表',
+      subtitle: '自由に入れてください',
       year: '',
       half: { H1: '', H2: '' },
       quarter: { Q1: '', Q2: '', Q3: '', Q4: '' },
@@ -1546,7 +1546,7 @@
     });
 
     function toMarkdown() {
-      let md = `# ${data.title || '2026年度 年間計画表'}\n\n`;
+      let md = `# ${data.title || '年間計画表'}\n\n`;
       md += `> ${data.subtitle || ''}\n\n`;
       md += `## 年間計画\n\n${data.year || '(未記入)'}\n\n`;
       md += `## 上半期（4〜9月）\n\n${data.half.H1 || '(未記入)'}\n\n`;
