@@ -1,1455 +1,1346 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="color-scheme" content="light only">
-  <meta name="supported-color-schemes" content="light">
-  <meta name="theme-color" content="#faf6ed">
-  <title>年間計画表</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&family=Kaisei+Decol:wght@400;500;700&family=Yomogi&display=swap"
-    rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="theme-color" content="#faf6ed">
+<title>2026年度 志有年間計画表</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&family=Kaisei+Decol:wght@400;500;700&family=Yomogi&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    /* ダークモード環境でもライト配色を強制 */
+  /* ダークモード環境でもライト配色を強制 */
+  :root {
+    color-scheme: light;
+    --ink: #1e2a44;
+    --ink-soft: #3a4663;
+    --ink-faint: #8792a8;
+    --paper: #faf6ed;
+    --paper-shade: #f0ebdd;
+    --grid-soft: #dde5ec;
+    --accent: #c7452e;
+    --accent-soft: #e78e7a;
+    --highlight: #f4d03f;
+    --quarter-a: #e8f0e4;
+    --quarter-b: #f4ebd9;
+    --quarter-c: #e4ecf0;
+    --quarter-d: #f0e4ea;
+  }
+
+  /* ダークモード時でも強制ライト配色（Safari/iOS対策） */
+  @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: light;
-      --ink: #1e2a44;
-      --ink-soft: #3a4663;
-      --ink-faint: #8792a8;
-      --paper: #faf6ed;
-      --paper-shade: #f0ebdd;
-      --grid-soft: #dde5ec;
-      --accent: #c7452e;
-      --accent-soft: #e78e7a;
-      --highlight: #f4d03f;
-      --quarter-a: #e8f0e4;
-      --quarter-b: #f4ebd9;
-      --quarter-c: #e4ecf0;
-      --quarter-d: #f0e4ea;
     }
-
-    /* ダークモード時でも強制ライト配色（Safari/iOS対策） */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        color-scheme: light;
-      }
-
-      html,
-      body {
-        background: #faf6ed !important;
-        color: #1e2a44 !important;
-      }
-
-      input,
-      textarea,
-      [contenteditable] {
-        background: #faf6ed !important;
-        color: #1e2a44 !important;
-        -webkit-text-fill-color: #1e2a44 !important;
-      }
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: 'Kaisei Decol', serif;
-      min-height: 100vh;
-      overscroll-behavior: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--grid-soft) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-soft) 1px, transparent 1px);
-      background-size: 24px 24px;
-      pointer-events: none;
-      opacity: 0.4;
-      z-index: 0;
-    }
-
-    .app {
-      position: relative;
-      z-index: 1;
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 18px 14px 120px;
-    }
-
-    .header {
-      border-bottom: 2px solid var(--ink);
-      padding-bottom: 12px;
-      margin-bottom: 18px;
-      position: relative;
-    }
-
-    .header::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -5px;
-      height: 1px;
-      background: var(--ink);
-    }
-
-    .title {
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      margin: 0 0 4px;
-      line-height: 1.3;
-    }
-
-    .wavy {
-      position: relative;
-      display: inline-block;
-    }
-
-    .wavy::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -3px;
-      height: 3px;
-      background: var(--highlight);
-      opacity: 0.6;
-      z-index: -1;
-    }
-
-    .title [contenteditable]:focus,
-    .subtitle [contenteditable]:focus {
-      outline: 2px dashed var(--accent);
-      outline-offset: 3px;
-      border-radius: 2px;
-      background: #fffdf5;
-    }
-
-    .title [contenteditable],
-    .subtitle [contenteditable] {
-      cursor: text;
-      min-width: 1em;
-    }
-
-    .edit-hint {
-      font-family: 'Yomogi', cursive;
-      font-size: 10px;
-      color: var(--ink-faint);
-      margin-top: 3px;
-      opacity: 0.7;
-    }
-
-    .subtitle {
-      font-family: 'Yomogi', cursive;
-      font-size: 12px;
-      color: var(--ink-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .date-stamp {
-      display: inline-block;
-      padding: 2px 8px;
-      border: 1.5px solid var(--accent);
-      color: var(--accent);
-      border-radius: 3px;
-      font-size: 11px;
-      transform: rotate(-2deg);
-      font-family: 'Yomogi', cursive;
-    }
-
-    .zoom-tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 16px;
-      background: var(--paper-shade);
-      padding: 4px;
-      border-radius: 8px;
-      border: 1.5px solid var(--ink);
-    }
-
-    .zoom-tab {
-      flex: 1;
-      padding: 8px 6px;
-      border: none;
-      background: transparent;
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--ink-soft);
-      cursor: pointer;
-      border-radius: 5px;
-      transition: all 0.2s;
-      letter-spacing: 0.05em;
-    }
-
-    .zoom-tab.active {
-      background: var(--ink);
-      color: var(--paper);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    }
-
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(4px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .section-label {
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--ink-soft);
-      margin: 0 0 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-label::before {
-      content: "";
-      width: 16px;
-      height: 2px;
-      background: var(--accent);
-    }
-
-    .card {
-      background: var(--paper);
-      border: 1.5px solid var(--ink);
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 10px;
-      position: relative;
-      box-shadow: 2px 2px 0 var(--ink);
-    }
-
-    .card-title {
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-content {
-      font-size: 14px;
-      line-height: 1.6;
-      min-height: 40px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: var(--ink);
-    }
-
-    .card-content.empty {
-      color: var(--ink-faint);
-      font-family: 'Yomogi', cursive;
-      font-size: 13px;
-    }
-
-    .card-content:focus {
-      outline: 2px dashed var(--accent);
-      outline-offset: 2px;
-    }
-
-    .year-card {
-      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-shade) 100%);
-      min-height: 180px;
-    }
-
-    .year-card .card-content {
-      min-height: 120px;
-    }
-
-    .half-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .half-card[data-half="H1"] {
-      border-left: 6px solid var(--accent);
-    }
-
-    .half-card[data-half="H2"] {
-      border-left: 6px solid var(--ink);
-    }
-
-    .half-label {
-      font-family: 'Yomogi', cursive;
-      font-size: 11px;
-      color: var(--ink-soft);
-      font-weight: normal;
-    }
-
-    .quarter-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .quarter-card {
-      padding: 10px;
-      margin-bottom: 0;
-    }
-
-    .quarter-card[data-q="Q1"] {
-      background: var(--quarter-a);
-    }
-
-    .quarter-card[data-q="Q2"] {
-      background: var(--quarter-b);
-    }
-
-    .quarter-card[data-q="Q3"] {
-      background: var(--quarter-c);
-    }
-
-    .quarter-card[data-q="Q4"] {
-      background: var(--quarter-d);
-    }
-
-    .quarter-card .card-title {
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
-
-    .quarter-card .card-content {
-      font-size: 12px;
-      min-height: 60px;
-      line-height: 1.5;
-    }
-
-    .quarter-months {
-      font-family: 'Yomogi', cursive;
-      font-size: 10px;
-      color: var(--ink-soft);
-    }
-
-    .month-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-
-    .month-card {
-      padding: 8px;
-      margin-bottom: 0;
-      min-height: 100px;
-      box-shadow: 1.5px 1.5px 0 var(--ink);
-    }
-
-    .month-number {
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 1;
-      display: flex;
-      align-items: baseline;
-      gap: 2px;
-    }
-
-    .month-number .suffix {
-      font-size: 11px;
-      font-weight: normal;
-      color: var(--ink-soft);
-    }
-
-    .month-card .card-content {
-      font-size: 10.5px;
-      min-height: 50px;
-      line-height: 1.4;
-      margin-top: 4px;
-    }
-
-    .month-card .card-content.empty {
-      font-size: 10px;
-    }
-
-    .week-month-group {
-      margin-bottom: 14px;
-      background: var(--paper);
-      border: 1.5px solid var(--ink);
-      border-radius: 6px;
-      overflow: hidden;
-      box-shadow: 2px 2px 0 var(--ink);
-    }
-
-    .week-month-header {
-      background: var(--ink);
-      color: var(--paper);
-      padding: 8px 12px;
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .week-month-header .plan-badge {
-      font-family: 'Yomogi', cursive;
-      font-weight: normal;
-      font-size: 10px;
-      opacity: 0.75;
-      padding: 2px 8px;
-      border: 1px solid var(--paper);
-      border-radius: 10px;
-    }
-
-    .week-month-plan {
-      padding: 8px 12px;
-      background: #fffbed;
-      border-bottom: 1px dashed var(--grid-soft);
-      font-size: 12px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: var(--ink);
-      font-family: 'Yomogi', cursive;
-      position: relative;
-    }
-
-    .week-month-plan::before {
-      content: "📍";
-      margin-right: 4px;
-      opacity: 0.6;
-    }
-
-    .week-month-plan.empty {
-      color: var(--ink-faint);
-      font-size: 11px;
-      font-style: italic;
-    }
-
-    .week-month-plan.empty::before {
-      content: "📝";
-    }
-
-    .week-row {
-      display: flex;
-      border-top: 1px dashed var(--grid-soft);
-      min-height: 48px;
-    }
-
-    .week-row:first-of-type {
-      border-top: none;
-    }
-
-    .week-label {
-      flex-shrink: 0;
-      width: 50px;
-      background: var(--paper-shade);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Yomogi', cursive;
-      font-size: 11px;
-      color: var(--ink-soft);
-      border-right: 1px dashed var(--grid-soft);
-      font-weight: 700;
-    }
-
-    .week-content {
-      flex: 1;
-      padding: 8px 10px;
-      font-size: 12.5px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-      min-height: 48px;
-    }
-
-    .week-content.empty::before {
-      content: "…";
-      color: var(--ink-faint);
-      font-family: 'Yomogi', cursive;
-    }
-
-    .week-content:focus {
-      outline: 2px dashed var(--accent);
-      outline-offset: -2px;
-      background: #fffdf5;
-    }
-
-    .toolbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--paper);
-      border-top: 2px solid var(--ink);
-      padding: 10px 14px;
-      padding-bottom: calc(10px + env(safe-area-inset-bottom));
-      display: flex;
-      gap: 6px;
-      z-index: 100;
-      box-shadow: 0 -4px 12px rgba(30, 42, 68, 0.08);
-    }
-
-    .tool-btn {
-      flex: 1;
-      padding: 10px 2px;
-      border: 1.5px solid var(--ink);
-      background: var(--paper);
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--ink);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.15s;
-      box-shadow: 2px 2px 0 var(--ink);
-      letter-spacing: 0.02em;
-    }
-
-    .tool-btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--ink);
-    }
-
-    .tool-btn.primary {
-      background: var(--accent);
-      color: var(--paper);
-      border-color: var(--accent);
-      box-shadow: 2px 2px 0 var(--ink);
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(30, 42, 68, 0.6);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 200;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-      animation: fadeIn 0.2s ease;
-    }
-
-    .modal {
-      background: var(--paper);
-      width: 100%;
-      max-width: 520px;
-      max-height: 85vh;
-      border-radius: 14px 14px 0 0;
-      border-top: 2px solid var(--ink);
-      padding: 18px 16px;
-      padding-bottom: calc(18px + env(safe-area-inset-bottom));
-      display: flex;
-      flex-direction: column;
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(100%);
-      }
-
-      to {
-        transform: translateY(0);
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1.5px solid var(--ink);
-    }
-
-    .modal-title {
-      font-family: 'Zen Kurenaido', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      margin: 0;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      color: var(--ink);
-      line-height: 1;
-      padding: 0 4px;
-    }
-
-    .modal-body {
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .modal-textarea {
-      width: 100%;
-      min-height: 200px;
-      padding: 12px;
-      border: 1.5px solid var(--ink);
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      line-height: 1.5;
-      resize: vertical;
-      background: var(--paper);
-      color: var(--ink);
-    }
-
-    .modal-hint {
-      font-family: 'Yomogi', cursive;
-      font-size: 11px;
-      color: var(--ink-soft);
-      margin: 8px 0;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--ink);
-      color: var(--paper);
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-family: 'Yomogi', cursive;
-      font-size: 13px;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 300;
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* ============================================
+    html, body {
+      background: #faf6ed !important;
+      color: #1e2a44 !important;
+    }
+    input, textarea, [contenteditable] {
+      background: #faf6ed !important;
+      color: #1e2a44 !important;
+      -webkit-text-fill-color: #1e2a44 !important;
+    }
+  }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Kaisei Decol', serif;
+    min-height: 100vh;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--grid-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-soft) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 18px 14px 120px;
+  }
+
+  .header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .header::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -5px;
+    height: 1px; background: var(--ink);
+  }
+  .title {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0 0 4px; line-height: 1.3;
+  }
+  .wavy { position: relative; display: inline-block; }
+  .wavy::after {
+    content: ""; position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 3px; background: var(--highlight);
+    opacity: 0.6; z-index: -1;
+  }
+  .title [contenteditable]:focus,
+  .subtitle [contenteditable]:focus {
+    outline: 2px dashed var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+    background: #fffdf5;
+  }
+  .title [contenteditable],
+  .subtitle [contenteditable] {
+    cursor: text;
+    min-width: 1em;
+  }
+  .edit-hint {
+    font-family: 'Yomogi', cursive;
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 3px;
+    opacity: 0.7;
+  }
+  .subtitle {
+    font-family: 'Yomogi', cursive;
+    font-size: 12px; color: var(--ink-soft);
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 8px;
+  }
+  .date-stamp {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    border-radius: 3px;
+    font-size: 11px;
+    transform: rotate(-2deg);
+    font-family: 'Yomogi', cursive;
+  }
+
+  .zoom-tabs {
+    display: flex; gap: 4px;
+    margin-bottom: 16px;
+    background: var(--paper-shade);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1.5px solid var(--ink);
+  }
+  .zoom-tab {
+    flex: 1; padding: 8px 6px;
+    border: none; background: transparent;
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .zoom-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::before {
+    content: "";
+    width: 16px; height: 2px;
+    background: var(--accent);
+  }
+
+  .card {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    position: relative;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .card-title {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 14px; font-weight: 700;
+    margin: 0 0 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-content {
+    font-size: 14px; line-height: 1.6;
+    min-height: 40px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--ink);
+  }
+  .card-content.empty {
+    color: var(--ink-faint);
+    font-family: 'Yomogi', cursive;
+    font-size: 13px;
+  }
+  .card-content:focus {
+    outline: 2px dashed var(--accent);
+    outline-offset: 2px;
+  }
+
+  .year-card {
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-shade) 100%);
+    min-height: 180px;
+  }
+  .year-card .card-content { min-height: 120px; }
+
+  .half-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .half-card[data-half="H1"] { border-left: 6px solid var(--accent); }
+  .half-card[data-half="H2"] { border-left: 6px solid var(--ink); }
+  .half-label {
+    font-family: 'Yomogi', cursive;
+    font-size: 11px; color: var(--ink-soft);
+    font-weight: normal;
+  }
+
+  .quarter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .quarter-card { padding: 10px; margin-bottom: 0; }
+  .quarter-card[data-q="Q1"] { background: var(--quarter-a); }
+  .quarter-card[data-q="Q2"] { background: var(--quarter-b); }
+  .quarter-card[data-q="Q3"] { background: var(--quarter-c); }
+  .quarter-card[data-q="Q4"] { background: var(--quarter-d); }
+  .quarter-card .card-title { font-size: 13px; margin-bottom: 6px; }
+  .quarter-card .card-content { font-size: 12px; min-height: 60px; line-height: 1.5; }
+  .quarter-months {
+    font-family: 'Yomogi', cursive;
+    font-size: 10px; color: var(--ink-soft);
+  }
+
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .month-card {
+    padding: 8px; margin-bottom: 0;
+    min-height: 100px;
+    box-shadow: 1.5px 1.5px 0 var(--ink);
+  }
+  .month-number {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 22px; font-weight: 700;
+    line-height: 1;
+    display: flex; align-items: baseline; gap: 2px;
+  }
+  .month-number .suffix {
+    font-size: 11px; font-weight: normal;
+    color: var(--ink-soft);
+  }
+  .month-card .card-content {
+    font-size: 10.5px; min-height: 50px;
+    line-height: 1.4; margin-top: 4px;
+  }
+  .month-card .card-content.empty { font-size: 10px; }
+
+  .week-month-group {
+    margin-bottom: 14px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .week-month-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-weight: 700; font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .week-month-header .plan-badge {
+    font-family: 'Yomogi', cursive;
+    font-weight: normal;
+    font-size: 10px;
+    opacity: 0.75;
+    padding: 2px 8px;
+    border: 1px solid var(--paper);
+    border-radius: 10px;
+  }
+  .week-month-plan {
+    padding: 8px 12px;
+    background: #fffbed;
+    border-bottom: 1px dashed var(--grid-soft);
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--ink);
+    font-family: 'Yomogi', cursive;
+    position: relative;
+  }
+  .week-month-plan::before {
+    content: "📍";
+    margin-right: 4px;
+    opacity: 0.6;
+  }
+  .week-month-plan.empty {
+    color: var(--ink-faint);
+    font-size: 11px;
+    font-style: italic;
+  }
+  .week-month-plan.empty::before {
+    content: "📝";
+  }
+  .week-row {
+    display: flex;
+    border-top: 1px dashed var(--grid-soft);
+    min-height: 48px;
+  }
+  .week-row:first-of-type { border-top: none; }
+  .week-label {
+    flex-shrink: 0; width: 50px;
+    background: var(--paper-shade);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Yomogi', cursive;
+    font-size: 11px; color: var(--ink-soft);
+    border-right: 1px dashed var(--grid-soft);
+    font-weight: 700;
+  }
+  .week-content {
+    flex: 1; padding: 8px 10px;
+    font-size: 12.5px; line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word;
+    min-height: 48px;
+  }
+  .week-content.empty::before {
+    content: "…";
+    color: var(--ink-faint);
+    font-family: 'Yomogi', cursive;
+  }
+  .week-content:focus {
+    outline: 2px dashed var(--accent);
+    outline-offset: -2px;
+    background: #fffdf5;
+  }
+
+  .toolbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--paper);
+    border-top: 2px solid var(--ink);
+    padding: 10px 14px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    display: flex; gap: 6px;
+    z-index: 100;
+    box-shadow: 0 -4px 12px rgba(30, 42, 68, 0.08);
+  }
+  .tool-btn {
+    flex: 1; padding: 10px 2px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 2px 2px 0 var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .tool-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 var(--ink);
+  }
+  .tool-btn.primary {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(30, 42, 68, 0.6);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+  .modal {
+    background: var(--paper);
+    width: 100%; max-width: 520px; max-height: 85vh;
+    border-radius: 14px 14px 0 0;
+    border-top: 2px solid var(--ink);
+    padding: 18px 16px;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .modal-title {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-weight: 700; font-size: 16px;
+    margin: 0;
+  }
+  .modal-close {
+    background: none; border: none;
+    font-size: 22px; cursor: pointer;
+    color: var(--ink); line-height: 1;
+    padding: 0 4px;
+  }
+  .modal-body { overflow-y: auto; flex: 1; }
+  .modal-textarea {
+    width: 100%; min-height: 200px;
+    padding: 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px; line-height: 1.5;
+    resize: vertical;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .modal-hint {
+    font-family: 'Yomogi', cursive;
+    font-size: 11px; color: var(--ink-soft);
+    margin: 8px 0;
+  }
+  .modal-actions {
+    display: flex; gap: 8px;
+    margin-top: 12px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 90px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--paper);
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-family: 'Yomogi', cursive;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 300;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ============================================
      印刷用レイアウト（元画像のグリッドを再現）
      ============================================ */
+  .print-sheet {
+    display: none;
+  }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 8mm;
+    }
+
+    body::before { display: none !important; }
+    .app, .toolbar, .modal-overlay, .toast, .zoom-tabs { display: none !important; }
+
+    html, body {
+      background: white !important;
+      color: black !important;
+      margin: 0; padding: 0;
+      font-family: 'Kaisei Decol', serif;
+    }
+
     .print-sheet {
-      display: none;
-    }
-
-    @media print {
-      @page {
-        size: A4 landscape;
-        margin: 8mm;
-      }
-
-      body::before {
-        display: none !important;
-      }
-
-      .app,
-      .toolbar,
-      .modal-overlay,
-      .toast,
-      .zoom-tabs {
-        display: none !important;
-      }
-
-      html,
-      body {
-        background: white !important;
-        color: black !important;
-        margin: 0;
-        padding: 0;
-        font-family: 'Kaisei Decol', serif;
-      }
-
-      .print-sheet {
-        display: block !important;
-        width: 100%;
-        color: black;
-      }
-
-      .print-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        border-bottom: 2px solid black;
-        padding-bottom: 4px;
-        margin-bottom: 6px;
-        font-size: 12pt;
-        font-weight: 700;
-      }
-
-      .print-header .meta {
-        font-size: 10pt;
-        font-weight: normal;
-      }
-
-      .print-header .date {
-        font-size: 10pt;
-        border: 1.5px solid black;
-        padding: 2px 8px;
-        border-radius: 3px;
-      }
-
-      /* 1段目：年間計画 */
-      .print-row.annual {
-        border: 1.5px solid black;
-        border-bottom: none;
-        padding: 4px 8px;
-        min-height: 50px;
-        font-size: 9pt;
-        white-space: pre-wrap;
-        line-height: 1.35;
-      }
-
-      .print-row.annual::before {
-        content: "年間計画";
-        display: inline-block;
-        font-size: 7.5pt;
-        font-weight: 700;
-        background: #eee;
-        padding: 1px 5px;
-        border-radius: 2px;
-        margin-right: 6px;
-        vertical-align: middle;
-      }
-
-      /* 2段目：上半期/下半期（2分割） */
-      .print-row.half {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        border: 1.5px solid black;
-        border-bottom: none;
-        min-height: 45px;
-      }
-
-      .print-row.half>div {
-        padding: 4px 8px;
-        font-size: 9pt;
-        white-space: pre-wrap;
-        line-height: 1.35;
-      }
-
-      .print-row.half>div:first-child {
-        border-right: 1px solid black;
-      }
-
-      .print-row.half>div::before {
-        display: inline-block;
-        font-size: 7.5pt;
-        font-weight: 700;
-        background: #eee;
-        padding: 1px 5px;
-        border-radius: 2px;
-        margin-right: 6px;
-        vertical-align: middle;
-      }
-
-      .print-row.half>div:nth-child(1)::before {
-        content: "上半期 (4-9月)";
-      }
-
-      .print-row.half>div:nth-child(2)::before {
-        content: "下半期 (10-3月)";
-      }
-
-      /* 3段目：四半期（4分割） */
-      .print-row.quarter {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        border: 1.5px solid black;
-        border-bottom: none;
-        min-height: 35px;
-      }
-
-      .print-row.quarter>div {
-        padding: 3px 6px;
-        font-size: 8pt;
-        white-space: pre-wrap;
-        line-height: 1.3;
-        border-right: 1px solid black;
-      }
-
-      .print-row.quarter>div:last-child {
-        border-right: none;
-      }
-
-      .print-row.quarter>div::before {
-        display: block;
-        font-size: 6.5pt;
-        font-weight: 700;
-        color: #666;
-        margin-bottom: 2px;
-      }
-
-      .print-row.quarter>div:nth-child(1)::before {
-        content: "Q1";
-      }
-
-      .print-row.quarter>div:nth-child(2)::before {
-        content: "Q2";
-      }
-
-      .print-row.quarter>div:nth-child(3)::before {
-        content: "Q3";
-      }
-
-      .print-row.quarter>div:nth-child(4)::before {
-        content: "Q4";
-      }
-
-      /* 4段目：月次（12分割） */
-      .print-month-numbers {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        border: 1.5px solid black;
-        border-bottom: none;
-        background: #eee;
-        font-family: 'Zen Kurenaido', sans-serif;
-        font-size: 8pt;
-        font-weight: 700;
-        text-align: center;
-      }
-
-      .print-month-numbers div {
-        border-right: 1px solid black;
-        padding: 2px 0;
-      }
-
-      .print-month-numbers div:last-child {
-        border-right: none;
-      }
-
-      .print-row.month {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        border: 1.5px solid black;
-        border-bottom: none;
-        min-height: 50px;
-      }
-
-      .print-row.month>div {
-        padding: 3px;
-        font-size: 7.5pt;
-        white-space: pre-wrap;
-        line-height: 1.25;
-        border-right: 1px solid black;
-      }
-
-      .print-row.month>div:last-child {
-        border-right: none;
-      }
-
-      /* 5段目：週次（ラベルなしの各月列） */
-      .print-row.week {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        border: 1.5px solid black;
-        border-bottom: none;
-        min-height: 38px;
-      }
-
-      .print-row.week:last-child {
-        border-bottom: 1.5px solid black;
-      }
-
-      .print-row.week>div {
-        padding: 2px 3px;
-        font-size: 7pt;
-        white-space: pre-wrap;
-        line-height: 1.2;
-        border-right: 1px solid black;
-      }
-
-      .print-row.week>div:last-child {
-        border-right: none;
-      }
-
-      /* プレビュー用特殊クラス */
-      .preview-mode .toolbar {
-        display: none;
-      }
-
-      .preview-exit-btn {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        background: var(--accent);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        z-index: 1000;
-        cursor: pointer;
-        font-family: 'Zen Kurenaido', sans-serif;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      }
-    }
-
-    /* プレビューモード（ブラウザ上でのシミュレーション） */
-    body.preview-mode {
-      background: #8792a8;
-      padding: 40px 0;
-      overflow-y: auto;
-    }
-
-    body.preview-mode .app,
-    body.preview-mode .toolbar {
-      display: none !important;
-    }
-
-    body.preview-mode .print-sheet {
       display: block !important;
-      background: white;
-      width: 297mm;
-      height: 210mm;
-      margin: 0 auto;
-      padding: 10mm;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      transform-origin: top center;
+      width: 100%;
+      color: black;
     }
 
-    @media (max-width: 1200px) {
-      body.preview-mode .print-sheet {
-        transform: scale(0.6);
-      }
-    }
-
-    @media (max-width: 800px) {
-      body.preview-mode .print-sheet {
-        transform: scale(0.4);
-      }
-    }
-
-    .preview-controls {
-      display: none;
-    }
-
-    body.preview-mode .preview-controls {
+    .print-header {
       display: flex;
-      position: fixed;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      gap: 10px;
-      z-index: 1000;
-    }
-
-    .preview-btn {
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 2px solid white;
-      font-family: 'Zen Kurenaido', sans-serif;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid black;
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      font-size: 12pt;
       font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-  </style>
+    .print-header .meta {
+      font-size: 10pt;
+      font-weight: normal;
+    }
+    .print-header .date {
+      font-size: 10pt;
+      border: 1.5px solid black;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    /* 1段目：年間計画 */
+    .print-row.annual {
+      border: 1.5px solid black;
+      border-bottom: none;
+      padding: 4px 8px;
+      min-height: 50px;
+      font-size: 9pt;
+      white-space: pre-wrap;
+      line-height: 1.35;
+    }
+    .print-row.annual::before {
+      content: "年間計画";
+      display: inline-block;
+      font-size: 7.5pt;
+      font-weight: 700;
+      background: #eee;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* 2段目：上半期/下半期（2分割） */
+    .print-row.half {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1.5px solid black;
+      border-bottom: none;
+      min-height: 45px;
+    }
+    .print-row.half > div {
+      padding: 4px 8px;
+      font-size: 9pt;
+      white-space: pre-wrap;
+      line-height: 1.35;
+    }
+    .print-row.half > div:first-child {
+      border-right: 1px solid black;
+    }
+    .print-row.half > div::before {
+      display: inline-block;
+      font-size: 7.5pt;
+      font-weight: 700;
+      background: #eee;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .print-row.half > div:nth-child(1)::before { content: "上半期 (4-9月)"; }
+    .print-row.half > div:nth-child(2)::before { content: "下半期 (10-3月)"; }
+
+    /* 3段目：四半期（4分割） */
+    .print-row.quarter {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      border: 1.5px solid black;
+      border-bottom: none;
+      min-height: 40px;
+    }
+    .print-row.quarter > div {
+      padding: 4px 6px;
+      font-size: 8.5pt;
+      white-space: pre-wrap;
+      line-height: 1.3;
+      border-right: 1px solid black;
+    }
+    .print-row.quarter > div:last-child { border-right: none; }
+    .print-row.quarter > div::before {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 700;
+      background: #eee;
+      padding: 1px 4px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .print-row.quarter > div:nth-child(1)::before { content: "Q1"; }
+    .print-row.quarter > div:nth-child(2)::before { content: "Q2"; }
+    .print-row.quarter > div:nth-child(3)::before { content: "Q3"; }
+    .print-row.quarter > div:nth-child(4)::before { content: "Q4"; }
+
+    /* 4段目：月（12分割）と月番号ヘッダー */
+    .print-month-numbers {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      border: 1.5px solid black;
+      border-bottom: none;
+      background: #f5f5f5;
+    }
+    .print-month-numbers > div {
+      font-family: 'Zen Kurenaido', sans-serif;
+      font-size: 16pt;
+      font-weight: 700;
+      text-align: center;
+      padding: 3px 0;
+      border-right: 1px solid black;
+      line-height: 1;
+    }
+    .print-month-numbers > div:last-child { border-right: none; }
+
+    .print-row.month {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      border: 1.5px solid black;
+      border-bottom: none;
+      min-height: 35px;
+    }
+    .print-row.month > div {
+      padding: 3px 4px;
+      font-size: 7.5pt;
+      white-space: pre-wrap;
+      line-height: 1.3;
+      border-right: 1px solid black;
+      overflow: hidden;
+    }
+    .print-row.month > div:last-child { border-right: none; }
+
+    /* 5〜8段目：週（12ヶ月 × 4週） */
+    .print-row.week {
+      display: grid;
+      grid-template-columns: 40px repeat(12, 1fr);
+      border: 1.5px solid black;
+      border-bottom: none;
+      min-height: 30px;
+    }
+    .print-row.week:last-of-type {
+      border-bottom: 1.5px solid black;
+    }
+    .print-row.week > div {
+      padding: 2px 3px;
+      font-size: 7pt;
+      white-space: pre-wrap;
+      line-height: 1.25;
+      border-right: 1px solid black;
+      overflow: hidden;
+    }
+    .print-row.week > div:last-child { border-right: none; }
+    .print-row.week .week-marker {
+      background: #f5f5f5;
+      font-family: 'Yomogi', cursive;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8pt;
+    }
+
+    /* 印刷時は色を保持 */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+
+  /* ========== 印刷プレビューをブラウザで表示する用（preview mode） ========== */
+  body.preview-mode .app,
+  body.preview-mode .toolbar { display: none; }
+  body.preview-mode .print-sheet {
+    display: block;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    color: black;
+    border: 1px solid var(--ink);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    font-family: 'Kaisei Decol', serif;
+  }
+  body.preview-mode .print-sheet .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid black;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  body.preview-mode .print-sheet .print-header .meta {
+    font-size: 12px; font-weight: normal;
+  }
+  body.preview-mode .print-sheet .print-header .date {
+    font-size: 11px;
+    border: 1.5px solid black;
+    padding: 2px 8px; border-radius: 3px;
+  }
+  body.preview-mode .print-row.annual {
+    border: 1.5px solid black; border-bottom: none;
+    padding: 6px 10px; min-height: 50px;
+    font-size: 11px; white-space: pre-wrap; line-height: 1.4;
+  }
+  body.preview-mode .print-row.annual::before {
+    content: "年間計画"; display: inline-block;
+    font-size: 9px; font-weight: 700;
+    background: #eee; padding: 2px 6px;
+    border-radius: 2px; margin-right: 8px;
+    vertical-align: middle;
+  }
+  body.preview-mode .print-row.half {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border: 1.5px solid black; border-bottom: none;
+    min-height: 50px;
+  }
+  body.preview-mode .print-row.half > div {
+    padding: 6px 10px; font-size: 11px;
+    white-space: pre-wrap; line-height: 1.4;
+  }
+  body.preview-mode .print-row.half > div:first-child { border-right: 1px solid black; }
+  body.preview-mode .print-row.half > div::before {
+    display: inline-block; font-size: 9px; font-weight: 700;
+    background: #eee; padding: 2px 6px; border-radius: 2px;
+    margin-right: 8px; vertical-align: middle;
+  }
+  body.preview-mode .print-row.half > div:nth-child(1)::before { content: "上半期 (4-9月)"; }
+  body.preview-mode .print-row.half > div:nth-child(2)::before { content: "下半期 (10-3月)"; }
+
+  body.preview-mode .print-row.quarter {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    border: 1.5px solid black; border-bottom: none;
+    min-height: 45px;
+  }
+  body.preview-mode .print-row.quarter > div {
+    padding: 5px 8px; font-size: 10.5px;
+    white-space: pre-wrap; line-height: 1.4;
+    border-right: 1px solid black;
+  }
+  body.preview-mode .print-row.quarter > div:last-child { border-right: none; }
+  body.preview-mode .print-row.quarter > div::before {
+    display: inline-block; font-size: 8.5px; font-weight: 700;
+    background: #eee; padding: 1px 5px; border-radius: 2px;
+    margin-right: 5px; vertical-align: middle;
+  }
+  body.preview-mode .print-row.quarter > div:nth-child(1)::before { content: "Q1"; }
+  body.preview-mode .print-row.quarter > div:nth-child(2)::before { content: "Q2"; }
+  body.preview-mode .print-row.quarter > div:nth-child(3)::before { content: "Q3"; }
+  body.preview-mode .print-row.quarter > div:nth-child(4)::before { content: "Q4"; }
+
+  body.preview-mode .print-month-numbers {
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    border: 1.5px solid black; border-bottom: none;
+    background: #f5f5f5;
+  }
+  body.preview-mode .print-month-numbers > div {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 20px; font-weight: 700;
+    text-align: center; padding: 4px 0;
+    border-right: 1px solid black; line-height: 1;
+  }
+  body.preview-mode .print-month-numbers > div:last-child { border-right: none; }
+
+  body.preview-mode .print-row.month {
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    border: 1.5px solid black; border-bottom: none;
+    min-height: 40px;
+  }
+  body.preview-mode .print-row.month > div {
+    padding: 4px 5px; font-size: 9.5px;
+    white-space: pre-wrap; line-height: 1.3;
+    border-right: 1px solid black; overflow: hidden;
+  }
+  body.preview-mode .print-row.month > div:last-child { border-right: none; }
+
+  body.preview-mode .print-row.week {
+    display: grid;
+    grid-template-columns: 46px repeat(12, 1fr);
+    border: 1.5px solid black; border-bottom: none;
+    min-height: 34px;
+  }
+  body.preview-mode .print-row.week:last-of-type {
+    border-bottom: 1.5px solid black;
+  }
+  body.preview-mode .print-row.week > div {
+    padding: 3px 4px; font-size: 9px;
+    white-space: pre-wrap; line-height: 1.3;
+    border-right: 1px solid black; overflow: hidden;
+  }
+  body.preview-mode .print-row.week > div:last-child { border-right: none; }
+  body.preview-mode .print-row.week .week-marker {
+    background: #f5f5f5;
+    font-family: 'Yomogi', cursive;
+    font-weight: 700; text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+
+  /* プレビュー時の戻るバー */
+  body.preview-mode::before {
+    display: none;
+  }
+  .preview-bar {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0;
+    background: var(--ink); color: var(--paper);
+    padding: 10px 14px;
+    z-index: 500;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 13px; font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  body.preview-mode .preview-bar { display: flex; }
+  body.preview-mode { padding-top: 48px; }
+  .preview-bar button {
+    padding: 6px 12px;
+    border: 1.5px solid var(--paper);
+    background: transparent; color: var(--paper);
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    border-radius: 4px; cursor: pointer;
+  }
+  .preview-bar button.primary {
+    background: var(--paper); color: var(--ink);
+  }
+  .preview-bar .bar-actions { display: flex; gap: 6px; }
+
+  @media print {
+    .preview-bar { display: none !important; }
+    body.preview-mode { padding-top: 0; }
+  }
+</style>
 </head>
-
 <body>
-  <div class="app">
-    <header class="header">
-      <h1 class="title">
-        <span class="wavy" contenteditable="true" data-key="title" spellcheck="false">年間計画表</span>
-      </h1>
-      <div class="subtitle">
-        <span contenteditable="true" data-key="subtitle" spellcheck="false">組織名・名前など</span>
-        <span class="date-stamp" id="todayStamp">26/04/21</span>
-      </div>
-      <div class="edit-hint">※ テキストを直接タップして自由に書き込めます</div>
-    </header>
+<div class="app">
 
-    <div class="zoom-tabs">
-      <button class="zoom-tab active" data-view="year">全体</button>
-      <button class="zoom-tab" data-view="quarter">四半期</button>
-      <button class="zoom-tab" data-view="month">月次</button>
-      <button class="zoom-tab" data-view="week">週次</button>
+  <header class="header">
+    <h1 class="title">
+      <span class="wavy" contenteditable="true" data-key="title" spellcheck="false">2026年度 志有年間計画表</span>
+    </h1>
+    <div class="subtitle">
+      <span contenteditable="true" data-key="subtitle" spellcheck="false">あげな中学 2年3組 / ながしおや しょうご</span>
+      <span class="date-stamp" id="todayStamp">26/04/17</span>
     </div>
+    <div class="edit-hint">↑タップして編集できます</div>
+  </header>
 
-    <!-- 全体ビュー -->
-    <div class="view active" data-view="year">
-      <h2 class="section-label">ANNUAL VISION</h2>
-      <div class="card year-card">
-        <div class="card-title">✨ 年間の大きなテーマ</div>
-        <div class="card-content" contenteditable="true" data-key="year" spellcheck="false"></div>
+  <nav class="zoom-tabs">
+    <button class="zoom-tab active" data-view="year">年</button>
+    <button class="zoom-tab" data-view="half">半期</button>
+    <button class="zoom-tab" data-view="quarter">四半期</button>
+    <button class="zoom-tab" data-view="month">月</button>
+    <button class="zoom-tab" data-view="week">週</button>
+  </nav>
+
+  <section class="view active" data-view="year">
+    <div class="section-label">年間計画 / ANNUAL</div>
+    <div class="card year-card">
+      <div class="card-title">2026年度</div>
+      <div class="card-content" contenteditable="true" data-key="year"></div>
+    </div>
+  </section>
+
+  <section class="view" data-view="half">
+    <div class="section-label">上半期 / 下半期</div>
+    <div class="half-grid">
+      <div class="card half-card" data-half="H1">
+        <div class="card-title">上半期 <span class="half-label">4〜9月</span></div>
+        <div class="card-content" contenteditable="true" data-key="half.H1"></div>
       </div>
-
-      <h2 class="section-label">HALF YEAR</h2>
-      <div class="half-grid">
-        <div class="card half-card" data-half="H1">
-          <div class="card-title">
-            <span>🌸 上半期</span>
-            <span class="half-label">4月〜9月</span>
-          </div>
-          <div class="card-content" contenteditable="true" data-key="half.H1" spellcheck="false"></div>
-        </div>
-        <div class="card half-card" data-half="H2">
-          <div class="card-title">
-            <span>🍂 下半期</span>
-            <span class="half-label">10月〜3月</span>
-          </div>
-          <div class="card-content" contenteditable="true" data-key="half.H2" spellcheck="false"></div>
-        </div>
+      <div class="card half-card" data-half="H2">
+        <div class="card-title">下半期 <span class="half-label">10〜3月</span></div>
+        <div class="card-content" contenteditable="true" data-key="half.H2"></div>
       </div>
     </div>
+  </section>
 
-    <!-- 四半期ビュー -->
-    <div class="view" data-view="quarter">
-      <h2 class="section-label">QUARTERLY FOCUS</h2>
-      <div class="quarter-grid">
-        <div class="card quarter-card" data-q="Q1">
-          <div class="card-title">Q1 <span class="quarter-months">4/5/6</span></div>
-          <div class="card-content" contenteditable="true" data-key="quarter.Q1" spellcheck="false"></div>
-        </div>
-        <div class="card quarter-card" data-q="Q2">
-          <div class="card-title">Q2 <span class="quarter-months">7/8/9</span></div>
-          <div class="card-content" contenteditable="true" data-key="quarter.Q2" spellcheck="false"></div>
-        </div>
-        <div class="card quarter-card" data-q="Q3">
-          <div class="card-title">Q3 <span class="quarter-months">10/11/12</span></div>
-          <div class="card-content" contenteditable="true" data-key="quarter.Q3" spellcheck="false"></div>
-        </div>
-        <div class="card quarter-card" data-q="Q4">
-          <div class="card-title">Q4 <span class="quarter-months">1/2/3</span></div>
-          <div class="card-content" contenteditable="true" data-key="quarter.Q4" spellcheck="false"></div>
-        </div>
+  <section class="view" data-view="quarter">
+    <div class="section-label">四半期 / QUARTER</div>
+    <div class="quarter-grid">
+      <div class="card quarter-card" data-q="Q1">
+        <div class="card-title">Q1 <span class="quarter-months">4・5・6月</span></div>
+        <div class="card-content" contenteditable="true" data-key="quarter.Q1"></div>
+      </div>
+      <div class="card quarter-card" data-q="Q2">
+        <div class="card-title">Q2 <span class="quarter-months">7・8・9月</span></div>
+        <div class="card-content" contenteditable="true" data-key="quarter.Q2"></div>
+      </div>
+      <div class="card quarter-card" data-q="Q3">
+        <div class="card-title">Q3 <span class="quarter-months">10・11・12月</span></div>
+        <div class="card-content" contenteditable="true" data-key="quarter.Q3"></div>
+      </div>
+      <div class="card quarter-card" data-q="Q4">
+        <div class="card-title">Q4 <span class="quarter-months">1・2・3月</span></div>
+        <div class="card-content" contenteditable="true" data-key="quarter.Q4"></div>
       </div>
     </div>
+  </section>
 
-    <!-- 月次ビュー -->
-    <div class="view" data-view="month">
-      <h2 class="section-label">MONTHLY GOALS</h2>
-      <div class="month-grid" id="monthGrid">
-        <!-- JSで生成 -->
-      </div>
-    </div>
+  <section class="view" data-view="month">
+    <div class="section-label">各月 / MONTHLY</div>
+    <div class="month-grid" id="monthGrid"></div>
+  </section>
 
-    <!-- 週次ビュー -->
-    <div class="view" data-view="week">
-      <h2 class="section-label">WEEKLY RHYTHM</h2>
-      <div id="weekContainer">
-        <!-- JSで生成 -->
-      </div>
-    </div>
+  <section class="view" data-view="week">
+    <div class="section-label">各週 / WEEKLY (12ヶ月 × 4週 = 48マス)</div>
+    <div id="weekList"></div>
+  </section>
 
-    <div class="toolbar">
-      <button class="tool-btn" id="btnExport">MD出力</button>
-      <button class="tool-btn" id="btnImport">MD読込</button>
-      <button class="tool-btn" id="btnClear">クリア</button>
-      <button class="tool-btn" id="btnPrint">印刷</button>
-      <button class="tool-btn primary" id="btnSave">保存</button>
-    </div>
+</div>
+
+<div class="toolbar">
+  <button class="tool-btn" id="btnExport">MD出力</button>
+  <button class="tool-btn" id="btnImport">MD読込</button>
+  <button class="tool-btn" id="btnPrint">印刷</button>
+  <button class="tool-btn" id="btnClear">クリア</button>
+  <button class="tool-btn primary" id="btnSave">保存</button>
+</div>
+
+<!-- プレビューモード時のバー -->
+<div class="preview-bar">
+  <span>📄 印刷プレビュー（元画像レイアウト）</span>
+  <div class="bar-actions">
+    <button id="btnPreviewExit">戻る</button>
+    <button class="primary" id="btnPreviewPrint">印刷</button>
   </div>
+</div>
 
-  <!-- 印刷用シート（非表示） -->
-  <div class="print-sheet" id="printSheet"></div>
+<!-- 印刷用シート（元画像のグリッドレイアウト） -->
+<div class="print-sheet" id="printSheet"></div>
 
-  <!-- プレビューモード用コントロール -->
-  <div class="preview-controls">
-    <button class="preview-btn" style="background: #3a4663; color: white;" id="btnPreviewExit">← 編集に戻る</button>
-    <button class="preview-btn" style="background: #c7452e; color: white;" id="btnPreviewPrint">🖨️ 今すぐ印刷する</button>
-  </div>
-
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modalTitle">タイトル</h3>
-        <button class="modal-close" id="modalClose">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-hint" id="modalHint"></p>
-        <textarea class="modal-textarea" id="modalTextarea" spellcheck="false"></textarea>
-      </div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">MDエクスポート</h3>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-hint" id="modalHint">下のテキストをコピーして保存してください。</p>
+      <textarea class="modal-textarea" id="modalTextarea"></textarea>
       <div class="modal-actions" id="modalActions"></div>
     </div>
   </div>
+</div>
 
-  <div class="toast" id="toast">保存しました</div>
+<div class="toast" id="toast">保存しました</div>
 
-  <script>
-    // ブラウザの「戻る」ボタンでプレビューを終了できるようにする
-    window.addEventListener('popstate', (e) => {
-      if (document.body.classList.contains('preview-mode')) {
-        document.body.classList.remove('preview-mode');
+<script>
+const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+const STORAGE_KEY = 'nenkan_keikaku_2026';
+
+let data = {
+  title: '2026年度 志有年間計画表',
+  subtitle: 'あげな中学 2年3組 / ながしおや しょうご',
+  year: '',
+  half: { H1: '', H2: '' },
+  quarter: { Q1: '', Q2: '', Q3: '', Q4: '' },
+  month: {},
+  week: {}
+};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.title) data.title = parsed.title;
+      if (parsed.subtitle) data.subtitle = parsed.subtitle;
+      data.year = parsed.year || '';
+      data.half = Object.assign({H1:'',H2:''}, parsed.half || {});
+      data.quarter = Object.assign({Q1:'',Q2:'',Q3:'',Q4:''}, parsed.quarter || {});
+      data.month = parsed.month || {};
+      data.week = parsed.week || {};
+    }
+  } catch (e) { console.error('load failed', e); }
+}
+
+function saveData(silent) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (!silent) showToast('保存しました');
+  } catch (e) {
+    showToast('保存に失敗しました');
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getPlaceholder(key) {
+  if (key === 'title') return 'タイトルを入力…';
+  if (key === 'subtitle') return 'サブタイトルを入力…';
+  if (key === 'year') return 'ここに年間のテーマや大目標を書く…';
+  if (key.startsWith('half')) return 'このシーズンのテーマ…';
+  if (key.startsWith('quarter')) return '四半期の重点…';
+  if (key.startsWith('month')) return 'この月の目標…';
+  if (key.startsWith('week')) return '';
+  return '…';
+}
+
+function setContent(el, val) {
+  const key = el.dataset.key;
+  if (!val) {
+    el.classList.add('empty');
+    el.textContent = getPlaceholder(key);
+  } else {
+    el.classList.remove('empty');
+    el.textContent = val;
+  }
+}
+
+function getByKey(key) {
+  const parts = key.split('.');
+  if (parts.length === 1) return data[parts[0]] || '';
+  return (data[parts[0]] && data[parts[0]][parts[1]]) || '';
+}
+
+function setByKey(key, val) {
+  const parts = key.split('.');
+  if (parts.length === 1) data[parts[0]] = val;
+  else {
+    if (!data[parts[0]]) data[parts[0]] = {};
+    data[parts[0]][parts[1]] = val;
+  }
+}
+
+function renderAll() {
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.dataset.key;
+    if (!key.startsWith('month.') && !key.startsWith('week.')) {
+      setContent(el, getByKey(key));
+    }
+  });
+
+  const mg = document.getElementById('monthGrid');
+  mg.innerHTML = '';
+  MONTHS.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'card month-card';
+    div.innerHTML = `
+      <div class="month-number">${m}<span class="suffix">月</span></div>
+      <div class="card-content" contenteditable="true" data-key="month.${m}"></div>
+    `;
+    mg.appendChild(div);
+    setContent(div.querySelector('.card-content'), data.month[m] || '');
+  });
+
+  const wl = document.getElementById('weekList');
+  wl.innerHTML = '';
+  MONTHS.forEach(m => {
+    const monthPlan = data.month[m] || '';
+    const group = document.createElement('div');
+    group.className = 'week-month-group';
+    group.dataset.month = m;
+    let html = `
+      <div class="week-month-header">
+        <span>${m}月</span>
+        <span class="plan-badge">月のテーマ</span>
+      </div>
+    `;
+    if (monthPlan) {
+      html += `<div class="week-month-plan">${escapeHtml(monthPlan)}</div>`;
+    } else {
+      html += `<div class="week-month-plan empty">（月ビューで目標を書くとここに表示されます）</div>`;
+    }
+    for (let w = 1; w <= 4; w++) {
+      html += `
+        <div class="week-row">
+          <div class="week-label">W${w}</div>
+          <div class="week-content" contenteditable="true" data-key="week.${m}-${w}"></div>
+        </div>
+      `;
+    }
+    group.innerHTML = html;
+    wl.appendChild(group);
+    group.querySelectorAll('.week-content').forEach(el => {
+      const key = el.dataset.key.split('.')[1];
+      setContent(el, data.week[key] || '');
+    });
+  });
+
+  bindEditables();
+}
+
+function bindEditables() {
+  document.querySelectorAll('[contenteditable="true"][data-key]').forEach(el => {
+    if (el.dataset.bound) return;
+    el.dataset.bound = '1';
+
+    el.addEventListener('focus', () => {
+      if (el.classList.contains('empty')) {
+        el.textContent = '';
+        el.classList.remove('empty');
       }
     });
 
-    const STORAGE_KEY = 'nenkan_keikaku_template';
-    const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+    // 入力があるたびに即座にデータを更新（タイミング問題を回避）
+    el.addEventListener('input', () => {
+      const val = el.textContent.trim();
+      setByKey(el.dataset.key, val);
 
-    let data = {
-      title: '年間計画表',
-      subtitle: '組織名・名前など',
-      year: '',
-      half: { H1: '', H2: '' },
-      quarter: { Q1: '', Q2: '', Q3: '', Q4: '' },
-      month: {},
-      week: {}
-    };
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-    }
-
-    function loadData() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          data = { ...data, ...parsed };
-        } catch (e) {
-          console.error('Data load error', e);
+      // 月の内容を編集中なら、週ビューの月テーマ表示もリアルタイム更新
+      if (el.dataset.key.startsWith('month.')) {
+        const m = el.dataset.key.split('.')[1];
+        const planEl = document.querySelector(`.week-month-group[data-month="${m}"] .week-month-plan`);
+        if (planEl) {
+          if (val) {
+            planEl.textContent = val;
+            planEl.classList.remove('empty');
+          } else {
+            planEl.textContent = '（月ビューで目標を書くとここに表示されます）';
+            planEl.classList.add('empty');
+          }
         }
       }
-    }
+    });
 
-    function saveData(silent = false) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      if (!silent) showToast('保存しました');
-    }
-
-    function getByKey(key) {
-      const parts = key.split('.');
-      let current = data;
-      for (const p of parts) {
-        if (current[p] === undefined) return '';
-        current = current[p];
-      }
-      return current;
-    }
-
-    function setByKey(key, val) {
-      const parts = key.split('.');
-      let current = data;
-      for (let i = 0; i < parts.length - 1; i++) {
-        const p = parts[i];
-        if (current[p] === undefined) current[p] = {};
-        current = current[p];
-      }
-      current[parts[parts.length - 1]] = val;
-    }
-
-    function renderAll() {
-      // タイトル・サブタイトル
-      document.querySelector('[data-key="title"]').textContent = data.title || '';
-      document.querySelector('[data-key="subtitle"]').textContent = data.subtitle || '';
-
-      // 全体・四半期
-      document.querySelectorAll('.card-content[contenteditable="true"]').forEach(el => {
-        const key = el.dataset.key;
-        if (!key) return;
-        const val = getByKey(key);
-        el.textContent = val;
-        el.classList.toggle('empty', !val);
-      });
-
-      // 月次グリッド
-      const monthGrid = document.getElementById('monthGrid');
-      monthGrid.innerHTML = MONTHS.map(m => {
-        const val = data.month[m] || '';
-        return `
-          <div class="card month-card">
-            <div class="month-number">${m}<span class="suffix">月</span></div>
-            <div class="card-content ${val ? '' : 'empty'}" contenteditable="true" data-key="month.${m}" spellcheck="false">${val}</div>
-          </div>
-        `;
-      }).join('');
-
-      // 週次コンテナ
-      const weekContainer = document.getElementById('weekContainer');
-      weekContainer.innerHTML = MONTHS.map(m => {
-        const mPlan = data.month[m] || '';
-        let html = `
-          <div class="week-month-group">
-            <div class="week-month-header">
-              <span>${m}月のリズム</span>
-              <span class="plan-badge">Weekly</span>
-            </div>
-            <div class="week-month-plan ${mPlan ? '' : 'empty'}">${mPlan}</div>
-        `;
-        for (let w = 1; w <= 4; w++) {
-          const key = `${m}-${w}`;
-          const val = data.week[key] || '';
-          html += `
-            <div class="week-row">
-              <div class="week-label">W${w}</div>
-              <div class="week-content ${val ? '' : 'empty'}" contenteditable="true" data-key="week.${key}" spellcheck="false">${val}</div>
-            </div>
-          `;
-        }
-        html += `</div>`;
-        return html;
-      }).join('');
-
-      // イベント紐付け
-      document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-        el.onblur = () => {
-          const key = el.dataset.key;
-          const val = el.textContent.trim();
-          setByKey(key, val);
-          el.classList.toggle('empty', !val);
-          saveData(true);
-        };
-        // 入力中の空判定リアルタイム（任意）
-        el.oninput = () => {
-          el.classList.toggle('empty', !el.textContent.trim());
-        };
-      });
-    }
-
-    // 自動保存（5秒ごと、変更があった場合のみを簡略化）
-    setInterval(() => {
-      // 実際には dirty フラグを管理するのが望ましいが、localStorage なので頻繁でも問題なし
+    // blurで保存とプレースホルダ復元
+    el.addEventListener('blur', () => {
+      const val = el.textContent.trim();
+      setByKey(el.dataset.key, val);
+      if (!val) setContent(el, '');
       saveData(true);
-    }, 5000);
-
-    // 現在の編集中フィールドの内容を確実にデータに反映する
-    function flushActiveEditor() {
-      const active = document.activeElement;
-      if (active && active.hasAttribute('contenteditable') && active.dataset.key) {
-        const val = active.textContent.trim();
-        setByKey(active.dataset.key, val);
-        saveData(true);
-        active.blur();
-      }
-    }
-
-    document.querySelectorAll('.zoom-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        flushActiveEditor();
-        document.querySelectorAll('.zoom-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        tab.classList.add('active');
-        const view = tab.dataset.view;
-        document.querySelector(`.view[data-view="${view}"]`).classList.add('active');
-        renderAll();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
     });
+  });
+}
 
-    function toMarkdown() {
-      let md = `# ${data.title || '年間計画表'}\n\n`;
-      md += `> ${data.subtitle || ''}\n\n`;
-      md += `## 年間計画\n\n${data.year || '(未記入)'}\n\n`;
-      md += `## 上半期（4〜9月）\n\n${data.half.H1 || '(未記入)'}\n\n`;
-      md += `## 下半期（10〜3月）\n\n${data.half.H2 || '(未記入)'}\n\n`;
-      md += `## 四半期計画\n\n`;
-      md += `### Q1（4・5・6月）\n${data.quarter.Q1 || '(未記入)'}\n\n`;
-      md += `### Q2（7・8・9月）\n${data.quarter.Q2 || '(未記入)'}\n\n`;
-      md += `### Q3（10・11・12月）\n${data.quarter.Q3 || '(未記入)'}\n\n`;
-      md += `### Q4（1・2・3月）\n${data.quarter.Q4 || '(未記入)'}\n\n`;
-      md += `## 月次・週次\n\n`;
-      MONTHS.forEach(m => {
-        md += `### ${m}月\n\n`;
-        md += `${data.month[m] || '(未記入)'}\n\n`;
-        for (let w = 1; w <= 4; w++) {
-          const k = `${m}-${w}`;
-          md += `- **W${w}**: ${data.week[k] || ''}\n`;
-        }
-        md += `\n`;
-      });
-      md += `---\n\n*Last updated: ${new Date().toISOString().slice(0, 10)}*\n`;
-      return md;
+// 定期的な自動保存（5秒ごと、念のため）
+setInterval(() => {
+  saveData(true);
+}, 5000);
+
+// 現在の編集中フィールドの内容を確実にデータに反映する
+function flushActiveEditor() {
+  const active = document.activeElement;
+  if (active && active.hasAttribute('contenteditable') && active.dataset.key) {
+    const val = active.textContent.trim();
+    setByKey(active.dataset.key, val);
+    saveData(true);
+    active.blur();
+  }
+}
+
+document.querySelectorAll('.zoom-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    flushActiveEditor();
+    document.querySelectorAll('.zoom-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    document.querySelector(`.view[data-view="${view}"]`).classList.add('active');
+    renderAll();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+function toMarkdown() {
+  let md = `# ${data.title || '2026年度 年間計画表'}\n\n`;
+  md += `> ${data.subtitle || ''}\n\n`;
+  md += `## 年間計画\n\n${data.year || '(未記入)'}\n\n`;
+  md += `## 上半期（4〜9月）\n\n${data.half.H1 || '(未記入)'}\n\n`;
+  md += `## 下半期（10〜3月）\n\n${data.half.H2 || '(未記入)'}\n\n`;
+  md += `## 四半期計画\n\n`;
+  md += `### Q1（4・5・6月）\n${data.quarter.Q1 || '(未記入)'}\n\n`;
+  md += `### Q2（7・8・9月）\n${data.quarter.Q2 || '(未記入)'}\n\n`;
+  md += `### Q3（10・11・12月）\n${data.quarter.Q3 || '(未記入)'}\n\n`;
+  md += `### Q4（1・2・3月）\n${data.quarter.Q4 || '(未記入)'}\n\n`;
+  md += `## 月次・週次\n\n`;
+  MONTHS.forEach(m => {
+    md += `### ${m}月\n\n`;
+    md += `${data.month[m] || '(未記入)'}\n\n`;
+    for (let w = 1; w <= 4; w++) {
+      const k = `${m}-${w}`;
+      md += `- **W${w}**: ${data.week[k] || ''}\n`;
     }
+    md += `\n`;
+  });
+  md += `---\n\n*Last updated: ${new Date().toISOString().slice(0,10)}*\n`;
+  return md;
+}
 
-    function fromMarkdown(md) {
-      const result = {
-        title: '', subtitle: '',
-        year: '', half: { H1: '', H2: '' }, quarter: { Q1: '', Q2: '', Q3: '', Q4: '' }, month: {}, week: {}
-      };
-      const lines = md.split('\n');
-      let section = null;
-      let buffer = [];
+function fromMarkdown(md) {
+  const result = {
+    title: '', subtitle: '',
+    year: '', half: {H1:'',H2:''}, quarter: {Q1:'',Q2:'',Q3:'',Q4:''}, month: {}, week: {}
+  };
+  const lines = md.split('\n');
+  let section = null;
+  let buffer = [];
 
-      // 最初の # 見出しをタイトル、最初の > 行をサブタイトルとして抽出
-      for (const line of lines) {
-        const titleMatch = line.match(/^#\s+(.+)$/);
-        if (titleMatch && !result.title) {
-          result.title = titleMatch[1].trim();
-          continue;
-        }
-        const subMatch = line.match(/^>\s+(.+)$/);
-        if (subMatch && !result.subtitle) {
-          result.subtitle = subMatch[1].trim();
-          break;
+  // 最初の # 見出しをタイトル、最初の > 行をサブタイトルとして抽出
+  for (const line of lines) {
+    const titleMatch = line.match(/^#\s+(.+)$/);
+    if (titleMatch && !result.title) {
+      result.title = titleMatch[1].trim();
+      continue;
+    }
+    const subMatch = line.match(/^>\s+(.+)$/);
+    if (subMatch && !result.subtitle) {
+      result.subtitle = subMatch[1].trim();
+      break;
+    }
+  }
+
+  const flush = () => {
+    if (!section) { buffer = []; return; }
+    const text = buffer.join('\n').trim();
+    const clean = text === '(未記入)' ? '' : text;
+    if (section.type === 'year') result.year = clean;
+    else if (section.type === 'half') result.half[section.key] = clean;
+    else if (section.type === 'quarter') result.quarter[section.key] = clean;
+    else if (section.type === 'month') {
+      const monthLines = [];
+      for (const l of text.split('\n')) {
+        const wm = l.match(/^-\s*\*\*W(\d)\*\*:\s*(.*)$/);
+        if (wm) {
+          result.week[`${section.key}-${wm[1]}`] = wm[2].trim();
+        } else {
+          monthLines.push(l);
         }
       }
-
-      const flush = () => {
-        if (!section) { buffer = []; return; }
-        const text = buffer.join('\n').trim();
-        const clean = text === '(未記入)' ? '' : text;
-        if (section.type === 'year') result.year = clean;
-        else if (section.type === 'half') result.half[section.key] = clean;
-        else if (section.type === 'quarter') result.quarter[section.key] = clean;
-        else if (section.type === 'month') {
-          const monthLines = [];
-          for (const l of text.split('\n')) {
-            const wm = l.match(/^-\s*\*\*W(\d)\*\*:\s*(.*)$/);
-            if (wm) {
-              result.week[`${section.key}-${wm[1]}`] = wm[2].trim();
-            } else {
-              monthLines.push(l);
-            }
-          }
-          result.month[section.key] = monthLines.join('\n').trim();
-        }
-        buffer = [];
-      };
-
-      for (const line of lines) {
-        if (/^##\s+年間計画/.test(line)) { flush(); section = { type: 'year' }; continue; }
-        if (/^##\s+上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
-        if (/^##\s+下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
-        const qm = line.match(/^###\s+Q(\d)/);
-        if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[1] }; continue; }
-        const mm = line.match(/^###\s+(\d+)月/);
-        if (mm) { flush(); section = { type: 'month', key: parseInt(mm[1]) }; continue; }
-        if (/^##?\s/.test(line) || /^---/.test(line)) { flush(); section = null; continue; }
-        if (section) buffer.push(line);
-      }
-      flush();
-      return result;
+      result.month[section.key] = monthLines.join('\n').trim();
     }
+    buffer = [];
+  };
 
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalHint = document.getElementById('modalHint');
-    const modalTextarea = document.getElementById('modalTextarea');
-    const modalActions = document.getElementById('modalActions');
+  for (const line of lines) {
+    if (/^##\s+年間計画/.test(line)) { flush(); section = {type:'year'}; continue; }
+    if (/^##\s+上半期/.test(line)) { flush(); section = {type:'half', key:'H1'}; continue; }
+    if (/^##\s+下半期/.test(line)) { flush(); section = {type:'half', key:'H2'}; continue; }
+    const qm = line.match(/^###\s+Q(\d)/);
+    if (qm) { flush(); section = {type:'quarter', key:'Q'+qm[1]}; continue; }
+    const mm = line.match(/^###\s+(\d+)月/);
+    if (mm) { flush(); section = {type:'month', key: parseInt(mm[1])}; continue; }
+    if (/^##?\s/.test(line) || /^---/.test(line)) { flush(); section = null; continue; }
+    if (section) buffer.push(line);
+  }
+  flush();
+  return result;
+}
 
-    function openModal(title, hint, content, actions) {
-      modalTitle.textContent = title;
-      modalHint.textContent = hint;
-      modalTextarea.value = content;
-      modalActions.innerHTML = '';
-      actions.forEach(a => {
-        const btn = document.createElement('button');
-        btn.className = 'tool-btn' + (a.primary ? ' primary' : '');
-        btn.textContent = a.label;
-        btn.onclick = a.onClick;
-        modalActions.appendChild(btn);
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalHint = document.getElementById('modalHint');
+const modalTextarea = document.getElementById('modalTextarea');
+const modalActions = document.getElementById('modalActions');
+
+function openModal(title, hint, content, actions) {
+  modalTitle.textContent = title;
+  modalHint.textContent = hint;
+  modalTextarea.value = content;
+  modalActions.innerHTML = '';
+  actions.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'tool-btn' + (a.primary ? ' primary' : '');
+    btn.textContent = a.label;
+    btn.onclick = a.onClick;
+    modalActions.appendChild(btn);
+  });
+  modal.classList.add('show');
+}
+
+function closeModal() { modal.classList.remove('show'); }
+document.getElementById('modalClose').onclick = closeModal;
+modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+document.getElementById('btnExport').onclick = () => {
+  flushActiveEditor();
+  const md = toMarkdown();
+  openModal('MD出力', '下のテキストをコピー、またはダウンロードしてください。', md, [
+    { label: 'コピー', primary: true, onClick: () => {
+      navigator.clipboard.writeText(modalTextarea.value).then(() => {
+        showToast('コピーしました');
+      }).catch(() => {
+        modalTextarea.select();
+        document.execCommand('copy');
+        showToast('コピーしました');
       });
-      modal.classList.add('show');
-    }
+    }},
+    { label: 'ダウンロード', onClick: () => {
+      const blob = new Blob([modalTextarea.value], {type:'text/markdown'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nenkan_keikaku_${new Date().toISOString().slice(0,10)}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('ダウンロードしました');
+    }}
+  ]);
+};
 
-    function closeModal() { modal.classList.remove('show'); }
-    document.getElementById('modalClose').onclick = closeModal;
-    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-
-    document.getElementById('btnExport').onclick = () => {
-      flushActiveEditor();
-      const md = toMarkdown();
-      openModal('MD出力', '下のテキストをコピー、またはダウンロードしてください。', md, [
-        {
-          label: 'コピー', primary: true, onClick: () => {
-            navigator.clipboard.writeText(modalTextarea.value).then(() => {
-              showToast('コピーしました');
-            }).catch(() => {
-              modalTextarea.select();
-              document.execCommand('copy');
-              showToast('コピーしました');
-            });
-          }
-        },
-        {
-          label: 'ダウンロード', onClick: () => {
-            const blob = new Blob([modalTextarea.value], { type: 'text/markdown' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `nenkan_keikaku_${new Date().toISOString().slice(0, 10)}.md`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('ダウンロードしました');
-          }
-        }
-      ]);
-    };
-
-    document.getElementById('btnImport').onclick = () => {
-      openModal('MD読込', 'MDテキストを貼り付けて「読込」を押してください。', '', [
-        {
-          label: '読込', primary: true, onClick: () => {
-            try {
-              const imported = fromMarkdown(modalTextarea.value);
-              data = imported;
-              saveData(true);
-              renderAll();
-              closeModal();
-              showToast('読み込みました');
-            } catch (e) {
-              alert('読み込みに失敗しました: ' + e.message);
-            }
-          }
-        }
-      ]);
-    };
-
-    document.getElementById('btnClear').onclick = () => {
-      if (confirm('全ての内容をクリアしますか？（この操作は取り消せません）')) {
-        data = {
-          year: '', half: { H1: '', H2: '' }, quarter: { Q1: '', Q2: '', Q3: '', Q4: '' }, month: {}, week: {}
-        };
+document.getElementById('btnImport').onclick = () => {
+  openModal('MD読込', 'MDテキストを貼り付けて「読込」を押してください。', '', [
+    { label: '読込', primary: true, onClick: () => {
+      try {
+        const imported = fromMarkdown(modalTextarea.value);
+        data = imported;
         saveData(true);
         renderAll();
-        showToast('クリアしました');
+        closeModal();
+        showToast('読み込みました');
+      } catch (e) {
+        alert('読み込みに失敗しました: ' + e.message);
       }
+    }}
+  ]);
+};
+
+document.getElementById('btnClear').onclick = () => {
+  if (confirm('全ての内容をクリアしますか？（この操作は取り消せません）')) {
+    data = {
+      year: '', half: {H1:'',H2:''}, quarter: {Q1:'',Q2:'',Q3:'',Q4:''}, month: {}, week: {}
     };
+    saveData(true);
+    renderAll();
+    showToast('クリアしました');
+  }
+};
 
-    document.getElementById('btnSave').onclick = () => {
-      flushActiveEditor();
-      saveData();
-    };
+document.getElementById('btnSave').onclick = () => {
+  flushActiveEditor();
+  saveData();
+};
 
-    // ========== 印刷プレビュー ==========
-    function buildPrintSheet() {
-      const sheet = document.getElementById('printSheet');
-      const today = formatToday();
+// ========== 印刷プレビュー ==========
+function buildPrintSheet() {
+  const sheet = document.getElementById('printSheet');
+  const today = formatToday();
 
-      let html = `
+  let html = `
     <div class="print-header">
       <div>${escapeHtml(data.title || '')}
         <span class="meta"> / ${escapeHtml(data.subtitle || '')}</span>
@@ -1480,57 +1371,68 @@
     </div>
   `;
 
-      // 週行（W1〜W4 を行として、各列に月）— ラベル列なし
-      for (let w = 1; w <= 4; w++) {
-        html += `<div class="print-row week">`;
-        MONTHS.forEach(m => {
-          const key = `${m}-${w}`;
-          html += `<div>${escapeHtml(data.week[key] || '')}</div>`;
-        });
-        html += `</div>`;
-      }
+  // 週行（W1〜W4 を行として、各列に月）
+  for (let w = 1; w <= 4; w++) {
+    html += `<div class="print-row week">`;
+    html += `<div class="week-marker">W${w}</div>`;
+    MONTHS.forEach(m => {
+      const key = `${m}-${w}`;
+      html += `<div>${escapeHtml(data.week[key] || '')}</div>`;
+    });
+    html += `</div>`;
+  }
 
-      sheet.innerHTML = html;
-    }
+  sheet.innerHTML = html;
+}
 
-    document.getElementById('btnPrint').onclick = () => {
-      flushActiveEditor();
-      buildPrintSheet();
-      document.body.classList.add('preview-mode');
-      window.scrollTo({ top: 0 });
-    };
+document.getElementById('btnPrint').onclick = () => {
+  flushActiveEditor();
+  buildPrintSheet();
+  document.body.classList.add('preview-mode');
+  window.scrollTo({ top: 0 });
+};
 
-    document.getElementById('btnPreviewExit').onclick = () => {
-      document.body.classList.remove('preview-mode');
-    };
+document.getElementById('btnPreviewExit').onclick = () => {
+  document.body.classList.remove('preview-mode');
+};
 
-    document.getElementById('btnPreviewPrint').onclick = () => {
-      window.print();
-    };
+document.getElementById('btnPreviewPrint').onclick = () => {
+  window.print();
+};
 
-    let toastTimer = null;
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
-    }
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
 
-    function formatToday() {
-      const d = new Date();
-      return `${String(d.getFullYear()).slice(2)}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-    }
+function formatToday() {
+  const d = new Date();
+  return `${String(d.getFullYear()).slice(2)}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+}
 
-    function seedIfEmpty() {
-      // テンプレートとして配布するため、初期シードデータは空にするのだ
-    }
+function seedIfEmpty() {
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    data.year = `☐ 作家業に熱中する
+☐ 文化祭出展準備 → できる限りの人に共感してもらう
+   （おどろかせる / 感動させたい）
+☐ ファイルの整理をする（団場にも持ってくる）
+☐「戦後80年をしあげる」の本
+☐ Simple Plans 志有ライブラリーの検討`;
+    data.month[5] = '飛行機2：5/5 沖縄多（要確認）';
+    data.month[6] = '6/2 MJ';
+    data.month[11] = '11/3 ゴジラ-0.0';
+    saveData(true);
+  }
+}
 
-    loadData();
-    seedIfEmpty();
-    document.getElementById('todayStamp').textContent = formatToday();
-    renderAll();
-  </script>
+loadData();
+seedIfEmpty();
+document.getElementById('todayStamp').textContent = formatToday();
+renderAll();
+</script>
 </body>
-
 </html>
