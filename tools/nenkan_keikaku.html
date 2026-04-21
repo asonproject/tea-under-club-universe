@@ -94,6 +94,7 @@
       padding-bottom: 12px;
       margin-bottom: 18px;
       position: relative;
+      padding-right: 40px;
     }
 
     .header::after {
@@ -175,35 +176,69 @@
       font-family: 'Yomogi', cursive;
     }
 
+    .zoom-section {
+      margin-bottom: 16px;
+    }
+
+    .zoom-label {
+      font-family: 'Zen Kurenaido', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .zoom-label::before {
+      content: "";
+      width: 16px;
+      height: 2px;
+      background: var(--accent);
+    }
+
     .zoom-tabs {
       display: flex;
-      gap: 4px;
-      margin-bottom: 16px;
+      gap: 6px;
       background: var(--paper-shade);
-      padding: 4px;
+      padding: 6px;
       border-radius: 8px;
-      border: 1.5px solid var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
     }
 
     .zoom-tab {
       flex: 1;
-      padding: 8px 6px;
-      border: none;
-      background: transparent;
+      padding: 10px 8px;
+      border: 1.5px solid var(--ink-soft);
+      background: var(--paper);
       font-family: 'Zen Kurenaido', sans-serif;
       font-size: 12px;
       font-weight: 700;
       color: var(--ink-soft);
       cursor: pointer;
       border-radius: 5px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       letter-spacing: 0.05em;
+      position: relative;
     }
 
     .zoom-tab.active {
       background: var(--ink);
       color: var(--paper);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      border-color: var(--ink);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .zoom-tab:hover {
+      border-color: var(--ink);
+    }
+
+    .zoom-tab:active {
+      transform: translateY(0);
     }
 
     .view {
@@ -543,9 +578,16 @@
     }
 
     .tool-btn.primary {
-      background: var(--accent);
+      background: #66bb6a;
       color: var(--paper);
-      border-color: var(--accent);
+      border-color: #66bb6a;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .tool-btn.danger {
+      background: #8792a8;
+      color: var(--paper);
+      border-color: #8792a8;
       box-shadow: 2px 2px 0 var(--ink);
     }
 
@@ -1195,6 +1237,35 @@
       gap: 6px;
     }
 
+    .help-button {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--ink);
+      background: var(--paper);
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .help-button:active {
+      transform: translate(1px, 1px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+
+    .help-button:hover {
+      background: var(--paper-shade);
+    }
+
     @media print {
       .preview-bar {
         display: none !important;
@@ -1202,6 +1273,10 @@
 
       body.preview-mode {
         padding-top: 0;
+      }
+
+      .help-button {
+        display: none !important;
       }
     }
   </style>
@@ -1216,16 +1291,22 @@
       </h1>
       <div class="subtitle">
         <span contenteditable="true" data-key="subtitle" spellcheck="false">自由に入れてください</span>
-        <span class="date-stamp" id="todayStamp">26/04/17</span>
+        <span class="date-stamp" id="todayStamp">2026-04-21</span>
       </div>
       <div class="edit-hint">↑タップして編集できます</div>
       <button id="helpButton" class="help-button">?</button>
-      <button class="zoom-tab active" data-view="year">年</button>
-      <button class="zoom-tab" data-view="half">半期</button>
-      <button class="zoom-tab" data-view="quarter">四半期</button>
-      <button class="zoom-tab" data-view="month">月</button>
-      <button class="zoom-tab" data-view="week">週</button>
-    </nav>
+    </header>
+
+    <div class="zoom-section">
+      <div class="zoom-label">表示方法</div>
+      <div class="zoom-tabs">
+        <button class="zoom-tab active" data-view="year">年</button>
+        <button class="zoom-tab" data-view="half">半期</button>
+        <button class="zoom-tab" data-view="quarter">四半期</button>
+        <button class="zoom-tab" data-view="month">月</button>
+        <button class="zoom-tab" data-view="week">週</button>
+      </div>
+    </div>
 
     <section class="view active" data-view="year">
       <div class="section-label">年間計画 / ANNUAL</div>
@@ -1287,7 +1368,7 @@
     <button class="tool-btn" id="btnExport">MD出力</button>
     <button class="tool-btn" id="btnImport">MD読込</button>
     <button class="tool-btn" id="btnPrint">印刷</button>
-    <button class="tool-btn" id="btnClear">クリア</button>
+    <button class="tool-btn danger" id="btnClear" title="全てのデータを削除します">🗑️ クリア</button>
     <button class="tool-btn primary" id="btnSave">保存</button>
   </div>
 
@@ -1704,6 +1785,73 @@
       saveData();
     };
 
+    document.getElementById('helpButton').onclick = () => {
+      const helpContent = `
+      <div style="font-size: 13px; line-height: 1.7; color: var(--ink);">
+        <p style="margin: 0 0 12px; font-weight: 700; font-size: 14px;">📖 このツールの使い方</p>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">💡 このツールは？</p>
+        <p style="margin: 0 0 12px;">1年間の計画を、いろいろな見方で管理できるツール。年間のテーマから、毎週の目標まで、自分のペースで記入できます。</p>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">📅 5つの見方</p>
+        <ul style="margin: 0 0 12px; padding-left: 16px;">
+          <li><strong>年</strong> — 1年全体のテーマ</li>
+          <li><strong>半期</strong> — 上半期(4-9月)と下半期(10-3月)</li>
+          <li><strong>四半期</strong> — Q1〜Q4の目標</li>
+          <li><strong>月</strong> — 毎月の目標（1-12月）</li>
+          <li><strong>週</strong> — 毎週の予定（全部で48マス）</li>
+        </ul>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">✏️ 記入方法</p>
+        <p style="margin: 0 0 12px;">上のボタンで見方を選んで、テキストをタップ。自動で保存されます。空のままでもOK。</p>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">💾 保存・共有</p>
+        <ul style="margin: 0 0 12px; padding-left: 16px;">
+          <li><strong>保存</strong> — ブラウザに自動保存</li>
+          <li><strong>MD出力</strong> — テキスト形式で出力（メールで共有可）</li>
+          <li><strong>MD読込</strong> — 出力したテキストを読み込み復元</li>
+        </ul>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">🖨️ 印刷</p>
+        <p style="margin: 0 0 12px;">「印刷」ボタンで、1枚のA4用紙にまとめた見た目をプレビュー。そのまま印刷できます。</p>
+
+        <p style="margin: 0 0 8px; font-weight: 700; color: var(--accent);">🔒 データ保護（大事！）</p>
+        <ul style="margin: 0 0 12px; padding-left: 16px;">
+          <li><strong>このツールのデータはあなたのブラウザにだけ保存されます</strong>。サーバーには送られません。</li>
+          <li><strong>他の人に見られたくない場合は、「🗑️ クリア」ボタンで削除してください。</strong></li>
+          <li>クリアすると、すべてのデータが消えます。削除する前にMD出力で保存しておくのがおすすめ。</li>
+        </ul>
+
+        <p style="margin: 0; font-size: 11px; color: var(--ink-faint);">💡 タイトルとサブタイトル(日付の横)もタップして編集できます</p>
+      </div>
+      `;
+
+      const modal = document.getElementById('modal');
+      modalTitle.textContent = 'ページの使い方';
+      modalHint.textContent = '';
+      modalTextarea.style.display = 'none';
+      modalActions.innerHTML = '<button class="tool-btn primary" style="flex: 1;" onclick="closeModalHelp()">わかりました</button>';
+
+      const modalBody = document.querySelector('.modal-body');
+      const helpDiv = document.createElement('div');
+      helpDiv.id = 'helpContent';
+      helpDiv.innerHTML = helpContent;
+
+      const existingContent = modalBody.querySelector('#helpContent');
+      if (existingContent) existingContent.remove();
+      modalBody.insertBefore(helpDiv, modalTextarea);
+
+      modal.classList.add('show');
+    };
+
+    function closeModalHelp() {
+      const modal = document.getElementById('modal');
+      const helpDiv = document.getElementById('helpContent');
+      if (helpDiv) helpDiv.remove();
+      modalTextarea.style.display = 'block';
+      modal.classList.remove('show');
+    }
+
     // ========== 印刷プレビュー ==========
     function buildPrintSheet() {
       const sheet = document.getElementById('printSheet');
@@ -1780,7 +1928,7 @@
 
     function formatToday() {
       const d = new Date();
-      return `${String(d.getFullYear()).slice(2)}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
 
