@@ -1,25 +1,25 @@
-# Design Document: User Guide Modal for Nenkan Keikaku
+# 設計ドキュメント：年間計画表 使い方ガイドモーダル
 
-## 1. Overview
-Add a user guide button (icon) to the top-right corner of the application. When clicked, it opens a modal window explaining how to use the "Nenkan Keikaku" tool in simple terms suitable for junior high school students.
+## 1. 概要
+アプリケーションの右上に、使い方ガイドボタン（アイコン）を追加するのだ。クリックすると、中学生でもわかるような優しい言葉で「年間計画表」ツールの使い方を説明するモーダルウィンドウが開くようにするのだ。
 
-## 2. Requirements
-- **Help Button**: A "?" icon button positioned at the top-right of the header.
-- **Guide Modal**: A visually appealing modal window showing the guide content.
-- **Simple Content**: Clear, 3-step instructions using friendly language.
-- **Close Action**: Easy way to close the guide (X button or clicking outside).
+## 2. 要件
+- **ヘルプボタン**: ヘッダーまたは画面の右上に配置される「？」アイコンのボタン。
+- **ガイドモーダル**: ガイドの内容を表示する、見た目の良いモーダルウィンドウ。
+- **シンプルな内容**: 親しみやすい言葉を使った、明確な3ステップの説明。
+- **閉じる操作**: Xボタン、またはモーダルの外側をクリックすることで簡単に閉じられること。
 
-## 3. Implementation Details
+## 3. 実装の詳細
 
-### 3.1 UI Components
-- **Button**: 
-    - Position: `absolute` or `fixed` at the top-right of the header/screen.
-    - Style: Circular button with a "?" icon, matching the "Kaisei Decol" and "Zen Kurenaido" fonts.
-- **Modal**:
-    - Re-use the existing `modal-overlay` and `modal` structure or create a dedicated `help-modal`.
-    - Style: Friendly "notebook" or "memo" look with clean spacing.
+### 3.1 UIコンポーネント
+- **ボタン**: 
+    - 配置: ヘッダーの右上に `absolute` または `fixed` で配置。
+    - スタイル: 「？」アイコンが入った円形のボタン。「Kaisei Decol」や「Zen Kurenaido」フォントに合わせたデザインにするのだ。
+- **モーダル**:
+    - 既存の `modal-overlay` と `modal` の構造を再利用するか、専用の `help-modal` を作成するのだ。
+    - スタイル: 清潔感のある、ノートやメモのような親しみやすいデザイン。
 
-### 3.2 Guide Content (Draft)
+### 3.2 ガイドの内容（ドラフト）
 **タイトル: 年間計画表の使い方**
 1. **自由に書こう！**
     - 表の中の「白っぽい部分」をタップすると、好きな言葉を入力できるよ！
@@ -32,7 +32,7 @@ Add a user guide button (icon) to the top-right corner of the application. When 
     - 「印刷」ボタンを押すと、自分だけの計画表がカッコよくプリントできちゃう！
     - 「MD出力」を使えば、テキストとして保存して他のアプリで使うこともできるよ。
 
-## 4. Verification Plan
-- **Manual Check**: Click the "?" button and verify the modal opens correctly.
-- **Content Review**: Ensure the text is readable and correctly reflects the tool's features.
-- **Responsiveness**: Check the button and modal layout on both desktop and mobile views.
+## 4. 検証計画
+- **手動確認**: 「？」ボタンをクリックして、モーダルが正しく開くか確認するのだ。
+- **内容の確認**: テキストが読みやすく、ツールの機能を正しく反映しているか確認するのだ。
+- **レスポンシブ対応**: デスクトップとモバイルの両方で、ボタンとモーダルのレイアウトが崩れていないか確認するのだ。
