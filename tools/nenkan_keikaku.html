@@ -584,6 +584,13 @@
       box-shadow: 2px 2px 0 var(--ink);
     }
 
+    .tool-btn.print {
+      background: #ff8c42;
+      color: var(--paper);
+      border-color: #ff8c42;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
     .tool-btn.danger {
       background: #8792a8;
       color: var(--paper);
@@ -957,6 +964,40 @@
         display: none;
       }
 
+      /* 週間計画表の印刷レイアウト */
+      .weekly-print-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        border: 1.5px solid black;
+      }
+
+      .weekly-print-cell {
+        border: 1.5px solid black;
+        padding: 6px;
+        min-height: 80px;
+        font-size: 9pt;
+        line-height: 1.3;
+      }
+
+      .weekly-print-cell .day-header {
+        font-weight: 700;
+        font-size: 11pt;
+        margin-bottom: 3px;
+        border-bottom: 1px solid black;
+        padding-bottom: 2px;
+      }
+
+      .weekly-print-cell .time-block {
+        margin-bottom: 2px;
+        font-size: 8pt;
+      }
+
+      .weekly-print-cell .time-block strong {
+        display: inline-block;
+        width: 20px;
+      }
+
       /* 印刷時は色を保持 */
       * {
         -webkit-print-color-adjust: exact !important;
@@ -1184,6 +1225,40 @@
       display: none;
     }
 
+    body.preview-mode .weekly-print-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      border: 1.5px solid black;
+      margin-top: 12px;
+    }
+
+    body.preview-mode .weekly-print-cell {
+      border: 1.5px solid black;
+      padding: 8px;
+      min-height: 100px;
+      font-size: 10pt;
+      line-height: 1.4;
+    }
+
+    body.preview-mode .weekly-print-cell .day-header {
+      font-weight: 700;
+      font-size: 13pt;
+      margin-bottom: 4px;
+      border-bottom: 1px solid black;
+      padding-bottom: 3px;
+    }
+
+    body.preview-mode .weekly-print-cell .time-block {
+      margin-bottom: 3px;
+      font-size: 9pt;
+    }
+
+    body.preview-mode .weekly-print-cell .time-block strong {
+      display: inline-block;
+      width: 25px;
+    }
+
     /* プレビュー時の戻るバー */
     body.preview-mode::before {
       display: none;
@@ -1266,6 +1341,97 @@
       background: var(--paper-shade);
     }
 
+    .tool-content {
+      display: none;
+    }
+
+    .tool-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    body.tool-weekly .header .title,
+    body.tool-weekly .header .subtitle,
+    body.tool-weekly .header .edit-hint {
+      display: none;
+    }
+
+    .weekly-planner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .day-cell {
+      background: var(--paper);
+      border: 1.5px solid var(--ink);
+      border-radius: 6px;
+      padding: 12px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .day-cell.todo {
+      grid-column: 4;
+      grid-row: 2 / 4;
+    }
+
+    .day-name {
+      font-family: 'Zen Kurenaido', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--ink);
+    }
+
+    .time-section {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--grid-soft);
+    }
+
+    .time-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .time-label {
+      font-family: 'Yomogi', cursive;
+      font-size: 10px;
+      color: var(--ink-soft);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .time-input {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid var(--grid-soft);
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: 'Yomogi', cursive;
+      color: var(--ink);
+      background: #fffdf5;
+      min-height: 40px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    .time-input:focus {
+      outline: 2px dashed var(--accent);
+      outline-offset: -2px;
+      background: #fffdf5;
+    }
+
+    .todo-section .day-name {
+      font-size: 14px;
+    }
+
+    .todo-section .time-input {
+      min-height: 200px;
+    }
+
     @media print {
       .preview-bar {
         display: none !important;
@@ -1298,17 +1464,26 @@
     </header>
 
     <div class="zoom-section">
-      <div class="zoom-label">表示方法</div>
+      <div class="zoom-label">ツール選択</div>
       <div class="zoom-tabs">
-        <button class="zoom-tab active" data-view="year">年</button>
-        <button class="zoom-tab" data-view="half">半期</button>
-        <button class="zoom-tab" data-view="quarter">四半期</button>
-        <button class="zoom-tab" data-view="month">月</button>
-        <button class="zoom-tab" data-view="week">週</button>
+        <button class="zoom-tab active" data-tool="annual">年間計画表</button>
+        <button class="zoom-tab" data-tool="weekly">週間計画表</button>
       </div>
     </div>
 
-    <section class="view active" data-view="year">
+    <div class="tool-content active" data-tool="annual">
+      <div class="zoom-section">
+        <div class="zoom-label">表示方法</div>
+        <div class="zoom-tabs">
+          <button class="zoom-tab active" data-view="year">年</button>
+          <button class="zoom-tab" data-view="half">半期</button>
+          <button class="zoom-tab" data-view="quarter">四半期</button>
+          <button class="zoom-tab" data-view="month">月</button>
+          <button class="zoom-tab" data-view="week">週</button>
+        </div>
+      </div>
+
+      <section class="view active" data-view="year">
       <div class="section-label">年間計画 / ANNUAL</div>
       <div class="card year-card">
         <div class="card-title">年度</div>
@@ -1357,19 +1532,24 @@
       <div class="month-grid" id="monthGrid"></div>
     </section>
 
-    <section class="view" data-view="week">
-      <div class="section-label">各週 / WEEKLY (12ヶ月 × 4週 = 48マス)</div>
-      <div id="weekList"></div>
-    </section>
+      <section class="view" data-view="week">
+        <div class="section-label">各週 / WEEKLY (12ヶ月 × 4週 = 48マス)</div>
+        <div id="weekList"></div>
+      </section>
+    </div>
+
+    <div class="tool-content" data-tool="weekly">
+      <div class="weekly-planner" id="weeklyPlanner"></div>
+    </div>
 
   </div>
 
   <div class="toolbar">
-    <button class="tool-btn" id="btnExport">MD出力</button>
-    <button class="tool-btn" id="btnImport">MD読込</button>
-    <button class="tool-btn" id="btnPrint">印刷</button>
+    <button class="tool-btn" id="btnExport" title="テキストファイルとしてパソコンに保存できます">📥 テキストをダウンロード</button>
+    <button class="tool-btn" id="btnImport" title="保存したテキストファイルを読み込んで復元">MD読込</button>
+    <button class="tool-btn print" id="btnPrint">🖨️ 印刷</button>
     <button class="tool-btn danger" id="btnClear" title="全てのデータを削除します">🗑️ クリア</button>
-    <button class="tool-btn primary" id="btnSave">保存</button>
+    <button class="tool-btn primary" id="btnSave" title="このブラウザにのみ自動保存されます">💾 ブラウザに保存</button>
   </div>
 
   <!-- プレビューモード時のバー -->
@@ -1403,6 +1583,8 @@
   <script>
     const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
     const STORAGE_KEY = 'nenkan_keikaku_2026';
+    const WEEKLY_STORAGE_KEY = 'weekly_keikaku_2026';
+    const DAYS = ['月', '火', '水', '木', '金', '土', '日'];
 
     let data = {
       title: '年間計画表',
@@ -1412,6 +1594,19 @@
       quarter: { Q1: '', Q2: '', Q3: '', Q4: '' },
       month: {},
       week: {}
+    };
+
+    let weeklyData = {
+      days: {
+        1: { morning: '', afternoon: '', evening: '' },
+        2: { morning: '', afternoon: '', evening: '' },
+        3: { morning: '', afternoon: '', evening: '' },
+        4: { morning: '', afternoon: '', evening: '' },
+        5: { morning: '', afternoon: '', evening: '' },
+        6: { morning: '', afternoon: '', evening: '' },
+        7: { morning: '', afternoon: '', evening: '' }
+      },
+      todo: ''
     };
 
     function loadData() {
@@ -1428,6 +1623,24 @@
           data.week = parsed.week || {};
         }
       } catch (e) { console.error('load failed', e); }
+    }
+
+    function loadWeeklyData() {
+      try {
+        const saved = localStorage.getItem(WEEKLY_STORAGE_KEY);
+        if (saved) {
+          weeklyData = JSON.parse(saved);
+        }
+      } catch (e) { console.error('weekly load failed', e); }
+    }
+
+    function saveWeeklyData(silent) {
+      try {
+        localStorage.setItem(WEEKLY_STORAGE_KEY, JSON.stringify(weeklyData));
+        if (!silent) showToast('保存しました');
+      } catch (e) {
+        showToast('保存に失敗しました');
+      }
     }
 
     function saveData(silent) {
@@ -1477,6 +1690,88 @@
       else {
         if (!data[parts[0]]) data[parts[0]] = {};
         data[parts[0]][parts[1]] = val;
+      }
+    }
+
+    function renderWeeklyPlanner() {
+      const planner = document.getElementById('weeklyPlanner');
+      planner.innerHTML = '';
+
+      // 月〜木（上段4セル）
+      for (let day = 1; day <= 4; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        cell.innerHTML = `
+          <div class="day-name">${DAYS[day - 1]}</div>
+          <div class="time-section">
+            <div class="time-label">朝</div>
+            <textarea class="time-input" data-day="${day}" data-time="morning"></textarea>
+          </div>
+          <div class="time-section">
+            <div class="time-label">昼</div>
+            <textarea class="time-input" data-day="${day}" data-time="afternoon"></textarea>
+          </div>
+          <div class="time-section">
+            <div class="time-label">夜</div>
+            <textarea class="time-input" data-day="${day}" data-time="evening"></textarea>
+          </div>
+        `;
+        planner.appendChild(cell);
+      }
+
+      // 金〜日（下段3セル）
+      for (let day = 5; day <= 7; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        cell.innerHTML = `
+          <div class="day-name">${DAYS[day - 1]}</div>
+          <div class="time-section">
+            <div class="time-label">朝</div>
+            <textarea class="time-input" data-day="${day}" data-time="morning"></textarea>
+          </div>
+          <div class="time-section">
+            <div class="time-label">昼</div>
+            <textarea class="time-input" data-day="${day}" data-time="afternoon"></textarea>
+          </div>
+          <div class="time-section">
+            <div class="time-label">夜</div>
+            <textarea class="time-input" data-day="${day}" data-time="evening"></textarea>
+          </div>
+        `;
+        planner.appendChild(cell);
+      }
+
+      // TODO（下段右4番目）
+      const todoCell = document.createElement('div');
+      todoCell.className = 'day-cell todo-section todo';
+      todoCell.innerHTML = `
+        <div class="day-name">TODO</div>
+        <textarea class="time-input" id="todoInput"></textarea>
+      `;
+      planner.appendChild(todoCell);
+
+      // データを填入
+      DAYS.forEach((_, idx) => {
+        const day = idx + 1;
+        ['morning', 'afternoon', 'evening'].forEach(time => {
+          const input = planner.querySelector(`textarea[data-day="${day}"][data-time="${time}"]`);
+          if (input) {
+            input.value = weeklyData.days[day][time];
+            input.addEventListener('input', () => {
+              weeklyData.days[day][time] = input.value;
+              saveWeeklyData(true);
+            });
+          }
+        });
+      });
+
+      const todoInput = document.getElementById('todoInput');
+      if (todoInput) {
+        todoInput.value = weeklyData.todo;
+        todoInput.addEventListener('input', () => {
+          weeklyData.todo = todoInput.value;
+          saveWeeklyData(true);
+        });
       }
     }
 
@@ -1581,9 +1876,54 @@
       });
     }
 
+    // ツール選択タブ
+    document.querySelectorAll('.zoom-tabs').forEach(tabGroup => {
+      const tabs = tabGroup.querySelectorAll('.zoom-tab');
+      if (tabs.length > 0) {
+        const firstTab = tabs[0];
+        if (firstTab.dataset.tool) {
+          // ツール選択タブ
+          tabGroup.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('zoom-tab')) return;
+            flushActiveEditor();
+            document.querySelectorAll('.zoom-tab[data-tool]').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(v => v.classList.remove('active'));
+            e.target.classList.add('active');
+            const tool = e.target.dataset.tool;
+            document.querySelector(`.tool-content[data-tool="${tool}"]`).classList.add('active');
+
+            // bodyクラスを切り替え
+            document.body.classList.remove('tool-annual', 'tool-weekly');
+            document.body.classList.add(`tool-${tool}`);
+
+            if (tool === 'weekly') {
+              renderWeeklyPlanner();
+            } else {
+              renderAll();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        } else {
+          // 表示方法タブ（年間計画表内）
+          tabGroup.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('zoom-tab')) return;
+            flushActiveEditor();
+            document.querySelectorAll('.zoom-tab[data-view]').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            e.target.classList.add('active');
+            const view = e.target.dataset.view;
+            document.querySelector(`.view[data-view="${view}"]`).classList.add('active');
+            renderAll();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+      }
+    });
+
     // 定期的な自動保存（5秒ごと、念のため）
     setInterval(() => {
       saveData(true);
+      saveWeeklyData(true);
     }, 5000);
 
     // 現在の編集中フィールドの内容を確実にデータに反映する
@@ -1597,18 +1937,49 @@
       }
     }
 
-    document.querySelectorAll('.zoom-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        flushActiveEditor();
-        document.querySelectorAll('.zoom-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        tab.classList.add('active');
-        const view = tab.dataset.view;
-        document.querySelector(`.view[data-view="${view}"]`).classList.add('active');
-        renderAll();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    function toWeeklyFormattedText() {
+      let text = `週間計画表\n`;
+      text += `${'━'.repeat(50)}\n\n`;
+      DAYS.forEach((dayName, idx) => {
+        const day = idx + 1;
+        text += `【${dayName}曜日】\n`;
+        text += `朝: ${weeklyData.days[day].morning || '(未記入)'}\n`;
+        text += `昼: ${weeklyData.days[day].afternoon || '(未記入)'}\n`;
+        text += `夜: ${weeklyData.days[day].evening || '(未記入)'}\n\n`;
       });
-    });
+      text += `【TODO】\n${weeklyData.todo || '(未記入)'}\n\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `最終更新: ${new Date().toISOString().slice(0, 10)}\n`;
+      return text;
+    }
+
+    function toFormattedText() {
+      let text = `${data.title || '年間計画表'} / ${data.subtitle || ''}\n`;
+      text += `${'━'.repeat(50)}\n\n`;
+      text += `【年間計画】\n${data.year || '(未記入)'}\n\n`;
+      text += `【上半期（4〜9月）】\n${data.half.H1 || '(未記入)'}\n\n`;
+      text += `【下半期（10〜3月）】\n${data.half.H2 || '(未記入)'}\n\n`;
+      text += `【四半期計画】\n\n`;
+      text += `━━ Q1（4・5・6月）\n${data.quarter.Q1 || '(未記入)'}\n\n`;
+      text += `━━ Q2（7・8・9月）\n${data.quarter.Q2 || '(未記入)'}\n\n`;
+      text += `━━ Q3（10・11・12月）\n${data.quarter.Q3 || '(未記入)'}\n\n`;
+      text += `━━ Q4（1・2・3月）\n${data.quarter.Q4 || '(未記入)'}\n\n`;
+      text += `【月次・週次計画】\n\n`;
+      MONTHS.forEach(m => {
+        text += `━━━ ${m}月\n`;
+        text += `${data.month[m] || '(未記入)'}\n\n`;
+        for (let w = 1; w <= 4; w++) {
+          const k = `${m}-${w}`;
+          const content = data.week[k] || '';
+          if (content) text += `  W${w}: ${content}\n`;
+        }
+        text += `\n`;
+      });
+      text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `最終更新: ${new Date().toISOString().slice(0, 10)}\n`;
+      return text;
+    }
 
     function toMarkdown() {
       let md = `# ${data.title || '年間計画表'}\n\n`;
@@ -1635,28 +2006,77 @@
       return md;
     }
 
-    function fromMarkdown(md) {
+    function fromWeeklyText(text) {
+      const result = {
+        days: {
+          1: { morning: '', afternoon: '', evening: '' },
+          2: { morning: '', afternoon: '', evening: '' },
+          3: { morning: '', afternoon: '', evening: '' },
+          4: { morning: '', afternoon: '', evening: '' },
+          5: { morning: '', afternoon: '', evening: '' },
+          6: { morning: '', afternoon: '', evening: '' },
+          7: { morning: '', afternoon: '', evening: '' }
+        },
+        todo: ''
+      };
+
+      const lines = text.split('\n');
+      let currentDay = null;
+
+      for (const line of lines) {
+        // 曜日判定
+        const dayMatch = line.match(/^【(月|火|水|木|金|土|日)曜日】/);
+        if (dayMatch) {
+          const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+          currentDay = dayNames.indexOf(dayMatch[1]) + 1;
+          continue;
+        }
+
+        // TODO判定
+        if (line.match(/^【TODO】/)) {
+          currentDay = 'todo';
+          continue;
+        }
+
+        // 時間帯判定と内容抽出
+        if (currentDay && currentDay !== 'todo') {
+          const morningMatch = line.match(/^朝:\s*(.*)$/);
+          if (morningMatch) {
+            result.days[currentDay].morning = morningMatch[1].trim();
+            continue;
+          }
+          const afternoonMatch = line.match(/^昼:\s*(.*)$/);
+          if (afternoonMatch) {
+            result.days[currentDay].afternoon = afternoonMatch[1].trim();
+            continue;
+          }
+          const eveningMatch = line.match(/^夜:\s*(.*)$/);
+          if (eveningMatch) {
+            result.days[currentDay].evening = eveningMatch[1].trim();
+            continue;
+          }
+        }
+
+        // TODO内容
+        if (currentDay === 'todo' && line && !line.startsWith('━') && !line.startsWith('最終更新')) {
+          result.todo += (result.todo ? '\n' : '') + line;
+        }
+      }
+
+      return result;
+    }
+
+    function fromMarkdown(input) {
       const result = {
         title: '', subtitle: '',
         year: '', half: { H1: '', H2: '' }, quarter: { Q1: '', Q2: '', Q3: '', Q4: '' }, month: {}, week: {}
       };
-      const lines = md.split('\n');
+      const lines = input.split('\n');
       let section = null;
       let buffer = [];
 
-      // 最初の # 見出しをタイトル、最初の > 行をサブタイトルとして抽出
-      for (const line of lines) {
-        const titleMatch = line.match(/^#\s+(.+)$/);
-        if (titleMatch && !result.title) {
-          result.title = titleMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
-          continue;
-        }
-        const subMatch = line.match(/^>\s+(.+)$/);
-        if (subMatch && !result.subtitle) {
-          result.subtitle = subMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
-          continue;
-        }
-      }
+      // 形式判定：【】括弧があればテキスト形式、##があればMD形式
+      const isFormattedText = input.includes('【') && input.includes('】');
 
       const flush = () => {
         if (!section) { buffer = []; return; }
@@ -1680,17 +2100,70 @@
         buffer = [];
       };
 
-      for (const line of lines) {
-        if (/^##\s+(\*\*|)年間計画(\*\*|)/.test(line)) { flush(); section = { type: 'year' }; continue; }
-        if (/^##\s+(\*\*|)上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
-        if (/^##\s+(\*\*|)下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
-        const qm = line.match(/^###\s+(\*\*|)Q(\d)(\*\*|)/);
-        if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[2] }; continue; }
-        const mm = line.match(/^###\s+(\*\*|)(\d+)月(\*\*|)/);
-        if (mm) { flush(); section = { type: 'month', key: parseInt(mm[2]) }; continue; }
-        if (/^##?\s/.test(line) || /^---/.test(line)) { flush(); section = null; continue; }
-        if (section) buffer.push(line);
+      if (isFormattedText) {
+        // テキスト形式のパース
+        for (const line of lines) {
+          // タイトル行：行の先頭で「 / 」を含む
+          if (!result.title && line.includes(' / ') && !line.startsWith('━')) {
+            const parts = line.split(' / ');
+            result.title = parts[0].trim();
+            result.subtitle = parts[1] ? parts[1].trim() : '';
+            continue;
+          }
+
+          // セクション判定
+          if (/^【年間計画】/.test(line)) { flush(); section = { type: 'year' }; continue; }
+          if (/^【上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
+          if (/^【下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
+          if (/^【四半期計画】/.test(line)) { flush(); section = null; continue; }
+          const qm = line.match(/^━━\s*Q(\d)（/);
+          if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[1] }; continue; }
+          const mm = line.match(/^━━━\s*(\d+)月/);
+          if (mm) { flush(); section = { type: 'month', key: parseInt(mm[1]) }; continue; }
+          if (/^【月次・週次計画】/.test(line)) { flush(); section = null; continue; }
+
+          // 週データ：「  W1: 」のような形式
+          if (section && section.type === 'month') {
+            const wm = line.match(/^\s+W(\d):\s*(.*)$/);
+            if (wm) {
+              result.week[`${section.key}-${wm[1]}`] = wm[2].trim();
+              continue;
+            }
+          }
+
+          // 区切り線とメタデータはスキップ
+          if (/^━+$/.test(line) || /^最終更新:/.test(line) || line.trim() === '') continue;
+
+          if (section) buffer.push(line);
+        }
+      } else {
+        // MD形式のパース（元の処理）
+        for (const line of lines) {
+          const titleMatch = line.match(/^#\s+(.+)$/);
+          if (titleMatch && !result.title) {
+            result.title = titleMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
+            continue;
+          }
+          const subMatch = line.match(/^>\s+(.+)$/);
+          if (subMatch && !result.subtitle) {
+            result.subtitle = subMatch[1].trim().replace(/^(\*\*|__)(.*)(\*\*|__)$/, '$2');
+            continue;
+          }
+        }
+
+        for (const line of lines) {
+          if (/^##\s+(\*\*|)年間計画(\*\*|)/.test(line)) { flush(); section = { type: 'year' }; continue; }
+          if (/^##\s+(\*\*|)上半期/.test(line)) { flush(); section = { type: 'half', key: 'H1' }; continue; }
+          if (/^##\s+(\*\*|)下半期/.test(line)) { flush(); section = { type: 'half', key: 'H2' }; continue; }
+          const qm = line.match(/^###\s+(\*\*|)Q(\d)(\*\*|)/);
+          if (qm) { flush(); section = { type: 'quarter', key: 'Q' + qm[2] }; continue; }
+          const mm = line.match(/^###\s+(\*\*|)(\d+)月(\*\*|)/);
+          if (mm) { flush(); section = { type: 'month', key: parseInt(mm[2]) }; continue; }
+          if (/^##?\s/.test(line) || /^---/.test(line)) { flush(); section = null; continue; }
+          if (section) buffer.push(line);
+        }
       }
+
       flush();
       return result;
     }
@@ -1722,8 +2195,17 @@
 
     document.getElementById('btnExport').onclick = () => {
       flushActiveEditor();
-      const md = toMarkdown();
-      openModal('MD出力', '下のテキストをコピー、またはダウンロードしてください。', md, [
+      const activeTool = document.querySelector('.tool-content.active').dataset.tool;
+      let content = '';
+      let title = '';
+      if (activeTool === 'annual') {
+        content = toFormattedText();
+        title = 'データをテキストで出力';
+      } else {
+        content = toWeeklyFormattedText();
+        title = '週間計画をテキストで出力';
+      }
+      openModal(title, '下のテキストをコピーして、テキストエディタに保存してください。読み込むときは自動的に認識されます。', content, [
         {
           label: 'コピー', primary: true, onClick: () => {
             navigator.clipboard.writeText(modalTextarea.value).then(() => {
@@ -1737,11 +2219,15 @@
         },
         {
           label: 'ダウンロード', onClick: () => {
-            const blob = new Blob([modalTextarea.value], { type: 'text/markdown' });
+            const activeTool = document.querySelector('.tool-content.active').dataset.tool;
+            const filename = activeTool === 'annual'
+              ? `nenkan_keikaku_${new Date().toISOString().slice(0, 10)}.txt`
+              : `shuukan_keikaku_${new Date().toISOString().slice(0, 10)}.txt`;
+            const blob = new Blob([modalTextarea.value], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nenkan_keikaku_${new Date().toISOString().slice(0, 10)}.md`;
+            a.download = filename;
             a.click();
             URL.revokeObjectURL(url);
             showToast('ダウンロードしました');
@@ -1751,14 +2237,23 @@
     };
 
     document.getElementById('btnImport').onclick = () => {
-      openModal('MD読込', 'MDテキストを貼り付けて「読込」を押してください。', '', [
+      const activeTool = document.querySelector('.tool-content.active').dataset.tool;
+      const title = activeTool === 'annual' ? 'MD読込' : '週間計画を読込';
+      openModal(title, '保存したテキストを貼り付けて「読込」を押してください。', '', [
         {
           label: '読込', primary: true, onClick: () => {
             try {
-              const imported = fromMarkdown(modalTextarea.value);
-              data = imported;
-              saveData(true);
-              renderAll();
+              if (activeTool === 'annual') {
+                const imported = fromMarkdown(modalTextarea.value);
+                data = imported;
+                saveData(true);
+                renderAll();
+              } else {
+                const imported = fromWeeklyText(modalTextarea.value);
+                weeklyData = imported;
+                saveWeeklyData(true);
+                renderWeeklyPlanner();
+              }
               closeModal();
               showToast('読み込みました');
             } catch (e) {
@@ -1770,12 +2265,30 @@
     };
 
     document.getElementById('btnClear').onclick = () => {
+      const activeTool = document.querySelector('.tool-content.active').dataset.tool;
       if (confirm('全ての内容をクリアしますか？（この操作は取り消せません）')) {
-        data = {
-          year: '', half: { H1: '', H2: '' }, quarter: { Q1: '', Q2: '', Q3: '', Q4: '' }, month: {}, week: {}
-        };
-        saveData(true);
-        renderAll();
+        if (activeTool === 'annual') {
+          data = {
+            year: '', half: { H1: '', H2: '' }, quarter: { Q1: '', Q2: '', Q3: '', Q4: '' }, month: {}, week: {}
+          };
+          saveData(true);
+          renderAll();
+        } else {
+          weeklyData = {
+            days: {
+              1: { morning: '', afternoon: '', evening: '' },
+              2: { morning: '', afternoon: '', evening: '' },
+              3: { morning: '', afternoon: '', evening: '' },
+              4: { morning: '', afternoon: '', evening: '' },
+              5: { morning: '', afternoon: '', evening: '' },
+              6: { morning: '', afternoon: '', evening: '' },
+              7: { morning: '', afternoon: '', evening: '' }
+            },
+            todo: ''
+          };
+          saveWeeklyData(true);
+          renderWeeklyPlanner();
+        }
         showToast('クリアしました');
       }
     };
@@ -1853,6 +2366,56 @@
     }
 
     // ========== 印刷プレビュー ==========
+    function buildWeeklyPrintSheet() {
+      const sheet = document.getElementById('printSheet');
+      const today = formatToday();
+
+      let html = `
+    <div class="print-header">
+      <div>週間計画表
+        <span class="meta"> / ${today}</span>
+      </div>
+    </div>
+
+    <div class="weekly-print-grid">
+    `;
+
+      // 月〜木（上段）
+      for (let day = 1; day <= 4; day++) {
+        html += `
+      <div class="weekly-print-cell">
+        <div class="day-header">${DAYS[day - 1]}</div>
+        <div class="time-block"><strong>朝</strong><br/>${escapeHtml(weeklyData.days[day].morning || '')}</div>
+        <div class="time-block"><strong>昼</strong><br/>${escapeHtml(weeklyData.days[day].afternoon || '')}</div>
+        <div class="time-block"><strong>夜</strong><br/>${escapeHtml(weeklyData.days[day].evening || '')}</div>
+      </div>
+        `;
+      }
+
+      // 金〜日（下段）
+      for (let day = 5; day <= 7; day++) {
+        html += `
+      <div class="weekly-print-cell">
+        <div class="day-header">${DAYS[day - 1]}</div>
+        <div class="time-block"><strong>朝</strong><br/>${escapeHtml(weeklyData.days[day].morning || '')}</div>
+        <div class="time-block"><strong>昼</strong><br/>${escapeHtml(weeklyData.days[day].afternoon || '')}</div>
+        <div class="time-block"><strong>夜</strong><br/>${escapeHtml(weeklyData.days[day].evening || '')}</div>
+      </div>
+        `;
+      }
+
+      // TODO（下段右）
+      html += `
+      <div class="weekly-print-cell">
+        <div class="day-header">TODO</div>
+        <div style="white-space: pre-wrap; word-break: break-word; font-size: 8pt;">${escapeHtml(weeklyData.todo || '')}</div>
+      </div>
+    </div>
+      `;
+
+      sheet.innerHTML = html;
+    }
+
     function buildPrintSheet() {
       const sheet = document.getElementById('printSheet');
       const today = formatToday();
@@ -1904,7 +2467,12 @@
 
     document.getElementById('btnPrint').onclick = () => {
       flushActiveEditor();
-      buildPrintSheet();
+      const activeTool = document.querySelector('.tool-content.active').dataset.tool;
+      if (activeTool === 'annual') {
+        buildPrintSheet();
+      } else {
+        buildWeeklyPrintSheet();
+      }
       document.body.classList.add('preview-mode');
       window.scrollTo({ top: 0 });
     };
@@ -1934,8 +2502,11 @@
 
 
     loadData();
+    loadWeeklyData();
     document.getElementById('todayStamp').textContent = formatToday();
+    document.body.classList.add('tool-annual');
     renderAll();
+    renderWeeklyPlanner();
   </script>
 </body>
 
