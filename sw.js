@@ -1,6 +1,9 @@
-const CACHE_NAME = 'teaunder-universe-v2';
+const CACHE_NAME = 'teaunder-universe-v4';
 const ASSETS_TO_CACHE = [
   './index.html',
+  './action-support-os.html',
+  './schedule-travel-planner.html',
+  './tools/schedule-travel-planner.html',
   './manifest.json',
   './icon-192.jpeg',
   './icon-512.jpeg',

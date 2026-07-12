@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日程調整・移動計画 β</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --surface-soft: #f0f4f7;
+      --ink: #202428;
+      --muted: #66717a;
+      --line: #d9dedf;
+      --blue: #286b9a;
+      --green: #2f755f;
+      --amber: #a76d1b;
+      --red: #a8443f;
+      --shadow: 0 16px 40px rgba(24, 36, 44, 0.08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 34px);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 390px) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 11px;
+      min-height: 42px;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(40, 107, 154, 0.18);
+      border-color: var(--blue);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      min-height: 40px;
+      padding: 9px 13px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .btn.success {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .btn.warning {
+      background: #fff7e8;
+      border-color: #d9bd89;
+      color: #74470d;
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      min-height: 36px;
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: grid;
+      gap: 14px;
+    }
+
+    .candidate-list,
+    .summary-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .candidate {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .candidate.busy {
+      border-left-color: var(--red);
+      background: #fff8f7;
+    }
+
+    .candidate-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-weight: 800;
+    }
+
+    .candidate small,
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.good {
+      background: #e8f4ef;
+      color: var(--green);
+    }
+
+    .tag.warn {
+      background: #fff2df;
+      color: var(--amber);
+    }
+
+    .tag.bad {
+      background: #fde9e7;
+      color: var(--red);
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .summary-card p,
+    .summary-card pre {
+      margin: 0;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #263038;
+    }
+
+    .notice {
+      border: 1px solid #d7c79d;
+      background: #fff9e9;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #684b16;
+      font-size: 13px;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: #fff;
+    }
+
+    .slot-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .slot-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 70px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .copy-toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(360px, calc(100vw - 36px));
+      background: var(--ink);
+      color: #fff;
+      border-radius: 8px;
+      padding: 11px 13px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 10;
+    }
+
+    .copy-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .form-grid,
+      .slot-row {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        width: 100%;
+      }
+
+      .tab {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>日程調整・移動計画 β</h1>
+        <p>予定候補、移動時間、下書き文面をひとつの画面で整えるための公開β版です。</p>
+      </div>
+      <div class="status-pill">外部送信なし / ブラウザ内保存</div>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-labelledby="input-title">
+        <div class="panel-header">
+          <h2 id="input-title" class="panel-title">入力</h2>
+          <button class="btn ghost" id="resetBtn" type="button">初期化</button>
+        </div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="eventTitle">予定名</label>
+              <input id="eventTitle" type="text" value="日程調整">
+            </div>
+
+            <div class="field">
+              <label for="hostName">担当者</label>
+              <input id="hostName" type="text" value="佐渡山 要">
+            </div>
+
+            <div class="field">
+              <label for="guestName">相手先</label>
+              <input id="guestName" type="text" placeholder="例: 山田さま">
+            </div>
+
+            <div class="field">
+              <label for="duration">所要時間</label>
+              <select id="duration">
+                <option value="30">30分</option>
+                <option value="45">45分</option>
+                <option value="60" selected>60分</option>
+                <option value="90">90分</option>
+                <option value="120">120分</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="buffer">前後バッファ</label>
+              <select id="buffer">
+                <option value="0">なし</option>
+                <option value="15" selected>15分</option>
+                <option value="30">30分</option>
+                <option value="45">45分</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="startDate">候補開始日</label>
+              <input id="startDate" type="date">
+            </div>
+
+            <div class="field">
+              <label for="days">候補日数</label>
+              <select id="days">
+                <option value="3">3日</option>
+                <option value="5" selected>5日</option>
+                <option value="7">7日</option>
+                <option value="10">10日</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dayStart">開始時刻</label>
+              <input id="dayStart" type="time" value="09:30">
+            </div>
+
+            <div class="field">
+              <label for="dayEnd">終了時刻</label>
+              <input id="dayEnd" type="time" value="17:30">
+            </div>
+
+            <div class="field">
+              <label for="lunchStart">昼休み開始</label>
+              <input id="lunchStart" type="time" value="12:00">
+            </div>
+
+            <div class="field">
+              <label for="lunchEnd">昼休み終了</label>
+              <input id="lunchEnd" type="time" value="13:00">
+            </div>
+
+            <div class="field full">
+              <label for="focusBlocks">除外する時間帯</label>
+              <textarea id="focusBlocks">10:00-11:00 集中時間
+15:00-15:30 移動・休憩</textarea>
+            </div>
+
+            <div class="field">
+              <label for="origin">出発地</label>
+              <input id="origin" type="text" placeholder="例: 読谷">
+            </div>
+
+            <div class="field">
+              <label for="destination">到着地</label>
+              <input id="destination" type="text" placeholder="例: 那覇市">
+            </div>
+
+            <div class="field">
+              <label for="travelMinutes">片道移動時間</label>
+              <select id="travelMinutes">
+                <option value="0">なし</option>
+                <option value="15">15分</option>
+                <option value="30">30分</option>
+                <option value="45" selected>45分</option>
+                <option value="60">60分</option>
+                <option value="90">90分</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="travelMode">移動手段</label>
+              <select id="travelMode">
+                <option>車</option>
+                <option>公共交通</option>
+                <option>徒歩</option>
+                <option>オンライン</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="notes">補足</label>
+              <textarea id="notes" placeholder="駐車場、持ち物、事前確認など"></textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="generateBtn" type="button">候補を作成</button>
+            <button class="btn" id="saveBtn" type="button">保存</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="output-title">
+        <div class="panel-header">
+          <h2 id="output-title" class="panel-title">出力</h2>
+          <div class="tabs" role="tablist" aria-label="出力切替">
+            <button class="tab active" data-view="candidates" type="button">候補</button>
+            <button class="tab" data-view="drafts" type="button">下書き</button>
+            <button class="tab" data-view="calendar" type="button">Calendar</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="notice">公開β版では、メール送信やカレンダー登録は行いません。内容を確認してから手動で使う設計です。</div>
+
+          <div class="view active" id="view-candidates">
+            <div class="candidate-list" id="candidateList">
+              <div class="empty">入力後に「候補を作成」を押してください。</div>
+            </div>
+          </div>
+
+          <div class="view" id="view-drafts">
+            <div class="summary-grid">
+              <div class="summary-card">
+                <h3>確認メッセージ</h3>
+                <pre id="messageDraft">候補作成後に表示されます。</pre>
+                <div class="actions">
+                  <button class="btn" data-copy="messageDraft" type="button">コピー</button>
+                </div>
+              </div>
+              <div class="summary-card">
+                <h3>移動メモ</h3>
+                <pre id="travelDraft">候補作成後に表示されます。</pre>
+                <div class="actions">
+                  <button class="btn" data-copy="travelDraft" type="button">コピー</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="view" id="view-calendar">
+            <div class="summary-grid">
+              <div class="summary-card">
+                <h3>Google Calendar用メモ</h3>
+                <pre id="calendarDraft">候補作成後に表示されます。</pre>
+                <div class="actions">
+                  <button class="btn" data-copy="calendarDraft" type="button">コピー</button>
+                  <button class="btn success" id="icsBtn" type="button" disabled>ICSを作成</button>
+                </div>
+              </div>
+              <div class="summary-card">
+                <h3>選択中の候補</h3>
+                <pre id="selectedDraft">未選択です。</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="copy-toast" role="status" aria-live="polite">コピーしました</div>
+
+  <script>
+    const STORAGE_KEY = "tea_schedule_travel_planner_beta_v1";
+    const $ = (id) => document.getElementById(id);
+    const fields = [
+      "eventTitle", "hostName", "guestName", "duration", "buffer", "startDate", "days",
+      "dayStart", "dayEnd", "lunchStart", "lunchEnd", "focusBlocks", "origin",
+      "destination", "travelMinutes", "travelMode", "notes"
+    ];
+
+    let candidates = [];
+    let selectedCandidate = null;
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function todayISO() {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function parseMinutes(value) {
+      const [h, m] = value.split(":").map(Number);
+      return h * 60 + m;
+    }
+
+    function formatMinutes(total) {
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return `${pad(h)}:${pad(m)}`;
+    }
+
+    function addDays(iso, offset) {
+      const [year, month, day] = iso.split("-").map(Number);
+      const d = new Date(year, month - 1, day + offset);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function weekday(iso) {
+      const [year, month, day] = iso.split("-").map(Number);
+      return ["日", "月", "火", "水", "木", "金", "土"][new Date(year, month - 1, day).getDay()];
+    }
+
+    function parseBlocks() {
+      return $("focusBlocks").value
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const match = line.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})(.*)/);
+          if (!match) return null;
+          return {
+            start: parseMinutes(match[1]),
+            end: parseMinutes(match[2]),
+            label: match[3].trim() || "除外"
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function overlaps(aStart, aEnd, bStart, bEnd) {
+      return aStart < bEnd && bStart < aEnd;
+    }
+
+    function collectData() {
+      return Object.fromEntries(fields.map((field) => [field, $(field).value]));
+    }
+
+    function saveData(showToastMessage = true) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+      if (showToastMessage) showToast("保存しました");
+    }
+
+    function loadData() {
+      $("startDate").value = todayISO();
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        fields.forEach((field) => {
+          if (data[field] !== undefined) $(field).value = data[field];
+        });
+      } catch (error) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function generateCandidates() {
+      const duration = Number($("duration").value);
+      const buffer = Number($("buffer").value);
+      const travel = Number($("travelMinutes").value);
+      const interval = Math.max(30, duration);
+      const blocks = parseBlocks();
+      const start = parseMinutes($("dayStart").value);
+      const end = parseMinutes($("dayEnd").value);
+      const lunchStart = parseMinutes($("lunchStart").value);
+      const lunchEnd = parseMinutes($("lunchEnd").value);
+      const totalHold = duration + buffer * 2 + travel * 2;
+      const generated = [];
+
+      for (let day = 0; day < Number($("days").value); day += 1) {
+        const date = addDays($("startDate").value, day);
+        for (let time = start; time + duration <= end; time += interval) {
+          const eventStart = time;
+          const eventEnd = time + duration;
+          const holdStart = eventStart - buffer - travel;
+          const holdEnd = eventEnd + buffer + travel;
+          const hitsLunch = overlaps(eventStart, eventEnd, lunchStart, lunchEnd);
+          const blocked = blocks.find((block) => overlaps(holdStart, holdEnd, block.start, block.end));
+
+          generated.push({
+            id: `${date}-${eventStart}`,
+            date,
+            eventStart,
+            eventEnd,
+            holdStart,
+            holdEnd,
+            blockedBy: blocked ? blocked.label : "",
+            hitsLunch,
+            available: !blocked && !hitsLunch && holdStart >= start && holdEnd <= end,
+            totalHold
+          });
+        }
+      }
+
+      candidates = generated
+        .sort((a, b) => Number(b.available) - Number(a.available) || a.date.localeCompare(b.date) || a.eventStart - b.eventStart)
+        .slice(0, 18);
+      selectedCandidate = candidates.find((candidate) => candidate.available) || candidates[0] || null;
+      renderCandidates();
+      renderDrafts();
+      saveData(false);
+      showToast("候補を作成しました");
+    }
+
+    function renderCandidates() {
+      const list = $("candidateList");
+      if (!candidates.length) {
+        list.innerHTML = '<div class="empty">候補がありません。条件を変えてください。</div>';
+        return;
+      }
+
+      list.innerHTML = candidates.map((candidate, index) => {
+        const selected = selectedCandidate && selectedCandidate.id === candidate.id;
+        const title = `${candidate.date}（${weekday(candidate.date)}） ${formatMinutes(candidate.eventStart)}-${formatMinutes(candidate.eventEnd)}`;
+        const travelLine = Number($("travelMinutes").value)
+          ? `移動込み確保 ${formatMinutes(candidate.holdStart)}-${formatMinutes(candidate.holdEnd)}`
+          : "移動なし";
+        const status = candidate.available ? "候補可" : (candidate.hitsLunch ? "昼休みと重複" : `除外: ${candidate.blockedBy || "時間外"}`);
+        return `
+          <article class="candidate ${candidate.available ? "" : "busy"}">
+            <div class="candidate-title">
+              <span>${title}</span>
+              <button class="btn ${selected ? "success" : ""}" type="button" data-select="${index}">${selected ? "選択中" : "選択"}</button>
+            </div>
+            <div class="meta">${travelLine}</div>
+            <div class="tag-row">
+              <span class="tag ${candidate.available ? "good" : "bad"}">${status}</span>
+              <span class="tag">所要 ${$("duration").value}分</span>
+              <span class="tag">前後 ${$("buffer").value}分</span>
+              <span class="tag">片道 ${$("travelMinutes").value}分</span>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      list.querySelectorAll("[data-select]").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedCandidate = candidates[Number(button.dataset.select)];
+          renderCandidates();
+          renderDrafts();
+        });
+      });
+    }
+
+    function renderDrafts() {
+      if (!selectedCandidate) {
+        $("messageDraft").textContent = "候補作成後に表示されます。";
+        $("travelDraft").textContent = "候補作成後に表示されます。";
+        $("calendarDraft").textContent = "候補作成後に表示されます。";
+        $("selectedDraft").textContent = "未選択です。";
+        $("icsBtn").disabled = true;
+        return;
+      }
+
+      const data = collectData();
+      const dateLabel = `${selectedCandidate.date}（${weekday(selectedCandidate.date)}）`;
+      const timeLabel = `${formatMinutes(selectedCandidate.eventStart)}-${formatMinutes(selectedCandidate.eventEnd)}`;
+      const travelLabel = Number(data.travelMinutes)
+        ? `${data.origin || "出発地未設定"} → ${data.destination || "到着地未設定"} / ${data.travelMode} / 片道${data.travelMinutes}分`
+        : "移動なし";
+
+      $("messageDraft").textContent =
+`${data.guestName || "ご担当者"}さま
+
+お世話になっております。${data.hostName || "担当者"}です。
+以下の日程でいかがでしょうか。
+
+候補: ${dateLabel} ${timeLabel}
+予定: ${data.eventTitle || "日程調整"}
+移動: ${travelLabel}
+
+${data.notes ? `補足: ${data.notes}\n\n` : ""}ご都合が合わない場合は、別候補を再調整いたします。
+どうぞよろしくお願いいたします。`;
+
+      $("travelDraft").textContent =
+`予定: ${data.eventTitle || "日程調整"}
+日時: ${dateLabel} ${timeLabel}
+移動: ${travelLabel}
+確保: ${formatMinutes(selectedCandidate.holdStart)}-${formatMinutes(selectedCandidate.holdEnd)}
+前後バッファ: ${data.buffer}分
+補足: ${data.notes || "なし"}`;
+
+      $("calendarDraft").textContent =
+`title: ${data.eventTitle || "日程調整"}
+date: ${selectedCandidate.date}
+start: ${formatMinutes(selectedCandidate.eventStart)}
+end: ${formatMinutes(selectedCandidate.eventEnd)}
+location: ${data.destination || ""}
+description:
+相手先: ${data.guestName || ""}
+移動: ${travelLabel}
+確保時間: ${formatMinutes(selectedCandidate.holdStart)}-${formatMinutes(selectedCandidate.holdEnd)}
+補足: ${data.notes || ""}`;
+
+      $("selectedDraft").textContent = `${dateLabel} ${timeLabel}\n${travelLabel}`;
+      $("icsBtn").disabled = false;
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    async function copyText(targetId) {
+      const text = $(targetId).textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("コピーしました");
+      } catch (error) {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+        showToast("コピーしました");
+      }
+    }
+
+    function toICSDate(date, minutes) {
+      return `${date.replace(/-/g, "")}T${formatMinutes(minutes).replace(":", "")}00`;
+    }
+
+    function downloadICS() {
+      if (!selectedCandidate) return;
+      const data = collectData();
+      const title = data.eventTitle || "日程調整";
+      const description = $("calendarDraft").textContent.replace(/\n/g, "\\n");
+      const location = data.destination || "";
+      const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tea Under Club Universe//Schedule Travel Planner//JA
+BEGIN:VEVENT
+UID:${selectedCandidate.id}@tea-under-club-universe
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z")}
+DTSTART:${toICSDate(selectedCandidate.date, selectedCandidate.eventStart)}
+DTEND:${toICSDate(selectedCandidate.date, selectedCandidate.eventEnd)}
+SUMMARY:${title}
+LOCATION:${location}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `schedule-${selectedCandidate.date}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetAll() {
+      if (!confirm("入力内容を初期化しますか？")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      fields.forEach((field) => {
+        const el = $(field);
+        if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      $("eventTitle").value = "日程調整";
+      $("hostName").value = "佐渡山 要";
+      $("duration").value = "60";
+      $("buffer").value = "15";
+      $("startDate").value = todayISO();
+      $("days").value = "5";
+      $("dayStart").value = "09:30";
+      $("dayEnd").value = "17:30";
+      $("lunchStart").value = "12:00";
+      $("lunchEnd").value = "13:00";
+      $("focusBlocks").value = "10:00-11:00 集中時間\n15:00-15:30 移動・休憩";
+      $("travelMinutes").value = "45";
+      $("travelMode").value = "車";
+      candidates = [];
+      selectedCandidate = null;
+      renderCandidates();
+      renderDrafts();
+      showToast("初期化しました");
+    }
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+        document.querySelectorAll(".view").forEach((view) => view.classList.remove("active"));
+        tab.classList.add("active");
+        $(`view-${tab.dataset.view}`).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", () => copyText(button.dataset.copy));
+    });
+
+    $("generateBtn").addEventListener("click", generateCandidates);
+    $("saveBtn").addEventListener("click", () => saveData(true));
+    $("resetBtn").addEventListener("click", resetAll);
+    $("icsBtn").addEventListener("click", downloadICS);
+    fields.forEach((field) => $(field).addEventListener("change", () => saveData(false)));
+
+    loadData();
+  </script>
+</body>
+</html>
