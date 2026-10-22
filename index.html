@@ -866,6 +866,43 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
+        /* Event thumbnail */
+        .event-thumbnail-link {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(165, 180, 252, 0.2);
+        }
+
+        .event-thumbnail {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+
+        .event-card-content {
+            min-width: 0;
+        }
+
+        @media (min-width: 640px) {
+            .event-card.has-thumbnail {
+                display: grid;
+                grid-template-columns: minmax(180px, 220px) 1fr;
+                gap: 1.25rem;
+                align-items: start;
+            }
+
+            .event-card.has-thumbnail .event-thumbnail-link {
+                max-width: none;
+                margin: 0;
+            }
+        }
+
         .event-header {
             display: flex;
             align-items: center;
@@ -1108,6 +1145,7 @@
                 container.innerHTML = events.map(event => {
                     const mapQuery = encodeURIComponent(event.location || event.address);
                     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+                    const imageUrl = normalizeImageUrl(event.imageUrl);
                     const locationText = event.address
                         ? `${event.location}（${event.address}）`
                         : event.location;
@@ -1129,7 +1167,13 @@
                     const applicationHtml = event.application ? linkify(event.application) : '';
 
                     return `
-                    <div class="event-card">
+                    <div class="event-card${imageUrl ? ' has-thumbnail' : ''}">
+                        ${imageUrl ? `
+                        <a class="event-thumbnail-link" href="${escapeAttribute(imageUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeAttribute(event.title)} の案内画像を開く">
+                            <img class="event-thumbnail" src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(event.title)} の案内画像" loading="lazy" decoding="async">
+                        </a>
+                        ` : ''}
+                        <div class="event-card-content">
                         <div class="event-header">
                             <div class="event-date">${escapeHtml(event.dateTime)}</div>
                             ${event.category ? `<span class="event-category ${categoryClass}">${escapeHtml(event.category)}</span>` : ''}
@@ -1156,6 +1200,7 @@
                         })()}
                             </div>
                             
+                        </div>
                         </div>
                     </div>
                 `}).join('');
@@ -1192,7 +1237,8 @@
                         organizer: values[8] || '',
                         coOrganizer: values[9] || '',
                         note: values[10] || '',
-                        target: values[11] || ''
+                        target: values[11] || '',
+                        imageUrl: values[12] || ''
                     });
                 }
             }
@@ -1232,6 +1278,23 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function escapeAttribute(text) {
+            return escapeHtml(String(text ?? ''))
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizeImageUrl(value) {
+            if (!value) return '';
+            try {
+                const url = new URL(String(value).trim(), window.location.href);
+                return (url.protocol === 'https:' || url.protocol === 'http:') ? url.href : '';
+            } catch (e) {
+                console.warn('Invalid event image URL:', value);
+                return '';
+            }
         }
 
         // URL/メール/電話番号をリンク化

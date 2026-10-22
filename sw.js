@@ -1,4 +1,4 @@
-const CACHE_NAME = 'teaunder-universe-v4';
+const CACHE_NAME = 'teaunder-universe-v5';
 const ASSETS_TO_CACHE = [
   './index.html',
   './action-support-os.html',
